@@ -1,16 +1,18 @@
 # expense_manager
 
-A new Flutter project.
+## Local Testing
 
-## Getting Started
+### Database
 
-This project is a starting point for a Flutter application.
+Run a local PostgreSQL container using the Docker compose provided at `db_helper/docker-compose.yml`.
 
-A few resources to get you started if this is your first Flutter project:
+```
+docker compose up --build
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Establish the connection in your app by using the following details:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```
+var dbManager = DatabaseManager();
+dbManager.connect("10.0.2.2", "test_db", "postgres", "postgres",const ConnectionSettings(sslMode: SslMode.disable));
+```
