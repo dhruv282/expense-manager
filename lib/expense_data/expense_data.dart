@@ -1,0 +1,99 @@
+class ExpenseData {
+  // ID is the unique identifier for the object
+  final String id;
+
+  // Description is the name of the expense
+  final String description;
+
+  // Cost of the expense
+  final int cost;
+
+  // Date is the date the expense occurred
+  final String date;
+
+  // Category is the type of expense
+  final String category;
+
+  // Person is the person who made the expense
+  final String person;
+
+  // Constructor
+  ExpenseData({
+    required this.id,
+    required this.description,
+    required this.cost,
+    required this.date,
+    required this.category,
+    required this.person,
+  });
+
+  // Empty constructor
+  ExpenseData.empty()
+      : id = "",
+        description = "",
+        cost = 0,
+        date = "",
+        category = "",
+        person = "";
+
+  // Converts the object to a map
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'description': description,
+      'cost': cost,
+      'date': date,
+      'category': category,
+      'person': person,
+    };
+  }
+
+  ExpenseData.fromMap(Map<String, dynamic> map)
+      : this(
+          id: map['id'],
+          description: map['description'],
+          cost: map['cost'],
+          date: map['date'],
+          category: map['category'],
+          person: map['person'],
+        );
+
+  // Converts the object to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'description': description,
+      'cost': cost,
+      'date': date,
+      'category': category,
+      'person': person,
+    };
+  }
+
+  // Constructor to create an object from a map
+  ExpenseData.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        description = json['description'],
+        cost = json['cost'],
+        date = json['date'],
+        category = json['category'],
+        person = json['person'];
+
+  // Returns a copy of the object
+  ExpenseData copy() {
+    return ExpenseData(
+      id: id,
+      description: description,
+      cost: cost,
+      date: date,
+      category: category,
+      person: person,
+    );
+  }
+
+  // Returns a string representation of the object
+  @override
+  String toString() {
+    return 'ExpenseData{id: $id, description: $description, cost: $cost, date: $date, category: $category, person: $person}';
+  }
+}
