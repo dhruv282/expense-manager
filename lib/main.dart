@@ -1,16 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:postgres/postgres.dart';
-
-import 'database_manager/database_manager.dart';
 
 void main() {
-  var dbManager = DatabaseManager();
-  dbManager.connect("10.0.2.2", "test_db", "postgres", "postgres",
-      const ConnectionSettings(sslMode: SslMode.disable));
-
-  dbManager.executeInsert("10.0.2.2", "test_db", "postgres", "postgres",
-      const ConnectionSettings(sslMode: SslMode.disable));
-
   runApp(const MyApp());
 }
 
