@@ -1,8 +1,9 @@
-import 'package:expense_manager/constants/expense_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class ExpenseFormField extends StatefulWidget {
+  final bool enabled;
+  final int? maxCharacters;
   final String labelText;
   final String hintText;
   final IconData? icon;
@@ -15,6 +16,8 @@ class ExpenseFormField extends StatefulWidget {
 
   const ExpenseFormField(
       {super.key,
+      required this.enabled,
+      required this.maxCharacters,
       required this.labelText,
       required this.hintText,
       required this.icon,
@@ -32,7 +35,8 @@ class _ExpenseFormFieldState extends State<ExpenseFormField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      maxLength: maxCharacters,
+      enabled: widget.enabled,
+      maxLength: widget.maxCharacters,
       keyboardType: widget.keyboardType,
       inputFormatters: [widget.inputFormatter],
       controller: widget.controller,

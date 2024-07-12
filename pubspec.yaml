@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   postgres: ^3.2.1
   logger: ^2.3.0
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:

@@ -1,7 +1,9 @@
 import 'package:expense_manager/constants/expense_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
+import '../utils/date_picker.dart';
 import '../utils/form_field.dart';
 
 class AddExpenseForm extends StatefulWidget {
@@ -35,6 +37,8 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
         child: Column(
           children: [
             ExpenseFormField(
+              enabled: true,
+              maxCharacters: maxCharacters,
               keyboardType: TextInputType.number,
               inputFormatter: FilteringTextInputFormatter.digitsOnly,
               controller: widget.controllerMap[amountTextFormFieldLabel]!,
@@ -47,6 +51,8 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
               },
             ),
             ExpenseFormField(
+              enabled: true,
+              maxCharacters: maxCharacters,
               keyboardType: TextInputType.text,
               inputFormatter: FilteringTextInputFormatter.singleLineFormatter,
               controller: widget.controllerMap[descriptionTextFormFieldLabel]!,
@@ -58,6 +64,31 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
                 return checkEmptyInput(value);
               },
             ),
+            Row(children: [
+              Expanded(
+                child: ExpenseFormField(
+                  enabled: true,
+                  maxCharacters: null,
+                  keyboardType: TextInputType.text,
+                  inputFormatter:
+                      FilteringTextInputFormatter.singleLineFormatter,
+                  controller: widget.controllerMap[dateTextFormFieldLabel]!,
+                  labelText: dateTextFormFieldLabel,
+                  hintText: dateTextFormFieldHint,
+                  icon: null,
+                  onSaved: (value) {},
+                  validator: (value) {
+                    return null;
+                  },
+                ),
+              ),
+              DatePicker(
+                  initialDate: DateTime.now(),
+                  onDateSelected: (date) {
+                    widget.controllerMap[dateTextFormFieldLabel]!.text =
+                        DateFormat.yMd().format(date);
+                  }),
+            ]),
             ElevatedButton(
               onPressed: () {
                 // Validate returns true if the form is valid, or false otherwise.
