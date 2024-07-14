@@ -1,4 +1,5 @@
 import 'package:expense_manager/constants/expense_form.dart';
+import 'package:expense_manager/expense_data/expense_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -36,6 +37,7 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
         key: _formKey,
         child: Column(
           children: [
+            // Cost field
             ExpenseFormField(
               enabled: true,
               maxCharacters: maxCharacters,
@@ -50,6 +52,7 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
                 return checkEmptyInput(value);
               },
             ),
+            // Description field
             ExpenseFormField(
               enabled: true,
               maxCharacters: maxCharacters,
@@ -64,6 +67,7 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
                 return checkEmptyInput(value);
               },
             ),
+            // Date field
             Row(children: [
               Expanded(
                 child: ExpenseFormField(
@@ -78,7 +82,17 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
                   icon: null,
                   onSaved: (value) {},
                   validator: (value) {
-                    return null;
+                    if (value!.isEmpty) {
+                      return 'Please enter a valid date';
+                    } else {
+                      try {
+                        DateFormat.yMd().parse(value).toString();
+
+                        return null;
+                      } catch (e) {
+                        return 'Please enter a valid date';
+                      }
+                    }
                   },
                 ),
               ),
@@ -93,6 +107,21 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
               onPressed: () {
                 // Validate returns true if the form is valid, or false otherwise.
                 if (_formKey.currentState!.validate()) {
+                  ExpenseData expense = ExpenseData(
+                    id: "01234",
+                    description: widget
+                        .controllerMap[descriptionTextFormFieldLabel]!.text,
+                    cost: double.parse(
+                        widget.controllerMap[amountTextFormFieldLabel]!.text),
+                    date: widget.controllerMap[dateTextFormFieldLabel]!.text,
+                    category:
+                        widget.controllerMap[categoryTextFormFieldLabel]!.text,
+                    person:
+                        widget.controllerMap[personTextFormFieldLabel]!.text,
+                  );
+
+                  print(expense.toString());
+
                   // If the form is valid, display a snackbar. In the real world,
                   // you'd often call a server or save the information in a database.
                   ScaffoldMessenger.of(context).showSnackBar(
