@@ -1,5 +1,6 @@
 import 'package:expense_manager/constants/expense_form.dart';
 import 'package:expense_manager/expense_data/expense_data.dart';
+import 'package:expense_manager/utils/form_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -37,36 +38,6 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
         key: _formKey,
         child: Column(
           children: [
-            // Cost field
-            ExpenseFormField(
-              enabled: true,
-              maxCharacters: maxCharacters,
-              keyboardType: TextInputType.number,
-              inputFormatter: FilteringTextInputFormatter.digitsOnly,
-              controller: widget.controllerMap[amountTextFormFieldLabel]!,
-              labelText: amountTextFormFieldLabel,
-              hintText: amountTextFormFieldHint,
-              icon: Icons.attach_money,
-              onSaved: (value) {},
-              validator: (value) {
-                return checkEmptyInput(value);
-              },
-            ),
-            // Description field
-            ExpenseFormField(
-              enabled: true,
-              maxCharacters: maxCharacters,
-              keyboardType: TextInputType.text,
-              inputFormatter: FilteringTextInputFormatter.singleLineFormatter,
-              controller: widget.controllerMap[descriptionTextFormFieldLabel]!,
-              labelText: descriptionTextFormFieldLabel,
-              hintText: descriptionTextFormFieldHint,
-              icon: null,
-              onSaved: (value) {},
-              validator: (value) {
-                return checkEmptyInput(value);
-              },
-            ),
             // Date field
             Row(children: [
               Expanded(
@@ -103,6 +74,43 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
                         DateFormat.yMd().format(date);
                   }),
             ]),
+            // Cost field
+            ExpenseFormField(
+              enabled: true,
+              maxCharacters: maxCharacters,
+              keyboardType: TextInputType.number,
+              inputFormatter: FilteringTextInputFormatter.digitsOnly,
+              controller: widget.controllerMap[amountTextFormFieldLabel]!,
+              labelText: amountTextFormFieldLabel,
+              hintText: amountTextFormFieldHint,
+              icon: Icons.attach_money,
+              onSaved: (value) {},
+              validator: (value) {
+                return checkEmptyInput(value);
+              },
+            ),
+            // Description field
+            ExpenseFormField(
+              enabled: true,
+              maxCharacters: maxCharacters,
+              keyboardType: TextInputType.text,
+              inputFormatter: FilteringTextInputFormatter.singleLineFormatter,
+              controller: widget.controllerMap[descriptionTextFormFieldLabel]!,
+              labelText: descriptionTextFormFieldLabel,
+              hintText: descriptionTextFormFieldHint,
+              icon: null,
+              onSaved: (value) {},
+              validator: (value) {
+                return checkEmptyInput(value);
+              },
+            ),
+            // Category field
+            const ExpenseFormDropdown(
+              options: [], // TODO: get categories from DB
+              labelText: categoryTextFormFieldLabel,
+              hintText: categoryTextFormFieldHint,
+              icon: null,
+            ),
             ElevatedButton(
               onPressed: () {
                 // Validate returns true if the form is valid, or false otherwise.
