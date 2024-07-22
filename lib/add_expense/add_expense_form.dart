@@ -106,7 +106,7 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
             ),
             // Category field
             const ExpenseFormDropdown(
-              options: [], // TODO: get categories from DB
+              options: expenseCategories,
               labelText: categoryTextFormFieldLabel,
               hintText: categoryTextFormFieldHint,
               icon: null,

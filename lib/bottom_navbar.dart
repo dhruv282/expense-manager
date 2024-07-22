@@ -1,3 +1,4 @@
+import 'package:expense_manager/pages/expenses.dart';
 import 'package:flutter/material.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -50,19 +51,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
         ),
 
         /// Expenses page
-        Card(
-          shadowColor: Colors.transparent,
-          margin: const EdgeInsets.all(8.0),
-          child: SizedBox.expand(
-            child: Center(
-              child: Text(
-                'Expenses page',
-                style: theme.textTheme.titleLarge,
-              ),
-            ),
-          ),
-        ),
-      ][currentPageIndex],// This trailing comma makes auto-formatting nicer for build methods.
+        const ExpensePage(),
+      ][currentPageIndex],
     );
   }
 }
