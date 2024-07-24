@@ -1,12 +1,13 @@
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:expense_manager/constants/expense_form.dart';
 import 'package:expense_manager/expense_data/expense_data.dart';
+import 'package:expense_manager/utils/date_picker.dart';
 import 'package:expense_manager/utils/form_dropdown.dart';
+import 'package:expense_manager/utils/form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-
-import '../utils/date_picker.dart';
-import '../utils/form_field.dart';
+import 'package:pattern_formatter/date_formatter.dart';
 
 class AddExpenseForm extends StatefulWidget {
   final Map<String, TextEditingController> controllerMap;
@@ -44,9 +45,8 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
                 child: ExpenseFormField(
                   enabled: true,
                   maxCharacters: null,
-                  keyboardType: TextInputType.text,
-                  inputFormatter:
-                      FilteringTextInputFormatter.singleLineFormatter,
+                  keyboardType: TextInputType.datetime,
+                  inputFormatter: DateInputFormatter(),
                   controller: widget.controllerMap[dateTextFormFieldLabel]!,
                   labelText: dateTextFormFieldLabel,
                   hintText: dateTextFormFieldHint,
@@ -77,13 +77,15 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
             // Cost field
             ExpenseFormField(
               enabled: true,
-              maxCharacters: maxCharacters,
-              keyboardType: TextInputType.number,
-              inputFormatter: FilteringTextInputFormatter.digitsOnly,
+              maxCharacters: null,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              inputFormatter: CurrencyTextInputFormatter.simpleCurrency(
+                  enableNegative: false),
               controller: widget.controllerMap[amountTextFormFieldLabel]!,
               labelText: amountTextFormFieldLabel,
               hintText: amountTextFormFieldHint,
-              icon: Icons.attach_money,
+              icon: null,
               onSaved: (value) {},
               validator: (value) {
                 return checkEmptyInput(value);
@@ -92,7 +94,7 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
             // Description field
             ExpenseFormField(
               enabled: true,
-              maxCharacters: maxCharacters,
+              maxCharacters: null,
               keyboardType: TextInputType.text,
               inputFormatter: FilteringTextInputFormatter.singleLineFormatter,
               controller: widget.controllerMap[descriptionTextFormFieldLabel]!,
@@ -119,8 +121,10 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
                     id: "01234",
                     description: widget
                         .controllerMap[descriptionTextFormFieldLabel]!.text,
-                    cost: double.parse(
-                        widget.controllerMap[amountTextFormFieldLabel]!.text),
+                    cost: double.parse(widget
+                        .controllerMap[amountTextFormFieldLabel]!.text
+                        .replaceFirst("\$", "")
+                        .replaceAll(",", "")),
                     date: widget.controllerMap[dateTextFormFieldLabel]!.text,
                     category:
                         widget.controllerMap[categoryTextFormFieldLabel]!.text,
