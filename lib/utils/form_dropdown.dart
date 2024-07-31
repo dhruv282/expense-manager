@@ -24,6 +24,7 @@ class _ExpenseFormDropdownState extends State<ExpenseFormDropdown> {
   @override
   Widget build(BuildContext context) {
     return DropdownMenu<String>(
+      expandedInsets: EdgeInsets.zero,
       label: Text(widget.labelText),
       leadingIcon: widget.icon != null ? Icon(widget.icon) : null,
       hintText: widget.hintText,

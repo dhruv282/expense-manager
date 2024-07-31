@@ -38,6 +38,7 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
     return Form(
         key: _formKey,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             // Date field
             Row(children: [
