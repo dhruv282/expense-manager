@@ -28,7 +28,7 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
 
   String? checkEmptyInput(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please enter an amount';
+      return 'Please enter a value';
     }
     return null;
   }
@@ -108,9 +108,16 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
               },
             ),
             // Category field
-            const ExpenseFormDropdown(
+            ExpenseFormDropdown(
               options: expenseCategories,
               labelText: categoryTextFormFieldLabel,
+              controller: widget.controllerMap[categoryTextFormFieldLabel]!,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please select a value';
+                }
+                return null;
+              },
               hintText: categoryTextFormFieldHint,
               icon: null,
             ),

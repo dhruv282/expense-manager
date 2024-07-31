@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ExpenseFormDropdown extends StatefulWidget {
   final List<String> options;
   final String labelText;
   final String hintText;
   final IconData? icon;
+  final String? Function(String?) validator;
+  final TextEditingController controller;
 
   const ExpenseFormDropdown({
     super.key,
@@ -12,6 +15,8 @@ class ExpenseFormDropdown extends StatefulWidget {
     required this.labelText,
     required this.hintText,
     required this.icon,
+    required this.validator,
+    required this.controller,
   });
 
   @override
@@ -23,19 +28,25 @@ class _ExpenseFormDropdownState extends State<ExpenseFormDropdown> {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownMenu<String>(
-      expandedInsets: EdgeInsets.zero,
-      label: Text(widget.labelText),
-      leadingIcon: widget.icon != null ? Icon(widget.icon) : null,
-      hintText: widget.hintText,
-      onSelected: (String? val) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        border: const OutlineInputBorder(),
+        icon: widget.icon != null ? Icon(widget.icon) : null,
+        labelText: widget.labelText,
+        hintText: widget.hintText,
+      ),
+      validator: widget.validator,
+      onChanged: (String? val) {
         setState(() {
           value = val!;
+          widget.controller.text = val;
         });
       },
-      dropdownMenuEntries:
-          widget.options.map<DropdownMenuEntry<String>>((String value) {
-        return DropdownMenuEntry(value: value, label: value);
+      items: widget.options.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem(
+          value: value,
+          child: Text(value),
+        );
       }).toList(),
     );
   }
