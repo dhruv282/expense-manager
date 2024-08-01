@@ -1,4 +1,4 @@
-import 'package:expense_manager/expense_data/expense_data.dart';
+import 'package:expense_manager/data/expense_data.dart';
 import 'package:postgres/postgres.dart';
 
 import '../logger/logger.dart';
