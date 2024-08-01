@@ -1,7 +1,6 @@
 import 'package:expense_manager/data/expense_data.dart';
+import 'package:expense_manager/logger/logger.dart';
 import 'package:postgres/postgres.dart';
-
-import '../logger/logger.dart';
 
 /// The `DatabaseManager` class is responsible for managing the connection and operations
 /// with the database. It provides methods to establish a connection, execute queries,
