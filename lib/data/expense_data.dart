@@ -19,7 +19,7 @@ class ExpenseData {
 
   // Constructor
   ExpenseData({
-    required this.id,
+    this.id = '',
     required this.description,
     required this.cost,
     required this.date,

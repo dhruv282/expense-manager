@@ -1,6 +1,7 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:expense_manager/constants/expense_form.dart';
 import 'package:expense_manager/data/expense_data.dart';
+import 'package:expense_manager/database_manager/database_manager.dart';
 import 'package:expense_manager/utils/date_picker.dart';
 import 'package:expense_manager/utils/form_dropdown.dart';
 import 'package:expense_manager/utils/form_field.dart';
@@ -126,7 +127,6 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
                 // Validate returns true if the form is valid, or false otherwise.
                 if (_formKey.currentState!.validate()) {
                   ExpenseData expense = ExpenseData(
-                    id: "01234",
                     description: widget
                         .controllerMap[descriptionTextFormFieldLabel]!.text,
                     cost: double.parse(widget
@@ -140,13 +140,16 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
                         widget.controllerMap[personTextFormFieldLabel]!.text,
                   );
 
-                  print(expense.toString());
-
-                  // If the form is valid, display a snackbar. In the real world,
-                  // you'd often call a server or save the information in a database.
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Processing Data')),
-                  );
+                  var dbManager = DatabaseManager();
+                  dbManager.executeInsert(expense).then((res) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Expense added!'), backgroundColor: Color.fromARGB(255, 0, 95, 0),),
+                    );
+                  }).catchError((error) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Failed to add expense :('), backgroundColor: Color.fromARGB(255, 95, 0, 0),),
+                    );
+                  });
                 }
               },
               child: const Text('Submit'),

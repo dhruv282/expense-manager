@@ -36,10 +36,10 @@ class DatabaseManager {
       );
 
       return await connection!.execute('CREATE TABLE IF NOT EXISTS expenses ('
-          '  id TEXT PRIMARY KEY, '
-          '  cost INTEGER NOT NULL DEFAULT 0,'
+          '  id UUID DEFAULT gen_random_uuid() PRIMARY KEY, '
+          '  cost DECIMAL(12,2) NOT NULL,'
           '  description TEXT NOT NULL,'
-          '  date TEXT NOT NULL,'
+          '  date DATE NOT NULL,'
           '  category TEXT NOT NULL,'
           '  person TEXT NOT NULL'
           ')');
@@ -57,9 +57,8 @@ class DatabaseManager {
     try {
       // Execute the query
       return await connection!.execute(
-          r'INSERT INTO expenses (id, cost, description, date, category, person) VALUES ($1, $2, $3, $4, $5, $6)',
+          r'INSERT INTO expenses (cost, description, date, category, person) VALUES ($1, $2, $3, $4, $5)',
           parameters: [
-            expense.id,
             expense.cost,
             expense.description,
             expense.date,
