@@ -26,6 +26,7 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
   // Note: This is a GlobalKey<FormState>,
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
+  var isSubmitting = false;
 
   String? checkEmptyInput(String? value) {
     if (value == null || value.isEmpty) {
@@ -36,6 +37,7 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     return Form(
         key: _formKey,
         child: Column(
@@ -123,36 +125,64 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
               icon: null,
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isSubmitting
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.inversePrimary,
+              ),
               onPressed: () {
-                // Validate returns true if the form is valid, or false otherwise.
-                if (_formKey.currentState!.validate()) {
-                  ExpenseData expense = ExpenseData(
-                    description: widget
-                        .controllerMap[descriptionTextFormFieldLabel]!.text,
-                    cost: double.parse(widget
-                        .controllerMap[amountTextFormFieldLabel]!.text
-                        .replaceFirst("\$", "")
-                        .replaceAll(",", "")),
-                    date: widget.controllerMap[dateTextFormFieldLabel]!.text,
-                    category:
-                        widget.controllerMap[categoryTextFormFieldLabel]!.text,
-                    person:
-                        widget.controllerMap[personTextFormFieldLabel]!.text,
-                  );
-
-                  var dbManager = DatabaseManager();
-                  dbManager.executeInsert(expense).then((res) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Expense added!'), backgroundColor: Color.fromARGB(255, 0, 95, 0),),
-                    );
-                  }).catchError((error) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Failed to add expense :('), backgroundColor: Color.fromARGB(255, 95, 0, 0),),
-                    );
+                // Ignore button presses with ongoing submit operation.
+                if (!isSubmitting) {
+                  setState(() {
+                    isSubmitting = true;
                   });
+                  // Validate returns true if the form is valid, or false otherwise.
+                  if (_formKey.currentState!.validate()) {
+                    ExpenseData expense = ExpenseData(
+                      description: widget
+                          .controllerMap[descriptionTextFormFieldLabel]!.text,
+                      cost: double.parse(widget
+                          .controllerMap[amountTextFormFieldLabel]!.text
+                          .replaceFirst("\$", "")
+                          .replaceAll(",", "")),
+                      date: widget.controllerMap[dateTextFormFieldLabel]!.text,
+                      category: widget
+                          .controllerMap[categoryTextFormFieldLabel]!.text,
+                      person:
+                          widget.controllerMap[personTextFormFieldLabel]!.text,
+                    );
+
+                    var dbManager = DatabaseManager();
+                    dbManager.executeInsert(expense).then((res) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Expense added!'),
+                          backgroundColor: Color.fromARGB(255, 0, 95, 0),
+                        ),
+                      );
+                    }).catchError((error) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Failed to add expense :('),
+                          backgroundColor: Color.fromARGB(255, 95, 0, 0),
+                        ),
+                      );
+                    }).whenComplete(() {
+                      setState(() {
+                        isSubmitting = false;
+                      });
+                    });
+                  }
                 }
               },
-              child: const Text('Submit'),
+              child: Text(
+                'Submit',
+                style: TextStyle(
+                  color: isSubmitting
+                      ? theme.colorScheme.inversePrimary
+                      : theme.colorScheme.primary,
+                ),
+              ),
             ),
           ],
         ));
