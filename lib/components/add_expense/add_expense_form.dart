@@ -160,6 +160,7 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
                           backgroundColor: Color.fromARGB(255, 0, 95, 0),
                         ),
                       );
+                      Navigator.pop(context);
                     }).catchError((error) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
