@@ -1,25 +1,25 @@
 class ExpenseData {
   // ID is the unique identifier for the object
-  final String id;
+  String id;
 
   // Description is the name of the expense
-  final String description;
+  String description;
 
   // Cost of the expense
-  final int cost;
+  double cost;
 
   // Date is the date the expense occurred
-  final String date;
+  String date;
 
   // Category is the type of expense
-  final String category;
+  String category;
 
   // Person is the person who made the expense
-  final String person;
+  String person;
 
   // Constructor
   ExpenseData({
-    required this.id,
+    this.id = '',
     required this.description,
     required this.cost,
     required this.date,
