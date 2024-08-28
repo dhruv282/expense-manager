@@ -21,11 +21,21 @@ class _AddExpensePageState extends State<AddExpensePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.arrow_back))
+          ],
+          title: const Text("Add Expense"),
+        ),
         body: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: AddExpenseForm(
-        controllerMap: formControllerMap,
-      ),
-    ));
+          padding: const EdgeInsets.all(16.0),
+          child: AddExpenseForm(
+            controllerMap: formControllerMap,
+          ),
+        ));
   }
 }
