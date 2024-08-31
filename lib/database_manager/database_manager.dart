@@ -118,7 +118,7 @@ class DatabaseManager {
   }
 
   /// Returns all expenses from the database.
-  Future<List<ExpenseData>?> executeFetchAll(ExpenseData expense) async {
+  Future<List<ExpenseData>?> executeFetchAll() async {
     // Execute the query
     logger.i("Fetching all expenses from the database...");
 
