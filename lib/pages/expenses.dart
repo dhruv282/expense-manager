@@ -1,4 +1,5 @@
 import 'package:data_table_2/data_table_2.dart';
+import 'package:expense_manager/data/expense_data.dart';
 import 'package:expense_manager/database_manager/database_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -12,24 +13,35 @@ class ExpensePage extends StatefulWidget {
 
 class _ExpensePageState extends State<ExpensePage> {
   var entriesLoaded = false;
-  List<DataRow> expenseDataEntries = [];
+  List<ExpenseData> expenseDataEntries = [];
+  bool sortAscending = true;
+  int? sortColumnIndex;
+
+  void sort<T>(
+    Comparable<T> Function(ExpenseData d) getField,
+    int columnIndex,
+    bool ascending,
+  ) {
+    // expenseDataEntries.sort<T>(getField, ascending);
+    expenseDataEntries.sort((a, b) {
+      final aValue = getField(a);
+      final bValue = getField(b);
+      return ascending
+          ? Comparable.compare(aValue, bValue)
+          : Comparable.compare(bValue, aValue);
+    });
+    setState(() {
+      sortColumnIndex = columnIndex;
+      sortAscending = ascending;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     var dbManager = DatabaseManager();
     dbManager.executeFetchAll().then((entries) {
-      for (var e in entries!) {
-        expenseDataEntries.add(DataRow(
-          cells: <DataCell>[
-            DataCell(Text(e.date)),
-            DataCell(Text(e.description)),
-            DataCell(Text(e.category)),
-            DataCell(Text(e.person)),
-            DataCell(Text(NumberFormat.compactSimpleCurrency().format(e.cost))),
-          ],
-        ));
-      }
+      expenseDataEntries = entries!;
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -44,40 +56,71 @@ class _ExpensePageState extends State<ExpensePage> {
     });
   }
 
+  List<DataRow> generateDataRows() {
+    List<DataRow> dataRows = [];
+    for (var e in expenseDataEntries) {
+      dataRows.add(DataRow(
+        cells: <DataCell>[
+          DataCell(Text(e.date)),
+          DataCell(Text(e.description)),
+          DataCell(Text(e.category)),
+          DataCell(Text(e.person)),
+          DataCell(Text(NumberFormat.compactSimpleCurrency().format(e.cost))),
+        ],
+      ));
+    }
+    return dataRows;
+  }
+
   @override
   Widget build(BuildContext context) {
     return entriesLoaded
         ? DataTable2(
             showBottomBorder: true,
+            sortColumnIndex: sortColumnIndex,
+            sortAscending: sortAscending,
+            sortArrowIcon: Icons.keyboard_arrow_up,
+            sortArrowAnimationDuration: const Duration(milliseconds: 500),
+            isVerticalScrollBarVisible: true,
             empty: Center(
                 child: Container(
                     padding: const EdgeInsets.all(20),
                     color: Colors.grey[200],
                     child: const Text('No data'))),
-            columns: const [
+            columns: [
               DataColumn2(
-                label: Text('Date'),
+                label: const Text('Date'),
                 size: ColumnSize.S,
+                onSort: (columnIndex, ascending) =>
+                    sort<String>((d) => d.date, columnIndex, ascending),
               ),
               DataColumn2(
-                label: Text('Description'),
+                label: const Text('Description'),
                 size: ColumnSize.S,
+                onSort: (columnIndex, ascending) =>
+                    sort<String>((d) => d.description, columnIndex, ascending),
               ),
               DataColumn2(
-                label: Text('Category'),
+                label: const Text('Category'),
                 size: ColumnSize.S,
+                onSort: (columnIndex, ascending) =>
+                    sort<String>((d) => d.category, columnIndex, ascending),
               ),
               DataColumn2(
-                label: Text('Owner'),
+                label: const Text('Owner'),
                 size: ColumnSize.S,
+                onSort: (columnIndex, ascending) =>
+                    sort<String>((d) => d.person, columnIndex, ascending),
               ),
               DataColumn2(
-                label: Text('Cost'),
+                label: const Text('Cost'),
                 size: ColumnSize.S,
+                numeric: true,
+                onSort: (columnIndex, ascending) =>
+                    sort<num>((d) => d.cost, columnIndex, ascending),
               ),
             ],
-            sortArrowIcon: Icons.keyboard_arrow_up,
-            rows: expenseDataEntries)
+            rows: generateDataRows())
         : const Center(child: CircularProgressIndicator());
   }
 }
