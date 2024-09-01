@@ -1,4 +1,4 @@
-import 'package:expense_manager/components/add_expense/add_expense_form.dart';
+import 'package:expense_manager/components/expense_form.dart';
 import 'package:expense_manager/constants/expense_form.dart';
 import 'package:flutter/material.dart';
 
@@ -33,7 +33,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: AddExpenseForm(
+          child: ExpenseForm(
             controllerMap: formControllerMap,
           ),
         ));

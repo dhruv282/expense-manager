@@ -10,16 +10,16 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:pattern_formatter/date_formatter.dart';
 
-class AddExpenseForm extends StatefulWidget {
+class ExpenseForm extends StatefulWidget {
   final Map<String, TextEditingController> controllerMap;
 
-  const AddExpenseForm({super.key, required this.controllerMap});
+  const ExpenseForm({super.key, required this.controllerMap});
 
   @override
-  State<AddExpenseForm> createState() => _AddExpenseFormState();
+  State<ExpenseForm> createState() => _ExpenseFormState();
 }
 
-class _AddExpenseFormState extends State<AddExpenseForm> {
+class _ExpenseFormState extends State<ExpenseForm> {
   // Create a global key that uniquely identifies the Form widget
   // and allows validation of the form.
   //
