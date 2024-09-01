@@ -46,9 +46,14 @@ class _ExpensePageState extends State<ExpensePage> {
 
   @override
   Widget build(BuildContext context) {
-    return (entriesLoaded && expenseDataEntries.isNotEmpty)
+    return entriesLoaded
         ? DataTable2(
             showBottomBorder: true,
+            empty: Center(
+                child: Container(
+                    padding: const EdgeInsets.all(20),
+                    color: Colors.grey[200],
+                    child: const Text('No data'))),
             columns: const [
               DataColumn2(
                 label: Text('Date'),
@@ -73,8 +78,6 @@ class _ExpensePageState extends State<ExpensePage> {
             ],
             sortArrowIcon: Icons.keyboard_arrow_up,
             rows: expenseDataEntries)
-        : Scaffold(
-            body: AppBar(title: const Text('No entries')),
-          );
+        : const Center(child: CircularProgressIndicator());
   }
 }
