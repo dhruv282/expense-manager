@@ -71,6 +71,28 @@ class DatabaseManager {
     }
   }
 
+  /// Updates values of the given expense in the database.
+  Future<Result?> updateExpense(ExpenseData expense) async {
+    logger.i("Updating expense ${expense.id}");
+
+    try {
+      return await connection!.execute(
+          Sql.named(
+              'UPDATE expenses SET cost = @cost, description = @description, date = @date, category = @category, person = @person WHERE id=@id'),
+          parameters: {
+            'id': expense.id,
+            'description': expense.description,
+            'date': expense.date,
+            'category': expense.category,
+            'person': expense.person,
+            'cost': expense.cost
+          });
+    } catch (e) {
+      logger.i("Error updating expense: $e");
+      return null;
+    }
+  }
+
   /// Returns the given expense from the database.
   Future<ExpenseData?> executeFetchOne(ExpenseData expense) async {
     // Execute the query

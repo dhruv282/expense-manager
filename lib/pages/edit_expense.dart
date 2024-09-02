@@ -4,14 +4,15 @@ import 'package:expense_manager/data/expense_data.dart';
 import 'package:expense_manager/database_manager/database_manager.dart';
 import 'package:flutter/material.dart';
 
-class AddExpensePage extends StatefulWidget {
-  const AddExpensePage({super.key});
+class EditExpensePage extends StatefulWidget {
+  final ExpenseData expense;
+  const EditExpensePage({super.key, required this.expense});
 
   @override
-  State<AddExpensePage> createState() => _AddExpensePageState();
+  State<EditExpensePage> createState() => _EditExpensePageState();
 }
 
-class _AddExpensePageState extends State<AddExpensePage> {
+class _EditExpensePageState extends State<EditExpensePage> {
   Map<String, TextEditingController> formControllerMap = {
     amountTextFormFieldLabel: TextEditingController(),
     descriptionTextFormFieldLabel: TextEditingController(),
@@ -19,6 +20,19 @@ class _AddExpensePageState extends State<AddExpensePage> {
     dateTextFormFieldLabel: TextEditingController(),
     personTextFormFieldLabel: TextEditingController(),
   };
+
+  @override
+  void initState() {
+    super.initState();
+    formControllerMap[amountTextFormFieldLabel]?.text =
+        widget.expense.cost.toString();
+    formControllerMap[descriptionTextFormFieldLabel]?.text =
+        widget.expense.description;
+    formControllerMap[categoryTextFormFieldLabel]?.text =
+        widget.expense.category;
+    formControllerMap[dateTextFormFieldLabel]?.text = widget.expense.date;
+    formControllerMap[personTextFormFieldLabel]?.text = widget.expense.person;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +45,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
                 },
                 icon: const Icon(Icons.arrow_back))
           ],
-          title: const Text("Add Expense"),
+          title: const Text("Edit Expense"),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -39,12 +53,14 @@ class _AddExpensePageState extends State<AddExpensePage> {
             controllerMap: formControllerMap,
             onSubmit: (ExpenseData e) {
               var dbManager = DatabaseManager();
-              return dbManager.executeInsert(e);
+              // Add expense ID for a successful update.
+              e.id = widget.expense.id;
+              return dbManager.updateExpense(e);
             },
             onSuccess: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Expense added!'),
+                  content: Text('Expense updated!'),
                   backgroundColor: Color.fromARGB(255, 0, 95, 0),
                 ),
               );
@@ -52,7 +68,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
             onError: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Failed to add expense :('),
+                  content: Text('Failed to update expense :('),
                   backgroundColor: Color.fromARGB(255, 95, 0, 0),
                 ),
               );

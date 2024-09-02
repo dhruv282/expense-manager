@@ -1,6 +1,7 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:expense_manager/data/expense_data.dart';
 import 'package:expense_manager/database_manager/database_manager.dart';
+import 'package:expense_manager/pages/edit_expense.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -56,18 +57,21 @@ class _ExpensePageState extends State<ExpensePage> {
     });
   }
 
-  List<DataRow> generateDataRows() {
-    List<DataRow> dataRows = [];
+  List<DataRow2> generateDataRows() {
+    List<DataRow2> dataRows = [];
     for (var e in expenseDataEntries) {
-      dataRows.add(DataRow(
-        cells: <DataCell>[
-          DataCell(Text(e.date)),
-          DataCell(Text(e.description)),
-          DataCell(Text(e.category)),
-          DataCell(Text(e.person)),
-          DataCell(Text(NumberFormat.compactSimpleCurrency().format(e.cost))),
-        ],
-      ));
+      dataRows.add(DataRow2(
+          cells: <DataCell>[
+            DataCell(Text(e.date)),
+            DataCell(Text(e.description)),
+            DataCell(Text(e.category)),
+            DataCell(Text(e.person)),
+            DataCell(Text(NumberFormat.compactSimpleCurrency().format(e.cost))),
+          ],
+          onDoubleTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => EditExpensePage(expense: e)))));
     }
     return dataRows;
   }

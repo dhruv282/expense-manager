@@ -1,7 +1,6 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:expense_manager/constants/expense_form.dart';
 import 'package:expense_manager/data/expense_data.dart';
-import 'package:expense_manager/database_manager/database_manager.dart';
 import 'package:expense_manager/utils/date_picker.dart';
 import 'package:expense_manager/utils/form_dropdown.dart';
 import 'package:expense_manager/utils/form_field.dart';
@@ -12,8 +11,16 @@ import 'package:pattern_formatter/date_formatter.dart';
 
 class ExpenseForm extends StatefulWidget {
   final Map<String, TextEditingController> controllerMap;
+  final Future Function(ExpenseData e) onSubmit;
+  final Function() onSuccess;
+  final Function() onError;
 
-  const ExpenseForm({super.key, required this.controllerMap});
+  const ExpenseForm(
+      {super.key,
+      required this.controllerMap,
+      required this.onSubmit,
+      required this.onSuccess,
+      required this.onError});
 
   @override
   State<ExpenseForm> createState() => _ExpenseFormState();
@@ -152,22 +159,11 @@ class _ExpenseFormState extends State<ExpenseForm> {
                           widget.controllerMap[personTextFormFieldLabel]!.text,
                     );
 
-                    var dbManager = DatabaseManager();
-                    dbManager.executeInsert(expense).then((res) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Expense added!'),
-                          backgroundColor: Color.fromARGB(255, 0, 95, 0),
-                        ),
-                      );
+                    widget.onSubmit(expense).then((res) {
+                      widget.onSuccess();
                       Navigator.pop(context);
                     }).catchError((error) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Failed to add expense :('),
-                          backgroundColor: Color.fromARGB(255, 95, 0, 0),
-                        ),
-                      );
+                      widget.onError();
                     }).whenComplete(() {
                       setState(() {
                         isSubmitting = false;
