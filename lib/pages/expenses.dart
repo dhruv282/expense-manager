@@ -21,15 +21,6 @@ class _ExpensePageState extends State<ExpensePage> {
   Widget build(BuildContext context) {
     final expenseProvider = Provider.of<ExpenseProvider>(context);
 
-    void updateExpenseEntries() {
-      expenseProvider.loadExpenseData().catchError((error) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Failed to load expenses :('),
-          backgroundColor: Color.fromARGB(255, 95, 0, 0),
-        ));
-      });
-    }
-
     void sort<T>(
       Comparable<T> Function(ExpenseData d) getField,
       int columnIndex,
