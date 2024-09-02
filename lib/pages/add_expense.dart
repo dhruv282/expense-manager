@@ -1,8 +1,9 @@
 import 'package:expense_manager/components/expense_form.dart';
 import 'package:expense_manager/constants/expense_form.dart';
 import 'package:expense_manager/data/expense_data.dart';
-import 'package:expense_manager/database_manager/database_manager.dart';
+import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AddExpensePage extends StatefulWidget {
   const AddExpensePage({super.key});
@@ -22,6 +23,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
 
   @override
   Widget build(BuildContext context) {
+    final expenseProvider = Provider.of<ExpenseProvider>(context);
     return Scaffold(
         appBar: AppBar(
           actions: [
@@ -37,10 +39,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
           padding: const EdgeInsets.all(16.0),
           child: ExpenseForm(
             controllerMap: formControllerMap,
-            onSubmit: (ExpenseData e) {
-              var dbManager = DatabaseManager();
-              return dbManager.executeInsert(e);
-            },
+            onSubmit: (ExpenseData e) => expenseProvider.addExpense(e),
             onSuccess: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
