@@ -51,8 +51,7 @@ class _ExpensePageState extends State<ExpensePage> {
               DataCell(Text(e.description)),
               DataCell(Text(e.category)),
               DataCell(Text(e.person)),
-              DataCell(
-                  Text(NumberFormat.compactSimpleCurrency().format(e.cost))),
+              DataCell(Text(NumberFormat.simpleCurrency().format(e.cost))),
             ],
             onDoubleTap: () => Navigator.push(
                 context,
