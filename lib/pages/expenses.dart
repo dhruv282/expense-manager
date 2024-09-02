@@ -37,17 +37,57 @@ class _ExpensePageState extends State<ExpensePage> {
       List<DataRow2> dataRows = [];
       for (var e in expenseProvider.expenses) {
         dataRows.add(DataRow2(
-            cells: <DataCell>[
-              DataCell(Text(e.date)),
-              DataCell(Text(e.description)),
-              DataCell(Text(e.category)),
-              DataCell(Text(e.person)),
-              DataCell(Text(NumberFormat.simpleCurrency().format(e.cost))),
-            ],
-            onDoubleTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => EditExpensePage(expense: e)))));
+          cells: <DataCell>[
+            DataCell(Text(e.date)),
+            DataCell(Text(e.description)),
+            DataCell(Text(e.category)),
+            DataCell(Text(e.person)),
+            DataCell(Text(NumberFormat.simpleCurrency().format(e.cost))),
+          ],
+          onDoubleTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => EditExpensePage(expense: e))),
+          onLongPress: () => showDialog<void>(
+              context: context,
+              barrierDismissible: true,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Delete Expense'),
+                  content: const Text('Are you sure?'),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        expenseProvider.deleteExpense(e).then((_) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Expense deleted!'),
+                              backgroundColor: Color.fromARGB(255, 0, 95, 0),
+                            ),
+                          );
+                          Navigator.of(context).pop();
+                        }).catchError((_) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Failed to delete expense :('),
+                              backgroundColor: Color.fromARGB(255, 95, 0, 0),
+                            ),
+                          );
+                        });
+                      },
+                      child: const Text(
+                        'Delete',
+                        selectionColor: Color.fromARGB(255, 95, 0, 0),
+                      ),
+                    ),
+                  ],
+                );
+              }),
+        ));
       }
       return dataRows;
     }

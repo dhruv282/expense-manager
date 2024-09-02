@@ -50,116 +50,69 @@ class DatabaseManager {
     return null;
   }
 
-  /// Executes the given query and returns the result.
-  Future<Result?> executeInsert(ExpenseData expense) async {
+  /// Returns all expenses from the database.
+  Future<List<ExpenseData>?> getAllExpenses() async {
+    // Execute the query
+    logger.i("Fetching all expenses from the database...");
+
+    List<ExpenseData> expenses = [];
+
+    // Execute the query
+    final results = await connection!.execute(
+      Sql.named('SELECT * FROM expenses'),
+    );
+
+    for (var result in results) {
+      expenses.add(ExpenseData.fromMap(result.toColumnMap()));
+    }
+
+    return expenses;
+  }
+
+  /// Inserts the given expense in the database and returns the ID.
+  Future<String> insertExpense(ExpenseData expense) async {
     logger.i("Inserting an expense into the database...");
 
-    try {
-      // Execute the query
-      return await connection!.execute(
-          r'INSERT INTO expenses (cost, description, date, category, person) VALUES ($1, $2, $3, $4, $5)',
-          parameters: [
-            expense.cost,
-            expense.description,
-            expense.date,
-            expense.category,
-            expense.person,
-          ]);
-    } catch (e) {
-      logger.e("Error executing query: $e");
-      return null;
+    // Execute the query
+    final res = await connection!.execute(
+        r'INSERT INTO expenses (cost, description, date, category, person) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+        parameters: [
+          expense.cost,
+          expense.description,
+          expense.date,
+          expense.category,
+          expense.person,
+        ]);
+    if (res.isEmpty) {
+      throw Exception('Error inserting expense: $expense');
     }
+    return res[0][0].toString();
   }
 
   /// Updates values of the given expense in the database.
   Future<Result?> updateExpense(ExpenseData expense) async {
     logger.i("Updating expense ${expense.id}");
 
-    try {
-      return await connection!.execute(
-          Sql.named(
-              'UPDATE expenses SET cost = @cost, description = @description, date = @date, category = @category, person = @person WHERE id=@id'),
-          parameters: {
-            'id': expense.id,
-            'description': expense.description,
-            'date': expense.date,
-            'category': expense.category,
-            'person': expense.person,
-            'cost': expense.cost
-          });
-    } catch (e) {
-      logger.i("Error updating expense: $e");
-      return null;
-    }
+    return await connection!.execute(
+        Sql.named(
+            'UPDATE expenses SET cost=@cost, description=@description, date=@date, category=@category, person=@person WHERE id=@id'),
+        parameters: {
+          'id': expense.id,
+          'description': expense.description,
+          'date': expense.date,
+          'category': expense.category,
+          'person': expense.person,
+          'cost': expense.cost
+        });
   }
 
-  /// Returns the given expense from the database.
-  Future<ExpenseData?> executeFetchOne(ExpenseData expense) async {
-    // Execute the query
-    logger.i("Fetching expense ${expense.description} from the database...");
+  /// Deletes the given expense id from the database.
+  Future<Result?> deleteExpense(String id) async {
+    logger.i("Deleting expense $id");
 
-    try {
-      // Execute the query
-      final result = await connection!.execute(
-        Sql.named('SELECT * FROM expenses WHERE id=@id'),
-        parameters: {'id': expense.id},
-      );
-
-      return ExpenseData.fromMap(result.first.toColumnMap());
-    } catch (e) {
-      logger.e("Error executing query: $e");
-      return null;
-    }
-  }
-
-  /// Returns the expenses with the given field value from the database.
-  Future<List<ExpenseData>?> executeFetchByField(
-      ExpenseData expense, String field, String fieldValue) async {
-    // Execute the query
-    logger.i(
-        "Fetching expenses with value $fieldValue for column $field from the database...");
-
-    List<ExpenseData> expenses = [];
-
-    try {
-      // Execute the query
-      final results = await connection!.execute(
-        Sql.named('SELECT * FROM expenses WHERE $field=@$field'),
-        parameters: {field: fieldValue},
-      );
-
-      for (var result in results) {
-        expenses.add(ExpenseData.fromMap(result.toColumnMap()));
-      }
-
-      return expenses;
-    } catch (e) {
-      logger.e("Error executing query: $e");
-      return null;
-    }
-  }
-
-  /// Returns all expenses from the database.
-  Future<List<ExpenseData>?> executeFetchAll() async {
-    // Execute the query
-    logger.i("Fetching all expenses from the database...");
-
-    List<ExpenseData> expenses = [];
-
-    try {
-      // Execute the query
-      final results = await connection!.execute(
-        Sql.named('SELECT * FROM expenses'),
-      );
-
-      for (var result in results) {
-        expenses.add(ExpenseData.fromMap(result.toColumnMap()));
-      }
-
-      return expenses;
-    } catch (e) {
-      logger.e("Error executing query: $e");
-      return null;
-    }
+    return await connection!
+        .execute(Sql.named('DELETE FROM expenses WHERE id=@id'), parameters: {
+      'id': id,
+    });
   }
 }

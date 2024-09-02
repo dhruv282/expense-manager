@@ -9,7 +9,7 @@ class ExpenseProvider extends ChangeNotifier {
 
   Future loadExpenseData() async {
     var dbManager = DatabaseManager();
-    return dbManager.executeFetchAll().then((entries) {
+    return dbManager.getAllExpenses().then((entries) {
       if (entries != null) {
         _expenses = entries;
       }
@@ -37,8 +37,17 @@ class ExpenseProvider extends ChangeNotifier {
 
   Future addExpense(ExpenseData e) {
     var dbManager = DatabaseManager();
-    return dbManager.executeInsert(e).then((_) {
+    return dbManager.insertExpense(e).then((id) {
+      // Populate the ID value of the object.
+      e.id = id;
       _expenses.add(e);
+    }).whenComplete(() => notifyListeners());
+  }
+
+  Future deleteExpense(ExpenseData e) {
+    var dbManager = DatabaseManager();
+    return dbManager.deleteExpense(e.id).then((_) {
+      _expenses.removeWhere((expense) => expense.id == e.id);
     }).whenComplete(() => notifyListeners());
   }
 
