@@ -35,6 +35,7 @@ class _ExpenseFormDropdownState extends State<ExpenseFormDropdown> {
         hintText: widget.hintText,
       ),
       validator: widget.validator,
+      value: widget.controller.text.isEmpty ? null : widget.controller.text,
       onChanged: (String? val) {
         setState(() {
           value = val!;
