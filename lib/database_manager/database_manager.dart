@@ -1,5 +1,6 @@
 import 'package:expense_manager/data/expense_data.dart';
 import 'package:expense_manager/logger/logger.dart';
+import 'package:intl/intl.dart';
 import 'package:postgres/postgres.dart';
 
 /// The `DatabaseManager` class is responsible for managing the connection and operations
@@ -79,7 +80,7 @@ class DatabaseManager {
         parameters: [
           expense.cost,
           expense.description,
-          expense.date,
+          DateFormat('MM/dd/yyyy').format(expense.date),
           expense.category,
           expense.person,
         ]);
@@ -99,7 +100,7 @@ class DatabaseManager {
         parameters: {
           'id': expense.id,
           'description': expense.description,
-          'date': expense.date,
+          'date': DateFormat('MM/dd/yyyy').format(expense.date),
           'category': expense.category,
           'person': expense.person,
           'cost': expense.cost

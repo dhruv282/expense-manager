@@ -152,7 +152,8 @@ class _ExpenseFormState extends State<ExpenseForm> {
                           .controllerMap[amountTextFormFieldLabel]!.text
                           .replaceFirst("\$", "")
                           .replaceAll(",", "")),
-                      date: widget.controllerMap[dateTextFormFieldLabel]!.text,
+                      date: DateFormat('M/d/yyyy').parse(
+                          widget.controllerMap[dateTextFormFieldLabel]!.text),
                       category: widget
                           .controllerMap[categoryTextFormFieldLabel]!.text,
                       person:

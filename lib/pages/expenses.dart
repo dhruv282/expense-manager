@@ -38,7 +38,7 @@ class _ExpensePageState extends State<ExpensePage> {
       for (var e in expenseProvider.expenses) {
         dataRows.add(DataRow2(
           cells: <DataCell>[
-            DataCell(Text(e.date)),
+            DataCell(Text(DateFormat('MM/dd/yyyy').format(e.date))),
             DataCell(Text(e.description)),
             DataCell(Text(e.category)),
             DataCell(Text(e.person)),
@@ -109,7 +109,7 @@ class _ExpensePageState extends State<ExpensePage> {
             label: const Text('Date'),
             size: ColumnSize.S,
             onSort: (columnIndex, ascending) =>
-                sort<String>((d) => d.date, columnIndex, ascending),
+                sort<DateTime>((d) => d.date, columnIndex, ascending),
           ),
           DataColumn2(
             label: const Text('Description'),

@@ -3,6 +3,7 @@ import 'package:expense_manager/constants/expense_form.dart';
 import 'package:expense_manager/data/expense_data.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class EditExpensePage extends StatefulWidget {
@@ -31,7 +32,8 @@ class _EditExpensePageState extends State<EditExpensePage> {
         widget.expense.description;
     formControllerMap[categoryTextFormFieldLabel]?.text =
         widget.expense.category;
-    formControllerMap[dateTextFormFieldLabel]?.text = widget.expense.date;
+    formControllerMap[dateTextFormFieldLabel]?.text =
+        DateFormat('MM/dd/yyyy').format(widget.expense.date);
     formControllerMap[personTextFormFieldLabel]?.text = widget.expense.person;
   }
 
