@@ -26,13 +26,6 @@ class _AddExpensePageState extends State<AddExpensePage> {
     final expenseProvider = Provider.of<ExpenseProvider>(context);
     return Scaffold(
         appBar: AppBar(
-          actions: [
-            IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(Icons.arrow_back))
-          ],
           title: const Text("Add Expense"),
         ),
         body: Padding(

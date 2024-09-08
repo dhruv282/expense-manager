@@ -42,13 +42,6 @@ class _EditExpensePageState extends State<EditExpensePage> {
     final expenseProvider = Provider.of<ExpenseProvider>(context);
     return Scaffold(
         appBar: AppBar(
-          actions: [
-            IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(Icons.arrow_back))
-          ],
           title: const Text("Edit Expense"),
         ),
         body: Padding(
