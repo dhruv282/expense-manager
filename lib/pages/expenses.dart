@@ -101,63 +101,65 @@ class _ExpensePageState extends State<ExpensePage> {
       return dataRows;
     }
 
-    return Padding(
-        padding: const EdgeInsets.all(16),
-        child: Theme(
-            data: ThemeData(
-                iconTheme: const IconThemeData(color: Colors.white),
-                scrollbarTheme: ScrollbarThemeData(
-                  thickness: WidgetStateProperty.all(5),
-                )),
-            child: DataTable2(
-                showBottomBorder: true,
-                sortColumnIndex: sortColumnIndex,
-                sortAscending: sortAscending,
-                sortArrowIcon: Icons.keyboard_arrow_up,
-                sortArrowAnimationDuration: const Duration(milliseconds: 500),
-                scrollController: controller,
-                horizontalScrollController: horizontalController,
-                minWidth: 900,
-                isVerticalScrollBarVisible: true,
-                isHorizontalScrollBarVisible: true,
-                empty: Center(
-                    child: Container(
-                        padding: const EdgeInsets.all(20),
-                        color: Colors.grey[200],
-                        child: const Text('No data'))),
-                columns: [
-                  DataColumn2(
-                    label: const Text('Date'),
-                    size: ColumnSize.S,
-                    onSort: (columnIndex, ascending) =>
-                        sort<DateTime>((d) => d.date, columnIndex, ascending),
-                  ),
-                  DataColumn2(
-                    label: const Text('Description'),
-                    size: ColumnSize.S,
-                    onSort: (columnIndex, ascending) => sort<String>(
-                        (d) => d.description, columnIndex, ascending),
-                  ),
-                  DataColumn2(
-                    label: const Text('Category'),
-                    size: ColumnSize.S,
-                    onSort: (columnIndex, ascending) =>
-                        sort<String>((d) => d.category, columnIndex, ascending),
-                  ),
-                  DataColumn2(
-                    label: const Text('Owner'),
-                    size: ColumnSize.S,
-                    onSort: (columnIndex, ascending) =>
-                        sort<String>((d) => d.person, columnIndex, ascending),
-                  ),
-                  DataColumn2(
-                    label: const Text('Cost'),
-                    size: ColumnSize.S,
-                    numeric: true,
-                    onSort: (columnIndex, ascending) =>
-                        sort<num>((d) => d.cost, columnIndex, ascending),
-                  ),
-                ],
-                rows: generateDataRows())));
+    return SafeArea(
+        child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Theme(
+                data: ThemeData(
+                    iconTheme: const IconThemeData(color: Colors.white),
+                    scrollbarTheme: ScrollbarThemeData(
+                      thickness: WidgetStateProperty.all(5),
+                    )),
+                child: DataTable2(
+                    showBottomBorder: true,
+                    sortColumnIndex: sortColumnIndex,
+                    sortAscending: sortAscending,
+                    sortArrowIcon: Icons.keyboard_arrow_up,
+                    sortArrowAnimationDuration:
+                        const Duration(milliseconds: 500),
+                    scrollController: controller,
+                    horizontalScrollController: horizontalController,
+                    minWidth: 900,
+                    isVerticalScrollBarVisible: true,
+                    isHorizontalScrollBarVisible: true,
+                    empty: Center(
+                        child: Container(
+                            padding: const EdgeInsets.all(20),
+                            color: Colors.grey[200],
+                            child: const Text('No data'))),
+                    columns: [
+                      DataColumn2(
+                        label: const Text('Date'),
+                        size: ColumnSize.S,
+                        onSort: (columnIndex, ascending) => sort<DateTime>(
+                            (d) => d.date, columnIndex, ascending),
+                      ),
+                      DataColumn2(
+                        label: const Text('Description'),
+                        size: ColumnSize.S,
+                        onSort: (columnIndex, ascending) => sort<String>(
+                            (d) => d.description, columnIndex, ascending),
+                      ),
+                      DataColumn2(
+                        label: const Text('Category'),
+                        size: ColumnSize.S,
+                        onSort: (columnIndex, ascending) => sort<String>(
+                            (d) => d.category, columnIndex, ascending),
+                      ),
+                      DataColumn2(
+                        label: const Text('Owner'),
+                        size: ColumnSize.S,
+                        onSort: (columnIndex, ascending) => sort<String>(
+                            (d) => d.person, columnIndex, ascending),
+                      ),
+                      DataColumn2(
+                        label: const Text('Cost'),
+                        size: ColumnSize.S,
+                        numeric: true,
+                        onSort: (columnIndex, ascending) =>
+                            sort<num>((d) => d.cost, columnIndex, ascending),
+                      ),
+                    ],
+                    rows: generateDataRows()))));
   }
 }
