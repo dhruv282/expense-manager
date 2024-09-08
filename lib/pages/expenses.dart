@@ -1,5 +1,6 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:expense_manager/data/expense_data.dart';
+import 'package:expense_manager/logger/logger.dart';
 import 'package:expense_manager/pages/edit_expense.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:flutter/material.dart';
@@ -79,7 +80,8 @@ class _ExpensePageState extends State<ExpensePage> {
                             ),
                           );
                           Navigator.of(context).pop();
-                        }).catchError((_) {
+                        }).catchError((e) {
+                          logger.e(e);
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Failed to delete expense :('),

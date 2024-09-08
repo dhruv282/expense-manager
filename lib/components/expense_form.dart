@@ -1,6 +1,7 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:expense_manager/constants/expense_form.dart';
 import 'package:expense_manager/data/expense_data.dart';
+import 'package:expense_manager/logger/logger.dart';
 import 'package:expense_manager/utils/date_picker.dart';
 import 'package:expense_manager/utils/form_dropdown.dart';
 import 'package:expense_manager/utils/form_field.dart';
@@ -164,6 +165,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                       widget.onSuccess();
                       Navigator.pop(context);
                     }).catchError((error) {
+                      logger.e(error);
                       widget.onError();
                     }).whenComplete(() {
                       setState(() {
