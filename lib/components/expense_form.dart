@@ -1,7 +1,7 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:expense_manager/constants/expense_form.dart';
 import 'package:expense_manager/data/expense_data.dart';
-import 'package:expense_manager/database_manager/database_manager.dart';
+import 'package:expense_manager/logger/logger.dart';
 import 'package:expense_manager/utils/date_picker.dart';
 import 'package:expense_manager/utils/form_dropdown.dart';
 import 'package:expense_manager/utils/form_field.dart';
@@ -10,16 +10,24 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:pattern_formatter/date_formatter.dart';
 
-class AddExpenseForm extends StatefulWidget {
+class ExpenseForm extends StatefulWidget {
   final Map<String, TextEditingController> controllerMap;
+  final Future Function(ExpenseData e) onSubmit;
+  final Function() onSuccess;
+  final Function() onError;
 
-  const AddExpenseForm({super.key, required this.controllerMap});
+  const ExpenseForm(
+      {super.key,
+      required this.controllerMap,
+      required this.onSubmit,
+      required this.onSuccess,
+      required this.onError});
 
   @override
-  State<AddExpenseForm> createState() => _AddExpenseFormState();
+  State<ExpenseForm> createState() => _ExpenseFormState();
 }
 
-class _AddExpenseFormState extends State<AddExpenseForm> {
+class _ExpenseFormState extends State<ExpenseForm> {
   // Create a global key that uniquely identifies the Form widget
   // and allows validation of the form.
   //
@@ -145,29 +153,20 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
                           .controllerMap[amountTextFormFieldLabel]!.text
                           .replaceFirst("\$", "")
                           .replaceAll(",", "")),
-                      date: widget.controllerMap[dateTextFormFieldLabel]!.text,
+                      date: DateFormat('M/d/yyyy').parse(
+                          widget.controllerMap[dateTextFormFieldLabel]!.text),
                       category: widget
                           .controllerMap[categoryTextFormFieldLabel]!.text,
                       person:
                           widget.controllerMap[personTextFormFieldLabel]!.text,
                     );
 
-                    var dbManager = DatabaseManager();
-                    dbManager.executeInsert(expense).then((res) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Expense added!'),
-                          backgroundColor: Color.fromARGB(255, 0, 95, 0),
-                        ),
-                      );
+                    widget.onSubmit(expense).then((res) {
+                      widget.onSuccess();
                       Navigator.pop(context);
                     }).catchError((error) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Failed to add expense :('),
-                          backgroundColor: Color.fromARGB(255, 95, 0, 0),
-                        ),
-                      );
+                      logger.e(error);
+                      widget.onError();
                     }).whenComplete(() {
                       setState(() {
                         isSubmitting = false;

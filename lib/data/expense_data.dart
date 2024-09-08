@@ -9,7 +9,7 @@ class ExpenseData {
   double cost;
 
   // Date is the date the expense occurred
-  String date;
+  DateTime date;
 
   // Category is the type of expense
   String category;
@@ -32,7 +32,7 @@ class ExpenseData {
       : id = "",
         description = "",
         cost = 0,
-        date = "",
+        date = DateTime.now(),
         category = "",
         person = "";
 
@@ -52,8 +52,8 @@ class ExpenseData {
       : this(
           id: map['id'],
           description: map['description'],
-          cost: map['cost'],
-          date: map['date'],
+          cost: double.parse(map['cost']),
+          date: DateTime.parse(map['date'].toString()),
           category: map['category'],
           person: map['person'],
         );
