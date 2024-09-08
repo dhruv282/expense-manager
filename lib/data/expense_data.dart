@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart';
-
 class ExpenseData {
   // ID is the unique identifier for the object
   String id;
@@ -55,7 +53,7 @@ class ExpenseData {
           id: map['id'],
           description: map['description'],
           cost: double.parse(map['cost']),
-          date: DateFormat('M/d/yyyy').parse(map['date'].toString()),
+          date: DateTime.parse(map['date'].toString()),
           category: map['category'],
           person: map['person'],
         );
