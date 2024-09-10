@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 import 'package:provider/provider.dart';
 
-import 'bottom_navbar.dart';
+import 'components/navbar/bottom_navbar.dart';
 
 void main() async {
   var dbManager = DatabaseManager();
