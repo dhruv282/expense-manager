@@ -1,5 +1,5 @@
 import 'package:expense_manager/pages/expenses.dart';
-import 'package:expense_manager/utils/navbar_page.dart';
+import 'package:expense_manager/components/navbar/navbar_page.dart';
 import 'package:flutter/material.dart';
 
 class BottomNavBar extends StatefulWidget {
