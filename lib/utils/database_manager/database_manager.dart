@@ -1,5 +1,5 @@
 import 'package:expense_manager/data/expense_data.dart';
-import 'package:expense_manager/logger/logger.dart';
+import 'package:expense_manager/utils/logger/logger.dart';
 import 'package:intl/intl.dart';
 import 'package:postgres/postgres.dart';
 

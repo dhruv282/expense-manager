@@ -1,5 +1,5 @@
 import 'package:expense_manager/data/expense_data.dart';
-import 'package:expense_manager/database_manager/database_manager.dart';
+import 'package:expense_manager/utils/database_manager/database_manager.dart';
 import 'package:flutter/material.dart';
 
 class ExpenseProvider extends ChangeNotifier {
