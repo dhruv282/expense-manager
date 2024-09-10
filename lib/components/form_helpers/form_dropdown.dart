@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ExpenseFormDropdown extends StatefulWidget {
+class CustomFormDropdown extends StatefulWidget {
   final List<String> options;
   final String labelText;
   final String hintText;
@@ -8,7 +8,7 @@ class ExpenseFormDropdown extends StatefulWidget {
   final String? Function(String?) validator;
   final TextEditingController controller;
 
-  const ExpenseFormDropdown({
+  const CustomFormDropdown({
     super.key,
     required this.options,
     required this.labelText,
@@ -19,10 +19,10 @@ class ExpenseFormDropdown extends StatefulWidget {
   });
 
   @override
-  State<ExpenseFormDropdown> createState() => _ExpenseFormDropdownState();
+  State<CustomFormDropdown> createState() => _CustomFormDropdownState();
 }
 
-class _ExpenseFormDropdownState extends State<ExpenseFormDropdown> {
+class _CustomFormDropdownState extends State<CustomFormDropdown> {
   late String value;
 
   @override
