@@ -1,4 +1,4 @@
-import 'package:expense_manager/database_manager/database_manager.dart';
+import 'package:expense_manager/utils/database_manager/database_manager.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
