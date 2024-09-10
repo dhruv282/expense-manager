@@ -54,7 +54,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
             // Date field
             Row(children: [
               Expanded(
-                child: ExpenseFormField(
+                child: CustomFormField(
                   enabled: true,
                   maxCharacters: null,
                   keyboardType: TextInputType.datetime,
@@ -79,7 +79,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                   },
                 ),
               ),
-              DatePicker(
+              CustomDatePicker(
                   initialDate: DateTime.now(),
                   onDateSelected: (date) {
                     widget.controllerMap[dateTextFormFieldLabel]!.text =
@@ -87,7 +87,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                   }),
             ]),
             // Cost field
-            ExpenseFormField(
+            CustomFormField(
               enabled: true,
               maxCharacters: null,
               keyboardType:
@@ -104,7 +104,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
               },
             ),
             // Description field
-            ExpenseFormField(
+            CustomFormField(
               enabled: true,
               maxCharacters: null,
               keyboardType: TextInputType.text,
@@ -119,7 +119,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
               },
             ),
             // Category field
-            ExpenseFormDropdown(
+            CustomFormDropdown(
               options: expenseCategories,
               labelText: categoryTextFormFieldLabel,
               controller: widget.controllerMap[categoryTextFormFieldLabel]!,

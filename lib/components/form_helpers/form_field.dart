@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class ExpenseFormField extends StatefulWidget {
+class CustomFormField extends StatefulWidget {
   final bool enabled;
   final int? maxCharacters;
   final String labelText;
@@ -14,7 +14,7 @@ class ExpenseFormField extends StatefulWidget {
   final void Function(String?) onSaved;
   final String? Function(String?) validator;
 
-  const ExpenseFormField(
+  const CustomFormField(
       {super.key,
       required this.enabled,
       required this.maxCharacters,
@@ -28,10 +28,10 @@ class ExpenseFormField extends StatefulWidget {
       required this.validator});
 
   @override
-  State<ExpenseFormField> createState() => _ExpenseFormFieldState();
+  State<CustomFormField> createState() => _CustomFormFieldState();
 }
 
-class _ExpenseFormFieldState extends State<ExpenseFormField> {
+class _CustomFormFieldState extends State<CustomFormField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
