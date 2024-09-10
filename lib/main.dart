@@ -1,10 +1,9 @@
+import 'package:expense_manager/components/navbar/bottom_navbar.dart';
 import 'package:expense_manager/utils/database_manager/database_manager.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 import 'package:provider/provider.dart';
-
-import 'components/navbar/bottom_navbar.dart';
 
 void main() async {
   var dbManager = DatabaseManager();
