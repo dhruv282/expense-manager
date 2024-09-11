@@ -3,7 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:postgres/postgres.dart';
 
 class DatabaseConfigStore {
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+  static const FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
   // Define the required fields for your database config
   static const String dbHostKey = 'dbHost';
@@ -18,7 +18,7 @@ class DatabaseConfigStore {
     dbHostKey: 'localhost',
     dbPortKey: '5432',
     dbNameKey: 'expenses_db',
-    sslModeKey: 'disable',
+    sslModeKey: SslMode.disable.toString(),
   };
 
   // Fetch a specific config value (or return default if exists)

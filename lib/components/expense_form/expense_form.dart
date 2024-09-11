@@ -62,6 +62,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                   controller: widget.controllerMap[dateTextFormFieldLabel]!,
                   labelText: dateTextFormFieldLabel,
                   hintText: dateTextFormFieldHint,
+                  obscureText: false,
                   icon: null,
                   onSaved: (value) {},
                   validator: (value) {
@@ -97,6 +98,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
               controller: widget.controllerMap[amountTextFormFieldLabel]!,
               labelText: amountTextFormFieldLabel,
               hintText: amountTextFormFieldHint,
+              obscureText: false,
               icon: null,
               onSaved: (value) {},
               validator: (value) {
@@ -112,6 +114,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
               controller: widget.controllerMap[descriptionTextFormFieldLabel]!,
               labelText: descriptionTextFormFieldLabel,
               hintText: descriptionTextFormFieldHint,
+              obscureText: false,
               icon: null,
               onSaved: (value) {},
               validator: (value) {

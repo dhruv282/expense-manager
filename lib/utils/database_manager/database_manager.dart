@@ -17,19 +17,12 @@ class DatabaseManager {
   static Connection? connection;
 
   /// Connects to the database.
-  Future<Result?> connect(String host, String dbName, String username,
-      String password, ConnectionSettings connectionSettings) async {
+  Future<Result?> connect(Endpoint endpoint, ConnectionSettings? connectionSettings) async {
     logger.i("Connecting to the database...");
 
     try {
       connection = await Connection.open(
-        Endpoint(
-          host: host,
-          port: 5432,
-          database: dbName,
-          username: username,
-          password: password,
-        ),
+        endpoint,
         // The postgres server hosted locally doesn't have SSL by default. If you're
         // accessing a postgres server over the Internet, the server should support
         // SSL and you should swap out the mode with `SslMode.verifyFull`.
