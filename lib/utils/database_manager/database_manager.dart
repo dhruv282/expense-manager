@@ -6,18 +6,12 @@ import 'package:postgres/postgres.dart';
 /// The `DatabaseManager` class is responsible for managing the connection and operations
 /// with the database. It provides methods to establish a connection, execute queries,
 /// and perform other database-related tasks.
-///
-/// Example usage:
-/// ```dart
-/// var dbManager = DatabaseManager();
-/// dbManager.connect();
-/// dbManager.executeQuery('SELECT * FROM users');
-/// ```
 class DatabaseManager {
   static Connection? connection;
 
   /// Connects to the database.
-  Future<Result?> connect(Endpoint endpoint, ConnectionSettings? connectionSettings) async {
+  Future<Result?> connect(
+      Endpoint endpoint, ConnectionSettings? connectionSettings) async {
     logger.i("Connecting to the database...");
 
     try {
@@ -49,6 +43,10 @@ class DatabaseManager {
     // Execute the query
     logger.i("Fetching all expenses from the database...");
 
+    if (connection == null) {
+      return Future.error('No connection to Database');
+    }
+
     List<ExpenseData> expenses = [];
 
     // Execute the query
@@ -66,6 +64,10 @@ class DatabaseManager {
   /// Inserts the given expense in the database and returns the ID.
   Future<String> insertExpense(ExpenseData expense) async {
     logger.i("Inserting an expense into the database...");
+
+    if (connection == null) {
+      return Future.error('No connection to Database');
+    }
 
     // Execute the query
     final res = await connection!.execute(
@@ -87,6 +89,10 @@ class DatabaseManager {
   Future<Result?> updateExpense(ExpenseData expense) async {
     logger.i("Updating expense ${expense.id}");
 
+    if (connection == null) {
+      return Future.error('No connection to Database');
+    }
+
     return await connection!.execute(
         Sql.named(
             'UPDATE expenses SET cost=@cost, description=@description, date=@date, category=@category, person=@person WHERE id=@id'),
@@ -103,6 +109,10 @@ class DatabaseManager {
   /// Deletes the given expense id from the database.
   Future<Result?> deleteExpense(String id) async {
     logger.i("Deleting expense $id");
+
+    if (connection == null) {
+      return Future.error('No connection to Database');
+    }
 
     return await connection!
         .execute(Sql.named('DELETE FROM expenses WHERE id=@id'), parameters: {
