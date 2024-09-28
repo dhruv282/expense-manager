@@ -34,7 +34,7 @@ class _HomeState extends State<Home> {
     await _initDBConnection().then((res) async {
       if (res) {
         return await Provider.of<ExpenseProvider>(context, listen: false)
-            .loadExpenseData();
+            .initialize();
       }
       throw Exception('Failed to initialize database connection');
     }).catchError((error) {

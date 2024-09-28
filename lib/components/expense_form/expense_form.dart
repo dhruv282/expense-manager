@@ -1,6 +1,7 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:expense_manager/components/expense_form/constants.dart';
 import 'package:expense_manager/data/expense_data.dart';
+import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:expense_manager/utils/logger/logger.dart';
 import 'package:expense_manager/components/form_helpers/date_picker.dart';
 import 'package:expense_manager/components/form_helpers/form_dropdown.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:pattern_formatter/date_formatter.dart';
+import 'package:provider/provider.dart';
 
 class ExpenseForm extends StatefulWidget {
   final Map<String, TextEditingController> controllerMap;
@@ -46,6 +48,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final expenseProvider = Provider.of<ExpenseProvider>(context);
     return Form(
         key: _formKey,
         child: Column(
@@ -133,6 +136,20 @@ class _ExpenseFormState extends State<ExpenseForm> {
                 return null;
               },
               hintText: categoryTextFormFieldHint,
+              icon: null,
+            ),
+            // Owner field
+            CustomFormDropdown(
+              options: expenseProvider.ownerOptions,
+              labelText: personTextFormFieldLabel,
+              controller: widget.controllerMap[personTextFormFieldLabel]!,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please select a value';
+                }
+                return null;
+              },
+              hintText: personTextFormFieldHint,
               icon: null,
             ),
             ElevatedButton(
