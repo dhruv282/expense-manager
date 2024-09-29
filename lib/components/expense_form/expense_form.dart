@@ -1,5 +1,6 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:expense_manager/components/expense_form/constants.dart';
+import 'package:expense_manager/components/form_helpers/form_dropdown_add_option.dart';
 import 'package:expense_manager/data/expense_data.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:expense_manager/utils/logger/logger.dart';
@@ -137,6 +138,8 @@ class _ExpenseFormState extends State<ExpenseForm> {
               },
               hintText: categoryTextFormFieldHint,
               icon: null,
+              addOption: null,
+              onAddOptionSelect: null,
             ),
             // Owner field
             CustomFormDropdown(
@@ -151,6 +154,19 @@ class _ExpenseFormState extends State<ExpenseForm> {
               },
               hintText: personTextFormFieldHint,
               icon: null,
+              addOption:
+                  getAddOptionDropdownItem('add_new_owner', 'Add new owner'),
+              onAddOptionSelect: () => showAddDialog(
+                  context,
+                  'Add Owner',
+                  'Enter value for new owner',
+                  (owner) => expenseProvider.addOwner(owner),
+                  () => ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Failed to add owner :('),
+                          backgroundColor: Color.fromARGB(255, 95, 0, 0),
+                        ),
+                      )),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(

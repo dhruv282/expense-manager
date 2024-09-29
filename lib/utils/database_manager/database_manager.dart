@@ -159,10 +159,7 @@ class DatabaseManager {
       return Future.error("No connection to Database");
     }
 
-    return await connection!.execute(
-        Sql.named('ALTER TYPE OWNER_OPTIONS ADD VALUE @owner'),
-        parameters: {
-          'owner': owner,
-        });
+    return await connection!
+        .execute("ALTER TYPE OWNER_OPTIONS ADD VALUE '$owner'");
   }
 }

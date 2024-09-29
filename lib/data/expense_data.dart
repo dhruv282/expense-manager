@@ -55,7 +55,7 @@ class ExpenseData {
           cost: double.parse(map['cost']),
           date: DateTime.parse(map['date'].toString()),
           category: map['category'],
-          person: map['person'],
+          person: map['person'].asString,
         );
 
   // Converts the object to JSON

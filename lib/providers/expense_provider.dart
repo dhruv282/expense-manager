@@ -85,4 +85,11 @@ class ExpenseProvider extends ChangeNotifier {
     });
     notifyListeners();
   }
+
+  Future addOwner(String owner) {
+    var dbManager = DatabaseManager();
+    return dbManager.addOwner(owner).then((res) {
+      _ownerOptions.add(owner);
+    }).whenComplete(() => notifyListeners());
+  }
 }

@@ -7,6 +7,8 @@ class CustomFormDropdown extends StatefulWidget {
   final IconData? icon;
   final String? Function(String?) validator;
   final TextEditingController controller;
+  final DropdownMenuItem<String>? addOption;
+  final Function? onAddOptionSelect;
 
   const CustomFormDropdown({
     super.key,
@@ -16,6 +18,8 @@ class CustomFormDropdown extends StatefulWidget {
     required this.icon,
     required this.validator,
     required this.controller,
+    required this.addOption,
+    required this.onAddOptionSelect,
   });
 
   @override
@@ -27,6 +31,15 @@ class _CustomFormDropdownState extends State<CustomFormDropdown> {
 
   @override
   Widget build(BuildContext context) {
+    var options = widget.options.map<DropdownMenuItem<String>>((String value) {
+      return DropdownMenuItem(
+        value: value,
+        child: Text(value),
+      );
+    }).toList();
+    if (widget.addOption != null) {
+      options.add(widget.addOption as DropdownMenuItem<String>);
+    }
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
@@ -37,17 +50,18 @@ class _CustomFormDropdownState extends State<CustomFormDropdown> {
       validator: widget.validator,
       value: widget.controller.text.isEmpty ? null : widget.controller.text,
       onChanged: (String? val) {
-        setState(() {
-          value = val!;
-          widget.controller.text = val;
-        });
+        if (widget.addOption != null &&
+            val == widget.addOption?.value &&
+            widget.onAddOptionSelect != null) {
+          widget.onAddOptionSelect!();
+        } else {
+          setState(() {
+            value = val!;
+            widget.controller.text = val;
+          });
+        }
       },
-      items: widget.options.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
+      items: options,
     );
   }
 }
