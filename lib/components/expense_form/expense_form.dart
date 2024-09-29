@@ -105,9 +105,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
               obscureText: false,
               icon: null,
               onSaved: (value) {},
-              validator: (value) {
-                return checkEmptyInput(value);
-              },
+              validator: checkEmptyInput,
             ),
             // Description field
             CustomFormField(
@@ -121,21 +119,14 @@ class _ExpenseFormState extends State<ExpenseForm> {
               obscureText: false,
               icon: null,
               onSaved: (value) {},
-              validator: (value) {
-                return checkEmptyInput(value);
-              },
+              validator: checkEmptyInput,
             ),
             // Category field
             CustomFormDropdown(
               options: expenseCategories,
               labelText: categoryTextFormFieldLabel,
               controller: widget.controllerMap[categoryTextFormFieldLabel]!,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please select a value';
-                }
-                return null;
-              },
+              validator: checkEmptyInput,
               hintText: categoryTextFormFieldHint,
               icon: null,
               addOption: null,
@@ -146,12 +137,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
               options: expenseProvider.ownerOptions,
               labelText: personTextFormFieldLabel,
               controller: widget.controllerMap[personTextFormFieldLabel]!,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please select a value';
-                }
-                return null;
-              },
+              validator: checkEmptyInput,
               hintText: personTextFormFieldHint,
               icon: null,
               addOption:
