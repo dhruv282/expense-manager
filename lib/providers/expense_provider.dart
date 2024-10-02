@@ -1,24 +1,41 @@
 import 'package:expense_manager/data/expense_data.dart';
 import 'package:expense_manager/utils/database_manager/database_manager.dart';
+import 'package:expense_manager/utils/logger/logger.dart';
 import 'package:flutter/material.dart';
 
 class ExpenseProvider extends ChangeNotifier {
   List<ExpenseData> _expenses = [];
+  List<String> _ownerOptions = [];
 
   List<ExpenseData> get expenses => _expenses;
+  List<String> get ownerOptions => _ownerOptions;
+
+  Future initialize() async {
+    return loadExpenseData()
+        .then((res) => loadOwnerOptions())
+        .catchError((e) => logger.e(e))
+        .whenComplete(() => notifyListeners());
+  }
 
   Future loadExpenseData() async {
     var dbManager = DatabaseManager();
     return dbManager.getAllExpenses().then((entries) {
-      if (entries != null) {
-        _expenses = entries;
-      }
-    }).whenComplete(() {
-      notifyListeners();
+      _expenses = entries;
+    });
+  }
+
+  Future loadOwnerOptions() async {
+    var dbManager = DatabaseManager();
+    return dbManager.getOwners().then((options) {
+      _ownerOptions = options;
     });
   }
 
   Future updateExpense(ExpenseData e) {
+    if (!_ownerOptions.contains(e.person)) {
+      return Future.error('Invalid value for person in expense: ${e.person}');
+    }
+
     var dbManager = DatabaseManager();
     return dbManager.updateExpense(e).then((_) {
       var updated = false;
@@ -36,6 +53,10 @@ class ExpenseProvider extends ChangeNotifier {
   }
 
   Future addExpense(ExpenseData e) {
+    if (!_ownerOptions.contains(e.person)) {
+      return Future.error('Invalid value for person in expense: ${e.person}');
+    }
+
     var dbManager = DatabaseManager();
     return dbManager.insertExpense(e).then((id) {
       // Populate the ID value of the object.
@@ -63,5 +84,12 @@ class ExpenseProvider extends ChangeNotifier {
           : Comparable.compare(bValue, aValue);
     });
     notifyListeners();
+  }
+
+  Future addOwner(String owner) {
+    var dbManager = DatabaseManager();
+    return dbManager.addOwner(owner).then((res) {
+      _ownerOptions.add(owner);
+    }).whenComplete(() => notifyListeners());
   }
 }

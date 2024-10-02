@@ -23,14 +23,23 @@ class DatabaseManager {
         settings: connectionSettings,
       );
 
-      return await connection!.execute('CREATE TABLE IF NOT EXISTS expenses ('
-          '  id UUID DEFAULT gen_random_uuid() PRIMARY KEY, '
-          '  cost DECIMAL(12,2) NOT NULL,'
-          '  description TEXT NOT NULL,'
-          '  date DATE NOT NULL,'
-          '  category TEXT NOT NULL,'
-          '  person TEXT NOT NULL'
-          ')');
+      return await connection!
+          // .execute('CREATE TYPE OWNER_OPTIONS AS ENUM(\'Shared\')')
+          .execute('''
+            DO \$\$ BEGIN
+              CREATE TYPE OWNER_OPTIONS AS ENUM('Shared');
+            EXCEPTION
+              WHEN duplicate_object THEN null;
+            END \$\$;
+          ''').then((value) =>
+              connection!.execute('CREATE TABLE IF NOT EXISTS expenses ('
+                  '  id UUID DEFAULT gen_random_uuid() PRIMARY KEY, '
+                  '  cost DECIMAL(12,2) NOT NULL,'
+                  '  description TEXT NOT NULL,'
+                  '  date DATE NOT NULL,'
+                  '  category TEXT NOT NULL,'
+                  '  person OWNER_OPTIONS'
+                  ')'));
     } catch (e) {
       logger.e("Error connecting to the database: $e");
     }
@@ -39,7 +48,7 @@ class DatabaseManager {
   }
 
   /// Returns all expenses from the database.
-  Future<List<ExpenseData>?> getAllExpenses() async {
+  Future<List<ExpenseData>> getAllExpenses() async {
     // Execute the query
     logger.i("Fetching all expenses from the database...");
 
@@ -118,5 +127,39 @@ class DatabaseManager {
         .execute(Sql.named('DELETE FROM expenses WHERE id=@id'), parameters: {
       'id': id,
     });
+  }
+
+  /// Get OWNER_OPTIONS values from the database.
+  Future<List<String>> getOwners() async {
+    logger.i("Getting owner options");
+
+    if (connection == null) {
+      return Future.error("No connection to Database");
+    }
+
+    List<String> owners = [];
+
+    // Execute the query
+    final results = await connection!.execute(
+      Sql.named('SELECT unnest(enum_range(NULL::OWNER_OPTIONS))'),
+    );
+
+    for (var result in results) {
+      owners.add(result.toColumnMap()["unnest"].asString);
+    }
+
+    return owners;
+  }
+
+  /// Appends to OWNER_OPTIONS enum in the database.
+  Future<Result?> addOwner(String owner) async {
+    logger.i("Adding owner option $owner");
+
+    if (connection == null) {
+      return Future.error("No connection to Database");
+    }
+
+    return await connection!
+        .execute("ALTER TYPE OWNER_OPTIONS ADD VALUE '$owner'");
   }
 }

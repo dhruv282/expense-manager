@@ -168,6 +168,8 @@ class _DatabaseConfigFormState extends State<DatabaseConfigForm> {
                   },
                   hintText: sslModeDropdownFieldHint,
                   icon: null,
+                  addOption: null,
+                  onAddOptionSelect: null,
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(

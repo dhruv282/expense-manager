@@ -1,6 +1,8 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:expense_manager/components/expense_form/constants.dart';
+import 'package:expense_manager/components/form_helpers/form_dropdown_add_option.dart';
 import 'package:expense_manager/data/expense_data.dart';
+import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:expense_manager/utils/logger/logger.dart';
 import 'package:expense_manager/components/form_helpers/date_picker.dart';
 import 'package:expense_manager/components/form_helpers/form_dropdown.dart';
@@ -9,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:pattern_formatter/date_formatter.dart';
+import 'package:provider/provider.dart';
 
 class ExpenseForm extends StatefulWidget {
   final Map<String, TextEditingController> controllerMap;
@@ -46,6 +49,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final expenseProvider = Provider.of<ExpenseProvider>(context);
     return Form(
         key: _formKey,
         child: Column(
@@ -101,9 +105,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
               obscureText: false,
               icon: null,
               onSaved: (value) {},
-              validator: (value) {
-                return checkEmptyInput(value);
-              },
+              validator: checkEmptyInput,
             ),
             // Description field
             CustomFormField(
@@ -117,23 +119,40 @@ class _ExpenseFormState extends State<ExpenseForm> {
               obscureText: false,
               icon: null,
               onSaved: (value) {},
-              validator: (value) {
-                return checkEmptyInput(value);
-              },
+              validator: checkEmptyInput,
             ),
             // Category field
             CustomFormDropdown(
               options: expenseCategories,
               labelText: categoryTextFormFieldLabel,
               controller: widget.controllerMap[categoryTextFormFieldLabel]!,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please select a value';
-                }
-                return null;
-              },
+              validator: checkEmptyInput,
               hintText: categoryTextFormFieldHint,
               icon: null,
+              addOption: null,
+              onAddOptionSelect: null,
+            ),
+            // Owner field
+            CustomFormDropdown(
+              options: expenseProvider.ownerOptions,
+              labelText: personTextFormFieldLabel,
+              controller: widget.controllerMap[personTextFormFieldLabel]!,
+              validator: checkEmptyInput,
+              hintText: personTextFormFieldHint,
+              icon: null,
+              addOption:
+                  getAddOptionDropdownItem('add_new_owner', 'Add new owner'),
+              onAddOptionSelect: () => showAddDialog(
+                  context,
+                  'Add Owner',
+                  'Enter value for new owner',
+                  (owner) => expenseProvider.addOwner(owner),
+                  () => ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Failed to add owner :('),
+                          backgroundColor: Color.fromARGB(255, 95, 0, 0),
+                        ),
+                      )),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
