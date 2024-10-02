@@ -14,7 +14,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
@@ -22,7 +21,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
             currentPageIndex = index;
           });
         },
-        indicatorColor: theme.colorScheme.secondary,
         selectedIndex: currentPageIndex,
         destinations: const <Widget>[
           NavigationDestination(

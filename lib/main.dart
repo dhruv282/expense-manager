@@ -20,7 +20,8 @@ class App extends StatelessWidget {
         child: MaterialApp(
           title: 'Expense Manager',
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            colorScheme: ColorScheme.fromSeed(
+                seedColor: Colors.cyan, brightness: Brightness.dark),
             useMaterial3: true,
           ),
           debugShowCheckedModeBanner: false,
