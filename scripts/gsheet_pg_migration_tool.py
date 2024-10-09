@@ -90,6 +90,45 @@ def get_postgres_table() -> str | None:
         logging.error("No config file found")
     return None
 
+def initialize_db(cursor: psycopg2._psycopg.cursor) -> bool:
+    try:
+        cursor.execute('''
+            DO $$ BEGIN
+              CREATE TYPE OWNER_OPTIONS AS ENUM('Shared');
+            EXCEPTION
+              WHEN duplicate_object THEN null;
+            END $$;        
+        ''')
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS expenses (
+            id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+            cost DECIMAL(12,2) NOT NULL,
+            description TEXT NOT NULL,
+            date DATE NOT NULL,
+            category TEXT NOT NULL,
+            person OWNER_OPTIONS
+        )
+        ''')
+    except Exception as e:
+        print(e)
+        return False
+    return True
+
+
+def add_owner_if_not_exists(owner: str, cursor: psycopg2._psycopg.cursor) -> bool:
+    try:
+        # Check if owner val currently exists in enum
+        cursor.execute("SELECT unnest(enum_range(NULL::OWNER_OPTIONS))")
+        vals = cursor.fetchall()
+        owners = [o[0] for o in vals]
+        if owner not in owners:
+            # Alter enum to add value
+            cursor.execute(f"ALTER TYPE OWNER_OPTIONS ADD VALUE '{owner}'")
+    except Exception as e:
+        print(e)
+        return False
+    return True
+
 if __name__ == "__main__":
     gsheet_client = get_spreadsheet_client()
     worksheet = get_worksheet()
@@ -101,7 +140,17 @@ if __name__ == "__main__":
 
     cur = postgres_client.cursor()
     w = gsheet_client.worksheet(worksheet)
+
+    init_status = initialize_db(cur)
+    if not init_status:
+        sys.exit(1)
+
     for r in w.get_values()[2:]:
+        status_ok = add_owner_if_not_exists(r[3], cur)
+        if not status_ok:
+            print(f"Error adding owner: {r[3]}")
+            continue
+        postgres_client.commit()
         cur.execute("INSERT INTO expenses (cost, description, date, category, person) VALUES (%s, %s, %s, %s, %s)", (
             float(str(r[4]).replace('$','').replace(',','')),
             r[1],
