@@ -1,5 +1,5 @@
 import 'package:expense_manager/pages/expenses.dart';
-import 'package:expense_manager/utils/navbar_page.dart';
+import 'package:expense_manager/components/navbar/navbar_page.dart';
 import 'package:flutter/material.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -14,7 +14,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
@@ -22,7 +21,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
             currentPageIndex = index;
           });
         },
-        indicatorColor: theme.colorScheme.secondary,
         selectedIndex: currentPageIndex,
         destinations: const <Widget>[
           NavigationDestination(
