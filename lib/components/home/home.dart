@@ -1,4 +1,5 @@
 import 'package:expense_manager/components/navbar/bottom_navbar.dart';
+import 'package:expense_manager/pages/add_expense.dart';
 import 'package:expense_manager/pages/settings.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:expense_manager/utils/database_config_store/database_config_store.dart';
@@ -95,10 +96,22 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton.filledTonal(
+            icon: const Icon(Icons.add),
+            tooltip: 'Add Expense',
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const AddExpensePage()));
+            }),
         actions: [
-          IconButton(
-              onPressed: navigateToSettingsPage,
-              icon: const Icon(Icons.settings))
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            IconButton(
+                tooltip: 'Database Settings',
+                onPressed: navigateToSettingsPage,
+                icon: const Icon(Icons.settings))
+          ])
         ],
       ),
       body: _isLoading
