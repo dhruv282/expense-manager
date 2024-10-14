@@ -156,7 +156,7 @@ if __name__ == "__main__":
             r[1],
             r[0],
             r[2],
-            r[3],
+            r[3] if r[6] == 'No' else 'Shared',
         ))
     postgres_client.commit()
     postgres_client.close()
