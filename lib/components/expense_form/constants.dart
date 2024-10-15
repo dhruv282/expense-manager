@@ -13,12 +13,21 @@ const String dateTextFormFieldHint = 'mm/dd/yyyy';
 const String personTextFormFieldHint = 'Enter a person';
 
 const List<String> expenseCategories = <String>[
+  'Investments',
+  'Income',
+  'Personal Care',
   'Housing',
-  'Utilities',
-  'Grocery',
-  'Dining',
-  'Health and Fitness',
-  'Entertainment',
+  'Internet',
   'Travel',
-  'Miscellaneous'
+  'Car',
+  'Health & Fitness',
+  'Grocery',
+  'Shopping',
+  'Phone',
+  'Taxes',
+  'Utility',
+  'Entertainment',
+  'Dining',
+  'Petrol',
+  'Other',
 ];
