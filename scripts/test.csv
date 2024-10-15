@@ -1,0 +1,52 @@
+Date,Memo,Category,Owner,Price,Payment Method,Shared
+06/01/2022,Rent Payment,Housing,Owner 1,"$1,200.00",Check,No
+06/01/2022,Income,Income,Owner 1,"$3,000.00",Check,No
+06/05/2022,Grocery Store,Grocery,Owner 1,$150.00,Credit,Yes
+06/10/2022,Internet Subscription,Internet,Owner 2,$50.00,Credit,No
+06/15/2022,Gym Membership,Health & Fitness,Owner 1,$75.00,Credit,No
+07/01/2022,Income,Income,Owner 1,"$3,000.00",Check,No
+07/02/2022,Gas Station,Petrol,Owner 2,$40.00,Cash,No
+07/10/2022,Restaurant Dinner,Dining,Owner 1,$60.00,Credit,Yes
+07/15/2022,Phone Bill,Phone,Owner 2,$80.00,Credit,No
+08/01/2022,Income,Income,Owner 1,"$3,000.00",Check,No
+08/05/2022,Movie Tickets,Entertainment,Owner 1,$30.00,Credit,No
+08/10/2022,Grocery Store,Grocery,Owner 2,$120.00,Credit,Yes
+08/20/2022,Electricity Bill,Utility,Owner 1,$70.00,Check,No
+09/01/2022,Income,Income,Owner 1,"$3,000.00",Check,No
+09/03/2022,Car Insurance,Car,Owner 2,$100.00,Credit,No
+09/08/2022,Amazon Purchase,Shopping,Owner 1,$50.00,Credit,No
+09/15/2022,Doctor's Visit Co-pay,Health & Fitness,Owner 2,$25.00,Credit,No
+10/01/2022,Income,Income,Owner 1,"$3,000.00",Check,No
+10/01/2022,Rent Payment,Housing,Owner 1,"$1,200.00",Check,No
+10/10/2022,Travel Expenses,Travel,Owner 2,$300.00,Credit,No
+10/15/2022,Grocery Store,Grocery,Owner 1,$130.00,Credit,No
+11/01/2022,Income,Income,Owner 1,"$3,000.00",Check,No
+11/02/2022,Gas Station,Petrol,Owner 1,$45.00,Cash,No
+11/10/2022,Restaurant Lunch,Dining,Owner 2,$25.00,Credit,No
+11/20/2022,Water Bill,Utility,Owner 1,$30.00,Check,Yes
+12/01/2022,Income,Income,Owner 1,"$3,000.00",Check,No
+12/03/2022,Car Maintenance,Car,Owner 2,$200.00,Credit,No
+12/08/2022,Clothing Store,Shopping,Owner 1,$75.00,Credit,No
+12/15/2022,Internet Subscription,Internet,Owner 2,$50.00,Credit,Yes
+01/01/2023,Income,Income,Owner 1,"$3,000.00",Check,No
+01/01/2023,Rent Payment,Housing,Owner 1,"$1,200.00",Check,No
+01/05/2023,Grocery Store,Grocery,Owner 1,$140.00,Credit,Yes
+01/10/2023,Movie Night Tickets,Entertainment,Owner 2,$40.00,Credit,Yes
+01/15/2023,Phone Bill,Phone,Owner 2,$80.00,Credit,Yes
+02/01/2023,Income,Income,Owner 1,"$3,000.00",Check,No
+02/02/2023,Gas Station,Petrol,Owner 1,$50.00,Cash,No
+02/10/2023,Dining Out with Friends,Dining,Owner 1,$70.00,Credit,Yes
+02/15/2023,Gym Membership,Health & Fitness,Owner 2,$75.00,Credit,No
+03/01/2023,Income,Income,Owner 1,"$3,000.00",Check,No
+03/01/2023,Rent Payment,Housing,Owner 1,"$1,200.00",Check,No
+03/10/2023,Grocery Store,Grocery,Owner 2,$110.00,Credit,Yes
+03/20/2023,Electricity Bill,Utility,Owner 1,$75.00,Check,Yes
+04/01/2023,Income,Income,Owner 1,"$3,000.00",Check,No
+04/03/2023,Car Maintenance,Car,Owner 2,$150.00,Credit,No
+04/08/2023,Amazon Purchase,Shopping,Owner 1,$60.00,Credit,No
+04/15/2023,Internet Subscription,Internet,Owner 2,$50.00,Credit,Yes
+05/01/2023,Income,Income,Owner 1,"$3,000.00",Check,No
+05/01/2023,Rent Payment,Housing,Owner 1,"$1,200.00",Check,No
+05/05/2023,Grocery Store,Grocery,Owner 1,$160.00,Credit,Yes
+05/10/2023,Travel Expenses,Travel,Owner 2,$400.00,Credit,No
+05/15/2023,Phone Bill,Phone,Owner 2,$80.00,Credit,No
