@@ -2,6 +2,7 @@ import 'package:expense_manager/components/expense_form/expense_form.dart';
 import 'package:expense_manager/components/expense_form/constants.dart';
 import 'package:expense_manager/data/expense_data.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
+import 'package:expense_manager/utils/snackbar/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -54,20 +55,11 @@ class _EditExpensePageState extends State<EditExpensePage> {
               return expenseProvider.updateExpense(e);
             },
             onSuccess: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Expense updated!'),
-                  backgroundColor: Color.fromARGB(255, 0, 95, 0),
-                ),
-              );
+              showSnackBar(context, 'Expense updated!', SnackBarColor.success);
             },
             onError: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Failed to update expense :('),
-                  backgroundColor: Color.fromARGB(255, 95, 0, 0),
-                ),
-              );
+              showSnackBar(
+                  context, 'Failed to update expense :(', SnackBarColor.error);
             },
           ),
         ));

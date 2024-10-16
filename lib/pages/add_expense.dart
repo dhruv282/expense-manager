@@ -2,6 +2,7 @@ import 'package:expense_manager/components/expense_form/expense_form.dart';
 import 'package:expense_manager/components/expense_form/constants.dart';
 import 'package:expense_manager/data/expense_data.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
+import 'package:expense_manager/utils/snackbar/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -34,19 +35,17 @@ class _AddExpensePageState extends State<AddExpensePage> {
             controllerMap: formControllerMap,
             onSubmit: (ExpenseData e) => expenseProvider.addExpense(e),
             onSuccess: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Expense added!'),
-                  backgroundColor: Color.fromARGB(255, 0, 95, 0),
-                ),
+              showSnackBar(
+                context,
+                'Failed to add expense :(',
+                SnackBarColor.success,
               );
             },
             onError: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Failed to add expense :('),
-                  backgroundColor: Color.fromARGB(255, 95, 0, 0),
-                ),
+              showSnackBar(
+                context,
+                'Failed to add expense :(',
+                SnackBarColor.error,
               );
             },
           ),

@@ -4,6 +4,7 @@ import 'package:expense_manager/pages/settings.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:expense_manager/utils/database_config_store/database_config_store.dart';
 import 'package:expense_manager/utils/database_manager/database_manager.dart';
+import 'package:expense_manager/utils/snackbar/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -40,11 +41,10 @@ class _HomeState extends State<Home> {
       throw Exception('Failed to initialize database connection');
     }).catchError((error) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to load expense data'),
-            backgroundColor: Color.fromARGB(255, 95, 0, 0),
-          ),
+        showSnackBar(
+          context,
+          'Failed to load expense data',
+          SnackBarColor.error,
         );
       });
     });
@@ -63,20 +63,18 @@ class _HomeState extends State<Home> {
           _initializeExpenseProvider(context);
         } else {
           navigateToSettingsPage();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Missing DB Config'),
-              backgroundColor: Color.fromARGB(255, 95, 0, 0),
-            ),
+          showSnackBar(
+            context,
+            'Missing DB Config',
+            SnackBarColor.error,
           );
         }
       }).catchError((error) {
         navigateToSettingsPage();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to fetch DB Config'),
-            backgroundColor: Color.fromARGB(255, 95, 0, 0),
-          ),
+        showSnackBar(
+          context,
+          'Failed to fetch DB Config',
+          SnackBarColor.error,
         );
       }).whenComplete(() {
         setState(() {

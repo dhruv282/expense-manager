@@ -7,6 +7,7 @@ import 'package:expense_manager/utils/logger/logger.dart';
 import 'package:expense_manager/components/form_helpers/date_picker.dart';
 import 'package:expense_manager/components/form_helpers/form_dropdown.dart';
 import 'package:expense_manager/components/form_helpers/form_field.dart';
+import 'package:expense_manager/utils/snackbar/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -143,16 +144,16 @@ class _ExpenseFormState extends State<ExpenseForm> {
               addOption:
                   getAddOptionDropdownItem('add_new_owner', 'Add new owner'),
               onAddOptionSelect: () => showAddDialog(
+                context,
+                'Add Owner',
+                'Enter value for new owner',
+                (owner) => expenseProvider.addOwner(owner),
+                () => showSnackBar(
                   context,
-                  'Add Owner',
-                  'Enter value for new owner',
-                  (owner) => expenseProvider.addOwner(owner),
-                  () => ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Failed to add owner :('),
-                          backgroundColor: Color.fromARGB(255, 95, 0, 0),
-                        ),
-                      )),
+                  'Failed to add owner :(',
+                  SnackBarColor.error,
+                ),
+              ),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
