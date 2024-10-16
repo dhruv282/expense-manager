@@ -60,7 +60,7 @@ class DatabaseManager {
 
     // Execute the query
     final results = await connection!.execute(
-      Sql.named('SELECT * FROM expenses'),
+      Sql.named('SELECT * FROM expenses ORDER BY date DESC'),
     );
 
     for (var result in results) {
