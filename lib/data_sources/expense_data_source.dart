@@ -3,6 +3,7 @@ import 'package:expense_manager/data/expense_data.dart';
 import 'package:expense_manager/pages/edit_expense.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:expense_manager/utils/logger/logger.dart';
+import 'package:expense_manager/utils/snackbar/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -47,20 +48,18 @@ class ExpenseDataSource extends DataTableSource {
                 TextButton(
                   onPressed: () {
                     expenseProvider.deleteExpense(expense).then((_) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Expense deleted!'),
-                          backgroundColor: Color.fromARGB(255, 0, 95, 0),
-                        ),
+                      showSnackBar(
+                        context,
+                        'Expense deleted!',
+                        SnackBarColor.success,
                       );
                       Navigator.of(context).pop();
                     }).catchError((e) {
                       logger.e(e);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Failed to delete expense :('),
-                          backgroundColor: Color.fromARGB(255, 95, 0, 0),
-                        ),
+                      showSnackBar(
+                        context,
+                        'Failed to delete expense :(',
+                        SnackBarColor.error,
                       );
                     });
                   },

@@ -13,17 +13,20 @@ class App extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    generateTheme(Brightness b) => ThemeData(
+          colorScheme:
+              ColorScheme.fromSeed(seedColor: Colors.cyan, brightness: b),
+          useMaterial3: true,
+        );
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => ExpenseProvider()),
         ],
         child: MaterialApp(
           title: 'Expense Manager',
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(
-                seedColor: Colors.cyan, brightness: Brightness.dark),
-            useMaterial3: true,
-          ),
+          theme: generateTheme(Brightness.light),
+          darkTheme: generateTheme(Brightness.dark),
+          themeMode: ThemeMode.system,
           debugShowCheckedModeBanner: false,
           home: const Home(),
         ));

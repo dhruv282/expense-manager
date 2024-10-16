@@ -4,6 +4,7 @@ import 'package:expense_manager/components/form_helpers/form_field.dart';
 import 'package:expense_manager/utils/database_config_store/database_config_store.dart';
 import 'package:expense_manager/utils/database_manager/database_manager.dart';
 import 'package:expense_manager/utils/logger/logger.dart';
+import 'package:expense_manager/utils/snackbar/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -195,13 +196,8 @@ class _DatabaseConfigFormState extends State<DatabaseConfigForm> {
                           } catch (error) {
                             logger.e(error);
                             if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Failed to save config :('),
-                                  backgroundColor:
-                                      Color.fromARGB(255, 95, 0, 0),
-                                ),
-                              );
+                              showSnackBar(context, 'Failed to save config :(',
+                                  SnackBarColor.error);
                             }
                             completedSuccessfully = false;
                             break;
@@ -221,14 +217,10 @@ class _DatabaseConfigFormState extends State<DatabaseConfigForm> {
                                 dbConfig.endpoint, dbConfig.connectionSettings);
                           } catch (error) {
                             if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                      'Failed to refresh DB connection :('),
-                                  backgroundColor:
-                                      Color.fromARGB(255, 95, 0, 0),
-                                ),
-                              );
+                              showSnackBar(
+                                  context,
+                                  'Failed to refresh DB connection :(',
+                                  SnackBarColor.error);
                             }
                           }
 
