@@ -92,6 +92,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final expenseProvider = Provider.of<ExpenseProvider>(context);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton.filledTonal(
@@ -104,12 +105,15 @@ class _HomeState extends State<Home> {
                       builder: (context) => const AddExpensePage()));
             }),
         actions: [
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            IconButton(
-                tooltip: 'Database Settings',
-                onPressed: navigateToSettingsPage,
-                icon: const Icon(Icons.settings))
-          ])
+          IconButton(
+            tooltip: 'Refresh Data',
+            onPressed: expenseProvider.initialize,
+            icon: const Icon(Icons.refresh),
+          ),
+          IconButton(
+              tooltip: 'Database Settings',
+              onPressed: navigateToSettingsPage,
+              icon: const Icon(Icons.settings)),
         ],
       ),
       body: _isLoading
