@@ -37,7 +37,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
             onSuccess: () {
               showSnackBar(
                 context,
-                'Failed to add expense :(',
+                'Expense added!',
                 SnackBarColor.success,
               );
             },
