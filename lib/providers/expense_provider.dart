@@ -6,9 +6,11 @@ import 'package:flutter/material.dart';
 class ExpenseProvider extends ChangeNotifier {
   List<ExpenseData> _expenses = [];
   List<String> _ownerOptions = [];
+  List<String> _categoryOptions = [];
 
   List<ExpenseData> get expenses => _expenses;
   List<String> get ownerOptions => _ownerOptions;
+  List<String> get categoryOptions => _categoryOptions;
 
   Future initialize() async {
     return loadExpenseData()
@@ -31,9 +33,21 @@ class ExpenseProvider extends ChangeNotifier {
     });
   }
 
+  Future loadCategoryOptions() async {
+    var dbManager = DatabaseManager();
+    return dbManager.getCategories().then((options) {
+      _categoryOptions = options;
+    });
+  }
+
   Future updateExpense(ExpenseData e) {
     if (!_ownerOptions.contains(e.person)) {
       return Future.error('Invalid value for person in expense: ${e.person}');
+    }
+
+    if (!_categoryOptions.contains(e.category)) {
+      return Future.error(
+          'Invalid value for category in expense: ${e.category}');
     }
 
     var dbManager = DatabaseManager();
@@ -55,6 +69,11 @@ class ExpenseProvider extends ChangeNotifier {
   Future addExpense(ExpenseData e) {
     if (!_ownerOptions.contains(e.person)) {
       return Future.error('Invalid value for person in expense: ${e.person}');
+    }
+
+    if (!_categoryOptions.contains(e.category)) {
+      return Future.error(
+          'Invalid value for category in expense: ${e.category}');
     }
 
     var dbManager = DatabaseManager();
@@ -90,6 +109,13 @@ class ExpenseProvider extends ChangeNotifier {
     var dbManager = DatabaseManager();
     return dbManager.addOwner(owner).then((res) {
       _ownerOptions.add(owner);
+    }).whenComplete(() => notifyListeners());
+  }
+
+  Future addCategory(String category) {
+    var dbManager = DatabaseManager();
+    return dbManager.addCategory(category).then((res) {
+      _categoryOptions.add(category);
     }).whenComplete(() => notifyListeners());
   }
 }

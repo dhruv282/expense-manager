@@ -31,13 +31,21 @@ class DatabaseManager {
             EXCEPTION
               WHEN duplicate_object THEN null;
             END \$\$;
-          ''').then((value) =>
+          ''')
+          .then((value) => connection!.execute('''
+            DO \$\$ BEGIN
+              CREATE TYPE CATEGORY_OPTIONS AS ENUM();
+            EXCEPTION
+              WHEN duplicate_object THEN null;
+            END \$\$;
+          '''))
+          .then((value) =>
               connection!.execute('CREATE TABLE IF NOT EXISTS expenses ('
                   '  id UUID DEFAULT gen_random_uuid() PRIMARY KEY, '
                   '  cost DECIMAL(12,2) NOT NULL,'
                   '  description TEXT NOT NULL,'
                   '  date DATE NOT NULL,'
-                  '  category TEXT NOT NULL,'
+                  '  category CATEGORY_OPTIONS,'
                   '  person OWNER_OPTIONS'
                   ')'));
     } catch (e) {
@@ -161,5 +169,39 @@ class DatabaseManager {
 
     return await connection!
         .execute("ALTER TYPE OWNER_OPTIONS ADD VALUE '$owner'");
+  }
+
+  /// Get CATEGORY_OPTIONS values from the database.
+  Future<List<String>> getCategories() async {
+    logger.i("Getting category options");
+
+    if (connection == null) {
+      return Future.error("No connection to Database");
+    }
+
+    List<String> categories = [];
+
+    // Execute the query
+    final results = await connection!.execute(
+      Sql.named('SELECT unnest(enum_range(NULL::CATEGORY_OPTIONS))'),
+    );
+
+    for (var result in results) {
+      categories.add(result.toColumnMap()["unnest"].asString);
+    }
+
+    return categories;
+  }
+
+  /// Appends to OWNER_OPTIONS enum in the database.
+  Future<Result?> addCategory(String category) async {
+    logger.i("Adding category option $category");
+
+    if (connection == null) {
+      return Future.error("No connection to Database");
+    }
+
+    return await connection!
+        .execute("ALTER TYPE CATEGORY_OPTIONS ADD VALUE '$category'");
   }
 }
