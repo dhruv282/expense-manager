@@ -54,7 +54,7 @@ class ExpenseData {
           description: map['description'],
           cost: double.parse(map['cost']),
           date: DateTime.parse(map['date'].toString()),
-          category: map['category'],
+          category: map['category'].asString,
           person: map['person'].asString,
         );
 

@@ -36,12 +36,19 @@ def initialize_db(cursor: psycopg2._psycopg.cursor) -> bool:
             END $$;        
         ''')
         cursor.execute('''
+            DO $$ BEGIN
+              CREATE TYPE CATEGORY_OPTIONS AS ENUM();
+            EXCEPTION
+              WHEN duplicate_object THEN null;
+            END $$;        
+        ''')
+        cursor.execute('''
         CREATE TABLE IF NOT EXISTS expenses (
             id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
             cost DECIMAL(12,2) NOT NULL,
             description TEXT NOT NULL,
             date DATE NOT NULL,
-            category TEXT NOT NULL,
+            category CATEGORY_OPTIONS,
             person OWNER_OPTIONS
         )
         ''')
@@ -60,6 +67,20 @@ def add_owner_if_not_exists(owner: str, cursor: psycopg2._psycopg.cursor) -> boo
         if owner not in owners:
             # Alter enum to add value
             cursor.execute(f"ALTER TYPE OWNER_OPTIONS ADD VALUE '{owner}'")
+    except Exception as e:
+        logger.error(e)
+        return False
+    return True
+
+def add_category_if_not_exists(category: str, cursor: psycopg2._psycopg.cursor) -> bool:
+    try:
+        # Check if owner val currently exists in enum
+        cursor.execute("SELECT unnest(enum_range(NULL::CATEGORY_OPTIONS))")
+        vals = cursor.fetchall()
+        categories = [c[0] for c in vals]
+        if category not in categories:
+            # Alter enum to add value
+            cursor.execute(f"ALTER TYPE CATEGORY_OPTIONS ADD VALUE '{category}'")
     except Exception as e:
         logger.error(e)
         return False
@@ -111,11 +132,18 @@ def main(db_config: DBConfig, transactions: List[Transaction]):
         sys.exit(1)
     
     for t in tqdm(transactions, desc="Adding entries to DB"):
-        status_ok = add_owner_if_not_exists(t.owner, cur)
-        if not status_ok:
+        owner_status_ok = add_owner_if_not_exists(t.owner, cur)
+        if not owner_status_ok:
             logger.error(f"Error adding owner: {t.owner}")
             sys.exit(1)
         postgres_client.commit()
+
+        category_status_ok = add_category_if_not_exists(t.category, cur)
+        if not category_status_ok:
+            logger.error(f"Error adding category: {t.category}")
+            sys.exit(1)
+        postgres_client.commit()
+
         cur.execute("INSERT INTO expenses (cost, description, date, category, person) VALUES (%s, %s, %s, %s, %s)", (
             t.cost,
             t.description,

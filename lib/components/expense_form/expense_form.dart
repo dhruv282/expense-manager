@@ -124,14 +124,25 @@ class _ExpenseFormState extends State<ExpenseForm> {
             ),
             // Category field
             CustomFormDropdown(
-              options: expenseCategories,
+              options: expenseProvider.categoryOptions,
               labelText: categoryTextFormFieldLabel,
               controller: widget.controllerMap[categoryTextFormFieldLabel]!,
               validator: checkEmptyInput,
               hintText: categoryTextFormFieldHint,
               icon: null,
-              addOption: null,
-              onAddOptionSelect: null,
+              addOption: getAddOptionDropdownItem(
+                  'add_new_category', 'Add new category'),
+              onAddOptionSelect: () => showAddDialog(
+                context,
+                'Add Category',
+                'Enter value for new category',
+                (category) => expenseProvider.addCategory(category),
+                () => showSnackBar(
+                  context,
+                  'Failed to add category :(',
+                  SnackBarColor.error,
+                ),
+              ),
             ),
             // Owner field
             CustomFormDropdown(
