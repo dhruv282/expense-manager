@@ -15,6 +15,7 @@ class ExpenseProvider extends ChangeNotifier {
   Future initialize() async {
     return loadExpenseData()
         .then((res) => loadOwnerOptions())
+        .then((res) => loadCategoryOptions())
         .catchError((e) => logger.e(e))
         .whenComplete(() => notifyListeners());
   }
