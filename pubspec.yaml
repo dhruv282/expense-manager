@@ -43,6 +43,7 @@ dependencies:
   data_table_2: ^2.5.15
   provider: ^6.1.2
   flutter_secure_storage: ^9.2.2
+  flutter_launcher_icons: ^0.14.1
 
 dev_dependencies:
   flutter_test:
@@ -54,6 +55,22 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path_ios: "assets/icon/expense_manager.png"
+  image_path: "assets/icon/expense_manager.png"
+  min_sdk_android: 34 # android min sdk min:16, default 21
+  adaptive_icon_background: "#000000" # only available for Android 8.0 devices and above
+  adaptive_icon_foreground: "assets/icon/expense_manager.png" # only available for Android 8.0 devices and above
+  windows:
+    generate: true
+    image_path: "assets/icon/expense_manager.png"
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "assets/icon/expense_manager.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
