@@ -4,6 +4,7 @@ import 'package:expense_manager/data/expense_data.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:expense_manager/utils/snackbar/snackbar.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class AddExpensePage extends StatefulWidget {
@@ -23,32 +24,44 @@ class _AddExpensePageState extends State<AddExpensePage> {
   };
 
   @override
+  void initState() {
+    super.initState();
+
+    // Auto-fill current date.
+    formControllerMap[dateTextFormFieldLabel]?.text =
+        DateFormat('MM/dd/yyyy').format(DateTime.now());
+  }
+
+  @override
   Widget build(BuildContext context) {
     final expenseProvider = Provider.of<ExpenseProvider>(context);
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Add Expense"),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ExpenseForm(
-            controllerMap: formControllerMap,
-            onSubmit: (ExpenseData e) => expenseProvider.addExpense(e),
-            onSuccess: () {
-              showSnackBar(
-                context,
-                'Expense added!',
-                SnackBarColor.success,
-              );
-            },
-            onError: () {
-              showSnackBar(
-                context,
-                'Failed to add expense :(',
-                SnackBarColor.error,
-              );
-            },
-          ),
-        ));
+      appBar: AppBar(
+        title: const Text("Add Expense"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+            child: ExpenseForm(
+          controllerMap: formControllerMap,
+          onSubmit: (ExpenseData e) => expenseProvider.addExpense(e),
+          onSuccess: () {
+            showSnackBar(
+              context,
+              'Expense added!',
+              SnackBarColor.success,
+            );
+          },
+          onError: () {
+            showSnackBar(
+              context,
+              'Failed to add expense :(',
+              SnackBarColor.error,
+            );
+          },
+        )),
+      ),
+      resizeToAvoidBottomInset: false,
+    );
   }
 }
