@@ -54,7 +54,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
     return Form(
         key: _formKey,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // Date field
             Row(children: [
@@ -92,6 +92,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                         DateFormat.yMd().format(date);
                   }),
             ]),
+            const SizedBox(height: 35),
             // Cost field
             CustomFormField(
               enabled: true,
@@ -108,6 +109,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
               onSaved: (value) {},
               validator: checkEmptyInput,
             ),
+            const SizedBox(height: 35),
             // Description field
             CustomFormField(
               enabled: true,
@@ -122,6 +124,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
               onSaved: (value) {},
               validator: checkEmptyInput,
             ),
+            const SizedBox(height: 35),
             // Category field
             CustomFormDropdown(
               options: expenseProvider.categoryOptions,
@@ -144,6 +147,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                 ),
               ),
             ),
+            const SizedBox(height: 35),
             // Owner field
             CustomFormDropdown(
               options: expenseProvider.ownerOptions,
@@ -166,6 +170,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                 ),
               ),
             ),
+            const SizedBox(height: 35),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: isSubmitting
