@@ -14,6 +14,8 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     generateTheme(Brightness b) => ThemeData(
+          bottomSheetTheme:
+              const BottomSheetThemeData(backgroundColor: Colors.transparent),
           colorScheme:
               ColorScheme.fromSeed(seedColor: Colors.cyan, brightness: b),
           useMaterial3: true,

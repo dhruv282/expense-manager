@@ -40,28 +40,25 @@ class _AddExpensePageState extends State<AddExpensePage> {
         title: const Text("Add Expense"),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-            child: ExpenseForm(
-          controllerMap: formControllerMap,
-          onSubmit: (ExpenseData e) => expenseProvider.addExpense(e),
-          onSuccess: () {
-            showSnackBar(
-              context,
-              'Expense added!',
-              SnackBarColor.success,
-            );
-          },
-          onError: () {
-            showSnackBar(
-              context,
-              'Failed to add expense :(',
-              SnackBarColor.error,
-            );
-          },
-        )),
-      ),
-      resizeToAvoidBottomInset: false,
+          padding: const EdgeInsets.all(16.0),
+          child: ExpenseForm(
+            controllerMap: formControllerMap,
+            onSubmit: (ExpenseData e) => expenseProvider.addExpense(e),
+            onSuccess: () {
+              showSnackBar(
+                context,
+                'Expense added!',
+                SnackBarColor.success,
+              );
+            },
+            onError: () {
+              showSnackBar(
+                context,
+                'Failed to add expense :(',
+                SnackBarColor.error,
+              );
+            },
+          )),
     );
   }
 }
