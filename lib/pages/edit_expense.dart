@@ -42,26 +42,29 @@ class _EditExpensePageState extends State<EditExpensePage> {
   Widget build(BuildContext context) {
     final expenseProvider = Provider.of<ExpenseProvider>(context);
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Edit Expense"),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ExpenseForm(
-            controllerMap: formControllerMap,
-            onSubmit: (ExpenseData e) {
-              // Add expense ID for a successful update.
-              e.id = widget.expense.id;
-              return expenseProvider.updateExpense(e);
-            },
-            onSuccess: () {
-              showSnackBar(context, 'Expense updated!', SnackBarColor.success);
-            },
-            onError: () {
-              showSnackBar(
-                  context, 'Failed to update expense :(', SnackBarColor.error);
-            },
-          ),
-        ));
+      appBar: AppBar(
+        title: const Text("Edit Expense"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+            child: ExpenseForm(
+          controllerMap: formControllerMap,
+          onSubmit: (ExpenseData e) {
+            // Add expense ID for a successful update.
+            e.id = widget.expense.id;
+            return expenseProvider.updateExpense(e);
+          },
+          onSuccess: () {
+            showSnackBar(context, 'Expense updated!', SnackBarColor.success);
+          },
+          onError: () {
+            showSnackBar(
+                context, 'Failed to update expense :(', SnackBarColor.error);
+          },
+        )),
+      ),
+      resizeToAvoidBottomInset: false,
+    );
   }
 }
