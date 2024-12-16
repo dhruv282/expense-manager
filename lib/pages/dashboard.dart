@@ -1,5 +1,6 @@
 import 'package:expense_manager/components/dashboard_widgets/dashboard_widget.dart';
-import 'package:expense_manager/components/dashboard_widgets/pie_chart/pie_chart.dart';
+import 'package:expense_manager/components/dashboard_widgets/expense_pie_chart/expense_pie_chart.dart';
+import 'package:expense_manager/components/dashboard_widgets/expense_vs_income_pie_chart/expense_vs_income_pie_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
@@ -12,7 +13,8 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   final List<DashboardWidget> widgets = [
-    PieChart(),
+    ExpensePieChart(),
+    ExpenseVsIncomePieChart(),
   ];
 
   @override
