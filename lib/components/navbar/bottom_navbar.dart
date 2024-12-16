@@ -1,3 +1,4 @@
+import 'package:expense_manager/pages/dashboard.dart';
 import 'package:expense_manager/pages/expenses.dart';
 import 'package:expense_manager/components/navbar/navbar_page.dart';
 import 'package:flutter/material.dart';
@@ -24,9 +25,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
         selectedIndex: currentPageIndex,
         destinations: const <Widget>[
           NavigationDestination(
-            selectedIcon: Icon(Icons.home),
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
+            icon: Icon(Icons.dashboard),
+            label: 'Dashboard',
           ),
           NavigationDestination(
             icon: Icon(Icons.attach_money),
@@ -35,19 +35,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
         ],
       ),
       body: <Widget>[
-        /// Home page
-        const NavbarPage(
-            body: Card(
-          shadowColor: Colors.transparent,
-          margin: EdgeInsets.all(8.0),
-          child: SizedBox.expand(
-            child: Center(
-              child: Text(
-                'Home page',
-              ),
-            ),
-          ),
-        )),
+        /// Charts page
+        const NavbarPage(body: Dashboard()),
 
         /// Expenses page
         const NavbarPage(body: ExpensePage()),

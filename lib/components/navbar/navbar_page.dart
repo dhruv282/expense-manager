@@ -8,7 +8,10 @@ class NavbarPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: body,
-    );
+      body: SafeArea(
+        child: Padding(
+            padding: const EdgeInsets.all(5),
+            child: body,
+      )));
   }
 }
