@@ -7,24 +7,33 @@ class ExpenseProvider extends ChangeNotifier {
   List<ExpenseData> _expenses = [];
   List<String> _ownerOptions = [];
   List<String> _categoryOptions = [];
+  List<int> _yearOptions = [];
+  int? _selectedYear;
 
   List<ExpenseData> get expenses => _expenses;
   List<String> get ownerOptions => _ownerOptions;
   List<String> get categoryOptions => _categoryOptions;
+  List<int> get yearOptions => _yearOptions;
+  int? get selectedYear => _selectedYear;
 
   Future initialize() async {
-    return loadExpenseData()
+    return loadYearOptions()
         .then((res) => loadOwnerOptions())
         .then((res) => loadCategoryOptions())
+        .then((res) => loadExpenseData(autoLoadLatestYear: true))
         .catchError((e) => logger.e(e))
         .whenComplete(() => notifyListeners());
   }
 
-  Future loadExpenseData() async {
+  Future loadExpenseData({int? year, bool autoLoadLatestYear = false}) async {
     var dbManager = DatabaseManager();
-    return dbManager.getAllExpenses().then((entries) {
+    _selectedYear = year;
+    if (autoLoadLatestYear && _selectedYear == null && yearOptions.isNotEmpty) {
+      _selectedYear = yearOptions.first;
+    }
+    return dbManager.getExpenses(year: _selectedYear).then((entries) {
       _expenses = entries;
-    });
+    }).whenComplete(() => notifyListeners());
   }
 
   Future loadOwnerOptions() async {
@@ -38,6 +47,13 @@ class ExpenseProvider extends ChangeNotifier {
     var dbManager = DatabaseManager();
     return dbManager.getCategories().then((options) {
       _categoryOptions = options;
+    });
+  }
+
+  Future loadYearOptions() async {
+    var dbManager = DatabaseManager();
+    return dbManager.getYears().then((options) {
+      _yearOptions = options;
     });
   }
 

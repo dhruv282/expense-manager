@@ -1,4 +1,5 @@
 import 'package:expense_manager/components/navbar/bottom_navbar.dart';
+import 'package:expense_manager/components/year_selector/year_selector.dart';
 import 'package:expense_manager/pages/add_expense.dart';
 import 'package:expense_manager/pages/settings.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
@@ -104,6 +105,8 @@ class _HomeState extends State<Home> {
                   MaterialPageRoute(
                       builder: (context) => const AddExpensePage()));
             }),
+        title: const YearSelector(),
+        centerTitle: true,
         actions: [
           IconButton(
             tooltip: 'Refresh Data',

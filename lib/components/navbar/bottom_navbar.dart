@@ -35,7 +35,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         ],
       ),
       body: <Widget>[
-        /// Charts page
+        /// Dashboard page
         const NavbarPage(body: Dashboard()),
 
         /// Expenses page
