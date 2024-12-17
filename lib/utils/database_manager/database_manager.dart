@@ -56,9 +56,9 @@ class DatabaseManager {
   }
 
   /// Returns all expenses from the database.
-  Future<List<ExpenseData>> getAllExpenses() async {
+  Future<List<ExpenseData>> getExpenses({int? year}) async {
     // Execute the query
-    logger.i("Fetching all expenses from the database...");
+    logger.i("Fetching ${year ?? 'all'} expenses from the database...");
 
     if (connection == null) {
       return Future.error('No connection to Database');
@@ -68,7 +68,9 @@ class DatabaseManager {
 
     // Execute the query
     final results = await connection!.execute(
-      Sql.named('SELECT * FROM expenses ORDER BY date DESC'),
+      year == null ?
+      Sql.named('SELECT * FROM expenses ORDER BY date DESC') :
+      Sql.named('SELECT * FROM expenses  WHERE DATE_PART(\'YEAR\', date)=$year ORDER BY date DESC'),
     );
 
     for (var result in results) {
@@ -203,5 +205,28 @@ class DatabaseManager {
 
     return await connection!
         .execute("ALTER TYPE CATEGORY_OPTIONS ADD VALUE '$category'");
+  }
+
+  /// Gets list of years from transaction data.
+  Future<List<int>> getYears() async {
+    logger.i("Getting years");
+
+    if (connection == null) {
+      return Future.error("No connection to Database");
+    }
+
+    List<int> years = [];
+
+    // Execute the query
+    final results = await connection!.execute(
+      Sql.named(
+          'SELECT * FROM (SELECT DISTINCT EXTRACT(YEAR FROM date) from expenses) results ORDER BY results DESC;'),
+    );
+
+    for (var result in results) {
+      years.add(int.parse(result[0] as String));
+    }
+
+    return years;
   }
 }
