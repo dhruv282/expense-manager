@@ -73,174 +73,183 @@ class _DatabaseConfigFormState extends State<DatabaseConfigForm> {
     final ThemeData theme = Theme.of(context);
     return isLoadingConfig
         ? const Center(child: CircularProgressIndicator())
-        : Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                CustomFormField(
-                  enabled: true,
-                  maxCharacters: null,
-                  keyboardType: TextInputType.text,
-                  inputFormatter:
-                      FilteringTextInputFormatter.singleLineFormatter,
-                  controller: formControllerMap[hostTextFormFieldLabel]!,
-                  labelText: hostTextFormFieldLabel,
-                  hintText: hostTextFormFieldHint,
-                  obscureText: false,
-                  icon: null,
-                  onSaved: (value) {},
-                  validator: (value) {
-                    return checkEmptyInput(value);
-                  },
-                ),
-                CustomFormField(
-                  enabled: true,
-                  maxCharacters: null,
-                  keyboardType: TextInputType.number,
-                  inputFormatter: FilteringTextInputFormatter.digitsOnly,
-                  controller: formControllerMap[portTextFormFieldLabel]!,
-                  labelText: portTextFormFieldLabel,
-                  hintText: portTextFormFieldHint,
-                  obscureText: false,
-                  icon: null,
-                  onSaved: (value) {},
-                  validator: (value) {
-                    return checkEmptyInput(value);
-                  },
-                ),
-                CustomFormField(
-                  enabled: true,
-                  maxCharacters: null,
-                  keyboardType: TextInputType.text,
-                  inputFormatter:
-                      FilteringTextInputFormatter.singleLineFormatter,
-                  controller: formControllerMap[nameTextFormFieldLabel]!,
-                  labelText: nameTextFormFieldLabel,
-                  hintText: nameTextFormFieldHint,
-                  obscureText: false,
-                  icon: null,
-                  onSaved: (value) {},
-                  validator: (value) {
-                    return checkEmptyInput(value);
-                  },
-                ),
-                CustomFormField(
-                  enabled: true,
-                  maxCharacters: null,
-                  keyboardType: TextInputType.text,
-                  inputFormatter:
-                      FilteringTextInputFormatter.singleLineFormatter,
-                  controller: formControllerMap[usernameTextFormFieldLabel]!,
-                  labelText: usernameTextFormFieldLabel,
-                  hintText: usernameTextFormFieldHint,
-                  obscureText: false,
-                  icon: null,
-                  onSaved: (value) {},
-                  validator: (value) {
-                    return checkEmptyInput(value);
-                  },
-                ),
-                CustomFormField(
-                  enabled: true,
-                  maxCharacters: null,
-                  keyboardType: TextInputType.text,
-                  inputFormatter:
-                      FilteringTextInputFormatter.singleLineFormatter,
-                  controller: formControllerMap[passwordTextFormFieldLabel]!,
-                  labelText: passwordTextFormFieldLabel,
-                  hintText: passwordTextFormFieldHint,
-                  obscureText: true,
-                  icon: null,
-                  onSaved: (value) {},
-                  validator: (value) {
-                    return checkEmptyInput(value);
-                  },
-                ),
-                CustomFormDropdown(
-                  options: sslModeOptions,
-                  labelText: sslModeDropdownFieldLabel,
-                  controller: formControllerMap[sslModeDropdownFieldLabel]!,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please select a value';
-                    }
-                    return null;
-                  },
-                  hintText: sslModeDropdownFieldHint,
-                  icon: null,
-                  addOption: null,
-                  onAddOptionSelect: null,
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isSubmitting
-                        ? theme.colorScheme.primary
-                        : theme.colorScheme.inversePrimary,
+        : Scaffold(
+            body: SingleChildScrollView(
+                child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  CustomFormField(
+                    enabled: true,
+                    maxCharacters: null,
+                    keyboardType: TextInputType.text,
+                    inputFormatter:
+                        FilteringTextInputFormatter.singleLineFormatter,
+                    controller: formControllerMap[hostTextFormFieldLabel]!,
+                    labelText: hostTextFormFieldLabel,
+                    hintText: hostTextFormFieldHint,
+                    obscureText: false,
+                    icon: null,
+                    onSaved: (value) {},
+                    validator: (value) {
+                      return checkEmptyInput(value);
+                    },
                   ),
-                  onPressed: () async {
-                    // Ignore button presses with ongoing submit operation.
-                    if (!isSubmitting) {
-                      setState(() {
-                        isSubmitting = true;
-                      });
-                      // Validate returns true if the form is valid, or false otherwise.
-                      if (_formKey.currentState!.validate()) {
-                        bool completedSuccessfully = true;
+                  const SizedBox(height: 35),
+                  CustomFormField(
+                    enabled: true,
+                    maxCharacters: null,
+                    keyboardType: TextInputType.number,
+                    inputFormatter: FilteringTextInputFormatter.digitsOnly,
+                    controller: formControllerMap[portTextFormFieldLabel]!,
+                    labelText: portTextFormFieldLabel,
+                    hintText: portTextFormFieldHint,
+                    obscureText: false,
+                    icon: null,
+                    onSaved: (value) {},
+                    validator: (value) {
+                      return checkEmptyInput(value);
+                    },
+                  ),
+                  const SizedBox(height: 35),
+                  CustomFormField(
+                    enabled: true,
+                    maxCharacters: null,
+                    keyboardType: TextInputType.text,
+                    inputFormatter:
+                        FilteringTextInputFormatter.singleLineFormatter,
+                    controller: formControllerMap[nameTextFormFieldLabel]!,
+                    labelText: nameTextFormFieldLabel,
+                    hintText: nameTextFormFieldHint,
+                    obscureText: false,
+                    icon: null,
+                    onSaved: (value) {},
+                    validator: (value) {
+                      return checkEmptyInput(value);
+                    },
+                  ),
+                  const SizedBox(height: 35),
+                  CustomFormField(
+                    enabled: true,
+                    maxCharacters: null,
+                    keyboardType: TextInputType.text,
+                    inputFormatter:
+                        FilteringTextInputFormatter.singleLineFormatter,
+                    controller: formControllerMap[usernameTextFormFieldLabel]!,
+                    labelText: usernameTextFormFieldLabel,
+                    hintText: usernameTextFormFieldHint,
+                    obscureText: false,
+                    icon: null,
+                    onSaved: (value) {},
+                    validator: (value) {
+                      return checkEmptyInput(value);
+                    },
+                  ),
+                  const SizedBox(height: 35),
+                  CustomFormField(
+                    enabled: true,
+                    maxCharacters: null,
+                    keyboardType: TextInputType.text,
+                    inputFormatter:
+                        FilteringTextInputFormatter.singleLineFormatter,
+                    controller: formControllerMap[passwordTextFormFieldLabel]!,
+                    labelText: passwordTextFormFieldLabel,
+                    hintText: passwordTextFormFieldHint,
+                    obscureText: true,
+                    icon: null,
+                    onSaved: (value) {},
+                    validator: (value) {
+                      return checkEmptyInput(value);
+                    },
+                  ),
+                  const SizedBox(height: 35),
+                  CustomFormDropdown(
+                    options: sslModeOptions,
+                    labelText: sslModeDropdownFieldLabel,
+                    controller: formControllerMap[sslModeDropdownFieldLabel]!,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select a value';
+                      }
+                      return null;
+                    },
+                    hintText: sslModeDropdownFieldHint,
+                    icon: null,
+                    addOption: null,
+                    onAddOptionSelect: null,
+                  ),
+                ],
+              ),
+            )),
+            bottomSheet: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(200, 50),
+                backgroundColor: isSubmitting
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.inversePrimary,
+              ),
+              onPressed: () async {
+                // Ignore button presses with ongoing submit operation.
+                if (!isSubmitting) {
+                  setState(() {
+                    isSubmitting = true;
+                  });
+                  // Validate returns true if the form is valid, or false otherwise.
+                  if (_formKey.currentState!.validate()) {
+                    bool completedSuccessfully = true;
 
-                        // Update values in config store
-                        for (var e in configToFieldMap.entries) {
-                          try {
-                            await dbConfigStore.setConfigValue(
-                                e.key, formControllerMap[e.value]!.text);
-                          } catch (error) {
-                            logger.e(error);
-                            if (context.mounted) {
-                              showSnackBar(context, 'Failed to save config :(',
-                                  SnackBarColor.error);
-                            }
-                            completedSuccessfully = false;
-                            break;
-                          }
+                    // Update values in config store
+                    for (var e in configToFieldMap.entries) {
+                      try {
+                        await dbConfigStore.setConfigValue(
+                            e.key, formControllerMap[e.value]!.text);
+                      } catch (error) {
+                        logger.e(error);
+                        if (context.mounted) {
+                          showSnackBar(context, 'Failed to save config :(',
+                              SnackBarColor.error);
                         }
-
-                        setState(() {
-                          isSubmitting = false;
-                        });
-
-                        if (completedSuccessfully) {
-                          try {
-                            var dbConfig =
-                                await dbConfigStore.getDatabaseConfig();
-                            var dbManager = DatabaseManager();
-                            await dbManager.connect(
-                                dbConfig.endpoint, dbConfig.connectionSettings);
-                          } catch (error) {
-                            if (context.mounted) {
-                              showSnackBar(
-                                  context,
-                                  'Failed to refresh DB connection :(',
-                                  SnackBarColor.error);
-                            }
-                          }
-
-                          if (context.mounted) {
-                            Navigator.pop(context);
-                          }
-                        }
+                        completedSuccessfully = false;
+                        break;
                       }
                     }
-                  },
-                  child: Text(
-                    'Submit',
-                    style: TextStyle(
-                      color: isSubmitting
-                          ? theme.colorScheme.inversePrimary
-                          : theme.colorScheme.primary,
-                    ),
-                  ),
+
+                    setState(() {
+                      isSubmitting = false;
+                    });
+
+                    if (completedSuccessfully) {
+                      try {
+                        var dbConfig = await dbConfigStore.getDatabaseConfig();
+                        var dbManager = DatabaseManager();
+                        await dbManager.connect(
+                            dbConfig.endpoint, dbConfig.connectionSettings);
+                      } catch (error) {
+                        if (context.mounted) {
+                          showSnackBar(
+                              context,
+                              'Failed to refresh DB connection :(',
+                              SnackBarColor.error);
+                        }
+                      }
+
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      }
+                    }
+                  }
+                }
+              },
+              child: Text(
+                'Submit',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: isSubmitting
+                      ? theme.colorScheme.inversePrimary
+                      : theme.colorScheme.primary,
                 ),
-              ],
+              ),
             ),
           );
   }
