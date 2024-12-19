@@ -67,6 +67,7 @@ flutter_launcher_icons:
   min_sdk_android: 34 # android min sdk min:16, default 21
   adaptive_icon_background: "#000000" # only available for Android 8.0 devices and above
   adaptive_icon_foreground: "assets/icon/expense_manager.png" # only available for Android 8.0 devices and above
+  adaptive_icon_monochrome: "assets/icon/expense_manager.png" # only available for Android 8.0 devices and above
   windows:
     generate: true
     image_path: "assets/icon/expense_manager.png"
