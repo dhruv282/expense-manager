@@ -121,7 +121,18 @@ class _HomeState extends State<Home> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : const BottomNavBar(),
+          : expenseProvider.expenses.isNotEmpty
+              ? const BottomNavBar()
+              : Center(
+                  child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primaryContainer,
+                          border: Border.all(
+                              width: 2.0,
+                              color: Theme.of(context).colorScheme.primary),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: const Text('No data'))),
     );
   }
 }
