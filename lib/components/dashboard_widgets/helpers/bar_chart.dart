@@ -9,12 +9,14 @@ class BarChartWidget extends StatefulWidget {
       getBarChartGroupData;
   final Widget Function(double, TitleMeta) leftTitleWidgets;
   final Widget Function(double, TitleMeta) bottomTitleWidgets;
-  final BarTooltipItem? Function(BarChartGroupData, int, BarChartRodData, int) getTooltipItems;
+  final BarTooltipItem? Function(BarChartGroupData, int, BarChartRodData, int)
+      getTooltipItems;
   const BarChartWidget({
     super.key,
     required this.getBarChartGroupData,
     required this.leftTitleWidgets,
-    required this.bottomTitleWidgets, required this.getTooltipItems,
+    required this.bottomTitleWidgets,
+    required this.getTooltipItems,
   });
 
   @override

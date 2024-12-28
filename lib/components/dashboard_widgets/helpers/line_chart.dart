@@ -9,11 +9,13 @@ class LineChartWidget extends StatefulWidget {
   final Widget Function(double, TitleMeta) leftTitleWidgets;
   final Widget Function(double, TitleMeta) bottomTitleWidgets;
   final List<LineTooltipItem?> Function(List<LineBarSpot>) getTooltipItems;
-  const LineChartWidget(
-      {super.key,
-      required this.getLineBarData,
-      required this.leftTitleWidgets,
-      required this.bottomTitleWidgets, required this.getTooltipItems,});
+  const LineChartWidget({
+    super.key,
+    required this.getLineBarData,
+    required this.leftTitleWidgets,
+    required this.bottomTitleWidgets,
+    required this.getTooltipItems,
+  });
 
   @override
   State<StatefulWidget> createState() => _LineChartWidgetState();
