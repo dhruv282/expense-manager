@@ -80,6 +80,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
                 },
                 touchSpotThreshold: 15,
                 touchTooltipData: LineTouchTooltipData(
+                  fitInsideHorizontally: true,
                   getTooltipColor: (group) => Theme.of(context)
                       .colorScheme
                       .secondaryContainer
