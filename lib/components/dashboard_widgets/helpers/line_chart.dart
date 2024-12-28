@@ -41,6 +41,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
                   bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                           showTitles: true,
+                          interval: 1,
                           getTitlesWidget: widget.bottomTitleWidgets)),
                   topTitles: const AxisTitles(
                       sideTitles: SideTitles(showTitles: false)),
