@@ -61,7 +61,11 @@ class _HomeState extends State<Home> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _isDBConfigComplete().then((val) {
         if (val) {
-          _initializeExpenseProvider(context);
+          _initializeExpenseProvider(context).whenComplete(() {
+            setState(() {
+              _isLoading = false;
+            });
+          });
         } else {
           navigateToSettingsPage();
           showSnackBar(
@@ -77,7 +81,6 @@ class _HomeState extends State<Home> {
           'Failed to fetch DB Config',
           SnackBarColor.error,
         );
-      }).whenComplete(() {
         setState(() {
           _isLoading = false;
         });
@@ -115,7 +118,12 @@ class _HomeState extends State<Home> {
           ),
           IconButton(
               tooltip: 'Database Settings',
-              onPressed: navigateToSettingsPage,
+              onPressed: () {
+                setState(() {
+                  _isLoading = true;
+                });
+                navigateToSettingsPage();
+              },
               icon: const Icon(Icons.settings)),
         ],
       ),
