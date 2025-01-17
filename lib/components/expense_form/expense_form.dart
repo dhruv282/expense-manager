@@ -73,6 +73,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                         obscureText: false,
                         icon: null,
                         onSaved: (value) {},
+                        onChanged: (value) {},
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Please enter a valid date';
@@ -110,6 +111,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                     obscureText: false,
                     icon: null,
                     onSaved: (value) {},
+                    onChanged: (value) {},
                     validator: checkEmptyInput,
                   ),
                   const SizedBox(height: 35),
@@ -127,6 +129,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                     obscureText: false,
                     icon: null,
                     onSaved: (value) {},
+                    onChanged: (value) {},
                     validator: checkEmptyInput,
                   ),
                   const SizedBox(height: 35),

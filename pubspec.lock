@@ -137,6 +137,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.7"
+  fading_edge_scrollview:
+    dependency: "direct main"
+    description:
+      name: fading_edge_scrollview
+      sha256: "1f84fe3ea8e251d00d5735e27502a6a250e4aa3d3b330d3fdcb475af741464ef"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.1"
   fake_async:
     dependency: transitive
     description:
@@ -166,6 +174,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_date_range_picker:
+    dependency: "direct main"
+    description:
+      name: flutter_date_range_picker
+      sha256: a8f8f4e11721e9d1bcc42e143129676488c5724136038670211865fc28ff779f
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   flutter_launcher_icons:
     dependency: "direct main"
     description:
@@ -344,6 +360,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.12.0"
+  multi_dropdown:
+    dependency: "direct main"
+    description:
+      name: multi_dropdown
+      sha256: da25f6defdc62aaf8ce0842d31ff7875fad29aeb13f5b2de9e157a06d53f4b74
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.1"
   nested:
     dependency: transitive
     description:

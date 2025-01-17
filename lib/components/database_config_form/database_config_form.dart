@@ -92,6 +92,7 @@ class _DatabaseConfigFormState extends State<DatabaseConfigForm> {
                     obscureText: false,
                     icon: null,
                     onSaved: (value) {},
+                    onChanged: (value) {},
                     validator: (value) {
                       return checkEmptyInput(value);
                     },
@@ -108,6 +109,7 @@ class _DatabaseConfigFormState extends State<DatabaseConfigForm> {
                     obscureText: false,
                     icon: null,
                     onSaved: (value) {},
+                    onChanged: (value) {},
                     validator: (value) {
                       return checkEmptyInput(value);
                     },
@@ -125,6 +127,7 @@ class _DatabaseConfigFormState extends State<DatabaseConfigForm> {
                     obscureText: false,
                     icon: null,
                     onSaved: (value) {},
+                    onChanged: (value) {},
                     validator: (value) {
                       return checkEmptyInput(value);
                     },
@@ -142,6 +145,7 @@ class _DatabaseConfigFormState extends State<DatabaseConfigForm> {
                     obscureText: false,
                     icon: null,
                     onSaved: (value) {},
+                    onChanged: (value) {},
                     validator: (value) {
                       return checkEmptyInput(value);
                     },
@@ -159,6 +163,7 @@ class _DatabaseConfigFormState extends State<DatabaseConfigForm> {
                     obscureText: true,
                     icon: null,
                     onSaved: (value) {},
+                    onChanged: (value) {},
                     validator: (value) {
                       return checkEmptyInput(value);
                     },
