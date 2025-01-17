@@ -32,6 +32,7 @@ class _DataTableFilterState extends State<DataTableFilter> {
   double largestAmount = 0;
   final _activeFiltersScrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
+  final _filterSnapShot = Map<String, String>();
   final _descriptionFilterController = TextEditingController();
   final _categoryFilterController = MultiSelectController<String>();
   final _ownerFilterController = MultiSelectController<String>();
@@ -118,6 +119,47 @@ class _DataTableFilterState extends State<DataTableFilter> {
         .toList();
   }
 
+  void createFilterSnapShot() {
+    _filterSnapShot["dateRangeLow"] = _dateRangeFilter.item1.text;
+    _filterSnapShot["dateRangeHigh"] = _dateRangeFilter.item2.text;
+    _filterSnapShot["description"] = _descriptionFilterController.text;
+    _filterSnapShot["category"] =
+        _categoryFilterController.selectedItems.map((v) => v.value).join(":");
+    _filterSnapShot["owner"] =
+        _ownerFilterController.selectedItems.map((v) => v.value).join(":");
+    _filterSnapShot["costRangeLow"] = _costRangeFilter.item1.text;
+    _filterSnapShot["costRangeHigh"] = _costRangeFilter.item2.text;
+  }
+
+  void resetFiltersToSnapShot() {
+    _dateRangeFilter.item1.text = _filterSnapShot["dateRangeLow"] ?? "";
+    _dateRangeFilter.item2.text = _filterSnapShot["dateRangeHigh"] ?? "";
+    _descriptionFilterController.text = _filterSnapShot["description"] ?? "";
+
+    _categoryFilterController.clearAll();
+    final snapShotCategories = _filterSnapShot["category"];
+    if (snapShotCategories != null) {
+      final snapShotCategoriesList = snapShotCategories.split(":");
+      _categoryFilterController
+          .selectWhere((v) => snapShotCategoriesList.contains(v.label));
+      _categoryFilterController
+          .unselectWhere((v) => !snapShotCategoriesList.contains(v.label));
+    }
+
+    _ownerFilterController.clearAll();
+    final snapShotOwners = _filterSnapShot["owner"];
+    if (snapShotOwners != null) {
+      final snapShotOwnersList = snapShotOwners.split(":");
+      _ownerFilterController
+          .selectWhere((v) => snapShotOwnersList.contains(v.label));
+      _ownerFilterController
+          .unselectWhere((v) => !snapShotOwnersList.contains(v.label));
+    }
+
+    _costRangeFilter.item1.text = _filterSnapShot["costRangeLow"] ?? "";
+    _costRangeFilter.item2.text = _filterSnapShot["costRangeHigh"] ?? "";
+  }
+
   void processFilters() {
     var filteredData = widget.unFilteredData;
 
@@ -192,266 +234,252 @@ class _DataTableFilterState extends State<DataTableFilter> {
           onPressed: () {
             showDialog(
                 context: context,
-                builder: (context) => Dialog(
-                      child: SingleChildScrollView(
-                          child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Form(
-                                key: _formKey,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Title(
-                                        color: Theme.of(context)
-                                            .textTheme
-                                            .displayLarge!
-                                            .color!,
-                                        child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              'Filter By',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleMedium,
-                                            ))),
-                                    const SizedBox(height: 20),
-                                    DateRangeFormField(
-                                      builder: (context, dateRange) => Text(
-                                          (_dateRangeFilter
-                                                      .item1.text.isEmpty ||
-                                                  _dateRangeFilter
-                                                      .item2.text.isEmpty)
-                                              ? ''
-                                              : "${_dateRangeFilter.item1.text} - ${_dateRangeFilter.item2.text}"),
-                                      decoration: const InputDecoration(
-                                        border: OutlineInputBorder(),
-                                        labelText: "Date",
-                                      ),
-                                      pickerBuilder: (context,
-                                              onDateRangeChanged) =>
-                                          Container(
-                                              decoration: BoxDecoration(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .surfaceContainerHigh,
-                                                  borderRadius:
-                                                      const BorderRadius.only(
-                                                    topLeft: Radius.circular(6),
-                                                    topRight:
-                                                        Radius.circular(6),
-                                                  )),
-                                              child: DateRangePickerWidget(
-                                                height: 320,
-                                                theme: CalendarTheme(
-                                                  selectedColor:
-                                                      Theme.of(context)
-                                                          .colorScheme
-                                                          .primaryContainer,
-                                                  inRangeColor:
-                                                      Theme.of(context)
-                                                          .colorScheme
-                                                          .primaryContainer,
-                                                  inRangeTextStyle:
-                                                      calendarTextStyle,
-                                                  selectedTextStyle:
-                                                      calendarTextStyle,
-                                                  dayNameTextStyle:
-                                                      calendarTextStyle,
-                                                  todayTextStyle:
-                                                      calendarTextStyle,
-                                                  defaultTextStyle:
-                                                      calendarTextStyle,
-                                                  disabledTextStyle:
-                                                      calendarTextStyle,
-                                                  radius: 25,
-                                                  tileSize: calendarTileSize,
-                                                ),
-                                                doubleMonth: false,
-                                                onDateRangeChanged:
-                                                    (dateRange) {
-                                                  if (dateRange != null) {
-                                                    _dateRangeFilter
-                                                            .item1.text =
-                                                        dateFormatter.format(
-                                                            dateRange.start);
-                                                    _dateRangeFilter
-                                                            .item2.text =
-                                                        dateFormatter.format(
-                                                            dateRange.end);
-                                                  }
-                                                  onDateRangeChanged(dateRange);
-                                                },
-                                              )),
-                                      showDateRangePicker: (
-                                              {dialogFooterBuilder,
-                                              required pickerBuilder,
-                                              required widgetContext}) =>
-                                          showDateRangePickerDialogOnWidget(
-                                              widgetContext: widgetContext,
-                                              pickerBuilder: pickerBuilder,
-                                              dialogFooterBuilder: (
-                                                      {selectedDateRange}) =>
-                                                  Container(
-                                                      decoration: BoxDecoration(
-                                                          color: Theme.of(
-                                                                  context)
-                                                              .colorScheme
-                                                              .surfaceContainerHigh,
-                                                          borderRadius:
-                                                              const BorderRadius
-                                                                  .only(
-                                                            bottomLeft:
-                                                                Radius.circular(
-                                                                    6),
-                                                            bottomRight:
-                                                                Radius.circular(
-                                                                    6),
-                                                          )),
-                                                      alignment:
-                                                          AlignmentDirectional
-                                                              .centerEnd,
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              5),
-                                                      width:
-                                                          7 * calendarTileSize,
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .end,
-                                                        children: [
-                                                          TextButton(
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      widgetContext)
-                                                                  .pop();
-                                                            },
-                                                            child: const Text(
-                                                                "Cancel"),
-                                                          ),
-                                                          const SizedBox(
-                                                              width: 10),
-                                                          FilledButton(
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      widgetContext)
-                                                                  .pop(
-                                                                      selectedDateRange);
-                                                            },
-                                                            child: const Text(
-                                                                "Confirm"),
-                                                          ),
-                                                        ],
-                                                      ))),
+                builder: (context) {
+                  createFilterSnapShot();
+                  return Dialog(
+                    child: SingleChildScrollView(
+                        child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Title(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .displayLarge!
+                                          .color!,
+                                      child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            'Filter By',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium,
+                                          ))),
+                                  const SizedBox(height: 20),
+                                  DateRangeFormField(
+                                    builder: (context, dateRange) => Text(
+                                        (_dateRangeFilter.item1.text.isEmpty ||
+                                                _dateRangeFilter
+                                                    .item2.text.isEmpty)
+                                            ? ''
+                                            : "${_dateRangeFilter.item1.text} - ${_dateRangeFilter.item2.text}"),
+                                    decoration: const InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      labelText: "Date",
                                     ),
-                                    const SizedBox(height: 20),
-                                    CustomFormField(
-                                      enabled: true,
-                                      maxCharacters: null,
-                                      keyboardType: TextInputType.text,
-                                      inputFormatter:
-                                          FilteringTextInputFormatter
-                                              .singleLineFormatter,
-                                      controller: _descriptionFilterController,
-                                      labelText: 'Description',
-                                      hintText: 'Filter by description',
-                                      obscureText: false,
-                                      icon: null,
-                                      onSaved: (value) {},
-                                      onChanged: (value) {},
-                                      validator: (value) => null,
-                                    ),
-                                    const SizedBox(height: 20),
-                                    CustomFormMultiDropdown(
-                                      labelText: 'Category',
-                                      hintText: 'Filter by category',
-                                      options: expenseProvider.categoryOptions,
-                                      validator: (value) => null,
-                                      controller: _categoryFilterController,
-                                    ),
-                                    const SizedBox(height: 20),
-                                    CustomFormMultiDropdown(
-                                      labelText: 'Owner',
-                                      hintText: 'Filter by owner',
-                                      options: expenseProvider.ownerOptions,
-                                      validator: (value) => null,
-                                      controller: _ownerFilterController,
-                                    ),
-                                    const SizedBox(height: 20),
-                                    Text(
-                                      "Cost",
-                                      style:
-                                          Theme.of(context).textTheme.bodyLarge,
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Row(children: [
-                                      Expanded(
-                                          child: CustomFormField(
-                                              enabled: true,
-                                              maxCharacters: null,
-                                              labelText: "From",
-                                              hintText: "Cost Filter Range Low",
-                                              icon: null,
-                                              keyboardType: const TextInputType
-                                                  .numberWithOptions(
-                                                  decimal: true),
-                                              inputFormatter:
-                                                  CurrencyTextInputFormatter
-                                                      .simpleCurrency(
-                                                          enableNegative:
-                                                              false),
-                                              controller:
-                                                  _costRangeFilter.item1,
-                                              onSaved: (val) {},
-                                              onChanged: (val) {},
-                                              validator: (val) => null,
-                                              obscureText: false)),
-                                      const SizedBox(width: 20),
-                                      Expanded(
-                                          child: CustomFormField(
-                                              enabled: true,
-                                              maxCharacters: null,
-                                              labelText: "To",
-                                              hintText:
-                                                  "Cost Filter Range High",
-                                              icon: null,
-                                              keyboardType: const TextInputType
-                                                  .numberWithOptions(
-                                                  decimal: true),
-                                              inputFormatter:
-                                                  CurrencyTextInputFormatter
-                                                      .simpleCurrency(
-                                                          enableNegative:
-                                                              false),
-                                              controller:
-                                                  _costRangeFilter.item2,
-                                              onSaved: (val) {},
-                                              onChanged: (val) {},
-                                              validator: (val) => null,
-                                              obscureText: false)),
-                                    ]),
-                                    const Divider(),
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
+                                    pickerBuilder: (context,
+                                            onDateRangeChanged) =>
+                                        Container(
+                                            decoration: BoxDecoration(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .surfaceContainerHigh,
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                  topLeft: Radius.circular(6),
+                                                  topRight: Radius.circular(6),
+                                                )),
+                                            child: DateRangePickerWidget(
+                                              height: 320,
+                                              theme: CalendarTheme(
+                                                selectedColor: Theme.of(context)
+                                                    .colorScheme
+                                                    .primaryContainer,
+                                                inRangeColor: Theme.of(context)
+                                                    .colorScheme
+                                                    .primaryContainer,
+                                                inRangeTextStyle:
+                                                    calendarTextStyle,
+                                                selectedTextStyle:
+                                                    calendarTextStyle,
+                                                dayNameTextStyle:
+                                                    calendarTextStyle,
+                                                todayTextStyle:
+                                                    calendarTextStyle,
+                                                defaultTextStyle:
+                                                    calendarTextStyle,
+                                                disabledTextStyle:
+                                                    calendarTextStyle,
+                                                radius: 25,
+                                                tileSize: calendarTileSize,
+                                              ),
+                                              doubleMonth: false,
+                                              onDateRangeChanged: (dateRange) {
+                                                if (dateRange != null) {
+                                                  _dateRangeFilter.item1.text =
+                                                      dateFormatter.format(
+                                                          dateRange.start);
+                                                  _dateRangeFilter.item2.text =
+                                                      dateFormatter.format(
+                                                          dateRange.end);
+                                                }
+                                                onDateRangeChanged(dateRange);
                                               },
-                                              child: const Text('Cancel')),
-                                          const SizedBox(width: 10),
-                                          FilledButton(
-                                              onPressed: () {
-                                                processFilters();
-                                                Navigator.pop(context);
-                                              },
-                                              child: const Text('Apply')),
-                                        ]),
-                                  ],
-                                ),
-                              ))),
-                    ));
+                                            )),
+                                    showDateRangePicker: (
+                                            {dialogFooterBuilder,
+                                            required pickerBuilder,
+                                            required widgetContext}) =>
+                                        showDateRangePickerDialogOnWidget(
+                                            widgetContext: widgetContext,
+                                            pickerBuilder: pickerBuilder,
+                                            dialogFooterBuilder: (
+                                                    {selectedDateRange}) =>
+                                                Container(
+                                                    decoration: BoxDecoration(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .surfaceContainerHigh,
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                .only(
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  6),
+                                                          bottomRight:
+                                                              Radius.circular(
+                                                                  6),
+                                                        )),
+                                                    alignment:
+                                                        AlignmentDirectional
+                                                            .centerEnd,
+                                                    padding:
+                                                        const EdgeInsets.all(5),
+                                                    width: 7 * calendarTileSize,
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    widgetContext)
+                                                                .pop();
+                                                          },
+                                                          child: const Text(
+                                                              "Cancel"),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 10),
+                                                        FilledButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    widgetContext)
+                                                                .pop(
+                                                                    selectedDateRange);
+                                                          },
+                                                          child: const Text(
+                                                              "Confirm"),
+                                                        ),
+                                                      ],
+                                                    ))),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  CustomFormField(
+                                    enabled: true,
+                                    maxCharacters: null,
+                                    keyboardType: TextInputType.text,
+                                    inputFormatter: FilteringTextInputFormatter
+                                        .singleLineFormatter,
+                                    controller: _descriptionFilterController,
+                                    labelText: 'Description',
+                                    hintText: 'Filter by description',
+                                    obscureText: false,
+                                    icon: null,
+                                    onSaved: (value) {},
+                                    onChanged: (value) {},
+                                    validator: (value) => null,
+                                  ),
+                                  const SizedBox(height: 20),
+                                  CustomFormMultiDropdown(
+                                    labelText: 'Category',
+                                    hintText: 'Filter by category',
+                                    options: expenseProvider.categoryOptions,
+                                    validator: (value) => null,
+                                    controller: _categoryFilterController,
+                                  ),
+                                  const SizedBox(height: 20),
+                                  CustomFormMultiDropdown(
+                                    labelText: 'Owner',
+                                    hintText: 'Filter by owner',
+                                    options: expenseProvider.ownerOptions,
+                                    validator: (value) => null,
+                                    controller: _ownerFilterController,
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Text(
+                                    "Cost",
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(children: [
+                                    Expanded(
+                                        child: CustomFormField(
+                                            enabled: true,
+                                            maxCharacters: null,
+                                            labelText: "From",
+                                            hintText: "Cost Filter Range Low",
+                                            icon: null,
+                                            keyboardType: const TextInputType
+                                                .numberWithOptions(
+                                                decimal: true),
+                                            inputFormatter:
+                                                CurrencyTextInputFormatter
+                                                    .simpleCurrency(
+                                                        enableNegative: false),
+                                            controller: _costRangeFilter.item1,
+                                            onSaved: (val) {},
+                                            onChanged: (val) {},
+                                            validator: (val) => null,
+                                            obscureText: false)),
+                                    const SizedBox(width: 20),
+                                    Expanded(
+                                        child: CustomFormField(
+                                            enabled: true,
+                                            maxCharacters: null,
+                                            labelText: "To",
+                                            hintText: "Cost Filter Range High",
+                                            icon: null,
+                                            keyboardType: const TextInputType
+                                                .numberWithOptions(
+                                                decimal: true),
+                                            inputFormatter:
+                                                CurrencyTextInputFormatter
+                                                    .simpleCurrency(
+                                                        enableNegative: false),
+                                            controller: _costRangeFilter.item2,
+                                            onSaved: (val) {},
+                                            onChanged: (val) {},
+                                            validator: (val) => null,
+                                            obscureText: false)),
+                                  ]),
+                                  const Divider(),
+                                  Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        TextButton(
+                                            onPressed: () {
+                                              resetFiltersToSnapShot();
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('Cancel')),
+                                        const SizedBox(width: 10),
+                                        FilledButton(
+                                            onPressed: () {
+                                              processFilters();
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('Apply')),
+                                      ]),
+                                ],
+                              ),
+                            ))),
+                  );
+                });
           },
           child: const Icon(Icons.filter_list)),
       Expanded(
