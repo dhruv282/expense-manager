@@ -479,6 +479,8 @@ class _DataTableFilterState extends State<DataTableFilter> {
                               ),
                             ))),
                   );
+                }).then((val) {
+                  resetFiltersToSnapShot();
                 });
           },
           child: const Icon(Icons.filter_list)),
