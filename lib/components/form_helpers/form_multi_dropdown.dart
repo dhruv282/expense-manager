@@ -43,7 +43,7 @@ class _CustomFormMultiDropdownState extends State<CustomFormMultiDropdown> {
           hintText: widget.hintText,
         ),
         dropdownDecoration: DropdownDecoration(
-          backgroundColor: Theme.of(context).colorScheme.surface,
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
         ),
         dropdownItemDecoration: DropdownItemDecoration(
           selectedBackgroundColor:
