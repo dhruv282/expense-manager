@@ -28,6 +28,7 @@ class DataTableFilter extends StatefulWidget {
 class _DataTableFilterState extends State<DataTableFilter> {
   final currencyFormatter = NumberFormat.simpleCurrency();
   final dateFormatter = DateFormat('MM/dd/yyyy');
+  int? currentYear;
   List<Widget> activeFilters = [];
   double largestAmount = 0;
   final _activeFiltersScrollController = ScrollController();
@@ -220,6 +221,13 @@ class _DataTableFilterState extends State<DataTableFilter> {
         .reduce((value, element) => value.cost > element.cost ? value : element)
         .cost;
 
+    if (currentYear != expenseProvider.selectedYear) {
+      currentYear = expenseProvider.selectedYear;
+      _filterSnapShot.clear();
+      resetFiltersToSnapShot();
+      activeFilters = [];
+    }
+
     if (_costRangeFilter.item1.text.isEmpty) {
       _costRangeFilter.item1.text = currencyFormatter.format(0);
     }
@@ -229,87 +237,92 @@ class _DataTableFilterState extends State<DataTableFilter> {
 
     return Row(children: [
       TextButton(
-          onPressed: () {
-            showDialog(
-                context: context,
-                builder: (context) {
-                  createFilterSnapShot();
-                  return Dialog(
-                    child: SingleChildScrollView(
-                        child: Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Form(
-                              key: _formKey,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                      Title(
-                                          color: Theme.of(context)
-                                              .textTheme
-                                              .displayLarge!
-                                              .color!,
-                                          child: Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                'Filter By',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .titleMedium,
-                                              ))),
-                                      DateRangeFilter(
-                                          dateRangeFilter: _dateRangeFilter),
-                                      DescriptionFilter(
-                                          descriptionFilterController:
-                                              _descriptionFilterController),
-                                      CategoryFilter(
-                                          categoryFilterController:
-                                              _categoryFilterController),
-                                      OwnerFilter(
-                                          ownerFilterController:
-                                              _ownerFilterController),
-                                      CostFilter(
-                                          costRangeFilter: _costRangeFilter),
-                                    ]
-                                        .expand((f) =>
-                                            [f, const SizedBox(height: 20)])
-                                        .toList() +
-                                    [
-                                      const Divider(),
-                                      Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            TextButton(
-                                                onPressed: () {
-                                                  resetFiltersToSnapShot();
-                                                  Navigator.pop(context);
-                                                },
-                                                child: const Text('Cancel')),
-                                            const SizedBox(width: 10),
-                                            FilledButton(
-                                                onPressed: () {
-                                                  createFilterSnapShot();
-                                                  processFilters();
-                                                  Navigator.pop(context);
-                                                },
-                                                child: const Text('Apply')),
-                                          ]),
-                                    ],
-                              ),
-                            ))),
-                  );
-                }).then((val) {
-              resetFiltersToSnapShot();
-            });
-          },
-          child: const Icon(Icons.filter_list)),
+        child: const Icon(Icons.filter_list),
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (context) {
+                createFilterSnapShot();
+                return Dialog(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                                Title(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .displayLarge!
+                                      .color!,
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      'Filter By',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium,
+                                    ),
+                                  ),
+                                ),
+                                DateRangeFilter(
+                                    dateRangeFilter: _dateRangeFilter),
+                                DescriptionFilter(
+                                    descriptionFilterController:
+                                        _descriptionFilterController),
+                                CategoryFilter(
+                                    categoryFilterController:
+                                        _categoryFilterController),
+                                OwnerFilter(
+                                    ownerFilterController:
+                                        _ownerFilterController),
+                                CostFilter(costRangeFilter: _costRangeFilter),
+                              ]
+                                  .expand(
+                                      (f) => [f, const SizedBox(height: 20)])
+                                  .toList() +
+                              [
+                                const Divider(),
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      TextButton(
+                                          onPressed: () {
+                                            resetFiltersToSnapShot();
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text('Cancel')),
+                                      const SizedBox(width: 10),
+                                      FilledButton(
+                                          onPressed: () {
+                                            createFilterSnapShot();
+                                            processFilters();
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text('Apply')),
+                                    ]),
+                              ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }).then((val) {
+            resetFiltersToSnapShot();
+          });
+        },
+      ),
       Expanded(
-          child: FadingEdgeScrollView.fromScrollView(
-              child: ListView(
-        scrollDirection: Axis.horizontal,
-        controller: _activeFiltersScrollController,
-        children: activeFilters,
-      )))
+        child: FadingEdgeScrollView.fromScrollView(
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            controller: _activeFiltersScrollController,
+            children: activeFilters,
+          ),
+        ),
+      )
     ]);
   }
 }
