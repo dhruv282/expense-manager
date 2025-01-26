@@ -1,6 +1,8 @@
+import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_date_range_picker/flutter_date_range_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
 class DateRangeFilter extends StatelessWidget {
@@ -10,6 +12,7 @@ class DateRangeFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final expenseProvider = Provider.of<ExpenseProvider>(context);
     final calendarTextStyle = Theme.of(context).textTheme.bodyMedium!;
     const double calendarTileSize = 35;
     return DateRangeFormField(
@@ -39,11 +42,15 @@ class DateRangeFilter extends StatelessWidget {
               dayNameTextStyle: calendarTextStyle,
               todayTextStyle: calendarTextStyle,
               defaultTextStyle: calendarTextStyle,
-              disabledTextStyle: calendarTextStyle,
+              disabledTextStyle: calendarTextStyle
+                  .merge(TextStyle(color: Theme.of(context).disabledColor)),
               radius: 25,
               tileSize: calendarTileSize,
             ),
             doubleMonth: false,
+            initialDisplayedDate: expenseProvider.expenses.firstOrNull?.date,
+            minDate: expenseProvider.expenses.lastOrNull?.date,
+            maxDate: expenseProvider.expenses.firstOrNull?.date,
             onDateRangeChanged: (dateRange) {
               if (dateRange != null) {
                 dateRangeFilter.item1.text =
