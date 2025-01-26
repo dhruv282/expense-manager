@@ -14,6 +14,7 @@ class ExpensePage extends StatefulWidget {
 }
 
 class _ExpensePageState extends State<ExpensePage> {
+  int? unfilteredExpenseDataHashCode;
   List<ExpenseData> expenseData = [];
   bool initialLoad = true;
   bool sortAscending = true;
@@ -45,9 +46,11 @@ class _ExpensePageState extends State<ExpensePage> {
       });
     }
 
-    if (initialLoad) {
+    if (initialLoad ||
+        expenseProvider.expenses.hashCode != unfilteredExpenseDataHashCode) {
       setState(() {
         expenseData = expenseProvider.expenses;
+        unfilteredExpenseDataHashCode = expenseProvider.expenses.hashCode;
         initialLoad = false;
       });
     }
@@ -117,7 +120,6 @@ class _ExpensePageState extends State<ExpensePage> {
         DataColumn2(
           label: const Text('Cost'),
           size: ColumnSize.S,
-          numeric: true,
           onSort: (columnIndex, ascending) =>
               sort<num>((d) => d.cost, columnIndex, ascending),
         ),
