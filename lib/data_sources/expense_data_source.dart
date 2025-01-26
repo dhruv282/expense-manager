@@ -10,12 +10,9 @@ import 'package:provider/provider.dart';
 
 class ExpenseDataSource extends DataTableSource {
   final BuildContext context;
-  late List<ExpenseData> _expenseData;
+  final List<ExpenseData> _expenseData;
 
-  ExpenseDataSource(this.context) {
-    final expenseProvider = Provider.of<ExpenseProvider>(context);
-    _expenseData = expenseProvider.expenses;
-  }
+  ExpenseDataSource(this.context, this._expenseData);
 
   @override
   DataRow2? getRow(int index) {

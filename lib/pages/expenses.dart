@@ -1,4 +1,5 @@
 import 'package:data_table_2/data_table_2.dart';
+import 'package:expense_manager/components/data_table_filter/data_table_filter.dart';
 import 'package:expense_manager/data/expense_data.dart';
 import 'package:expense_manager/data_sources/expense_data_source.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
@@ -13,6 +14,9 @@ class ExpensePage extends StatefulWidget {
 }
 
 class _ExpensePageState extends State<ExpensePage> {
+  int? unfilteredExpenseDataHashCode;
+  List<ExpenseData> expenseData = [];
+  bool initialLoad = true;
   bool sortAscending = true;
   int? sortColumnIndex;
   final ScrollController controller = ScrollController();
@@ -42,8 +46,25 @@ class _ExpensePageState extends State<ExpensePage> {
       });
     }
 
+    if (initialLoad ||
+        expenseProvider.expenses.hashCode != unfilteredExpenseDataHashCode) {
+      setState(() {
+        expenseData = expenseProvider.expenses;
+        unfilteredExpenseDataHashCode = expenseProvider.expenses.hashCode;
+        initialLoad = false;
+      });
+    }
+
     return PaginatedDataTable2(
-      source: ExpenseDataSource(context),
+      source: ExpenseDataSource(context, expenseData),
+      header: DataTableFilter(
+        unFilteredData: expenseProvider.expenses,
+        onFilter: (expenses) {
+          setState(() {
+            expenseData = expenses;
+          });
+        },
+      ),
       sortColumnIndex: sortColumnIndex,
       sortAscending: sortAscending,
       sortArrowIcon: Icons.keyboard_arrow_up,
@@ -99,7 +120,6 @@ class _ExpensePageState extends State<ExpensePage> {
         DataColumn2(
           label: const Text('Cost'),
           size: ColumnSize.S,
-          numeric: true,
           onSort: (columnIndex, ascending) =>
               sort<num>((d) => d.cost, columnIndex, ascending),
         ),

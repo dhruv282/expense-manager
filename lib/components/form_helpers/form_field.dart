@@ -13,6 +13,7 @@ class CustomFormField extends StatefulWidget {
 
   final TextEditingController controller;
   final void Function(String?) onSaved;
+  final void Function(String?) onChanged;
   final String? Function(String?) validator;
 
   const CustomFormField({
@@ -26,6 +27,7 @@ class CustomFormField extends StatefulWidget {
     required this.inputFormatter,
     required this.controller,
     required this.onSaved,
+    required this.onChanged,
     required this.validator,
     required this.obscureText,
   });
@@ -66,6 +68,7 @@ class _CustomFormFieldState extends State<CustomFormField> {
             : null,
       ),
       onSaved: widget.onSaved,
+      onChanged: widget.onChanged,
       validator: widget.validator,
     );
   }
