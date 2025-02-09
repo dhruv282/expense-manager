@@ -58,7 +58,7 @@ class ExpenseVsIncomeLineChart extends DashboardWidget {
           return Container();
         }
         return SideTitleWidget(
-          axisSide: meta.axisSide,
+          meta: meta,
           child: Text(
             compactCurrencyFormatter.format(value),
             style: const TextStyle(
@@ -72,7 +72,7 @@ class ExpenseVsIncomeLineChart extends DashboardWidget {
         var text = DateFormat('MMM').format(DateTime(0, value.toInt()));
 
         return SideTitleWidget(
-          axisSide: meta.axisSide,
+          meta: meta,
           space: 4,
           child: Text(text,
               style: const TextStyle(
