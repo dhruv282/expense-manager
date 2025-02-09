@@ -198,12 +198,11 @@ class _ExpenseFormState extends State<ExpenseForm> {
               }).catchError((error) {
                 logger.e(error);
                 widget.onError();
-              }).whenComplete(() {
-                setState(() {
-                  isSubmitting = false;
-                });
               });
             }
+            setState(() {
+              isSubmitting = false;
+            });
           }
         },
         child: Text(

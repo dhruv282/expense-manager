@@ -178,10 +178,6 @@ class _DatabaseConfigFormState extends State<DatabaseConfigForm> {
                       }
                     }
 
-                    setState(() {
-                      isSubmitting = false;
-                    });
-
                     if (completedSuccessfully) {
                       try {
                         var dbConfig = await dbConfigStore.getDatabaseConfig();
@@ -202,6 +198,9 @@ class _DatabaseConfigFormState extends State<DatabaseConfigForm> {
                       }
                     }
                   }
+                  setState(() {
+                    isSubmitting = false;
+                  });
                 }
               },
               child: Text(
