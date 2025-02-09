@@ -45,6 +45,7 @@ class ExpenseDataSource extends DataTableSource {
                 TextButton(
                   onPressed: () {
                     expenseProvider.deleteExpense(expense).then((_) {
+                      if (!context.mounted) return;
                       showSnackBar(
                         context,
                         'Expense deleted!',
@@ -53,6 +54,7 @@ class ExpenseDataSource extends DataTableSource {
                       Navigator.of(context).pop();
                     }).catchError((e) {
                       logger.e(e);
+                      if (!context.mounted) return;
                       showSnackBar(
                         context,
                         'Failed to delete expense :(',

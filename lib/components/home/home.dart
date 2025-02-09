@@ -36,6 +36,7 @@ class _HomeState extends State<Home> {
   Future<void> _initializeExpenseProvider(BuildContext context) async {
     await _initDBConnection().then((res) async {
       if (res) {
+        if (!context.mounted) return;
         return await Provider.of<ExpenseProvider>(context, listen: false)
             .initialize();
       }

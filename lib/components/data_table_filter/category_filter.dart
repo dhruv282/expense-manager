@@ -15,7 +15,6 @@ class CategoryFilter extends StatelessWidget {
       labelText: 'Category',
       hintText: 'Filter by category',
       options: expenseProvider.categoryOptions,
-      validator: (value) => null,
       controller: categoryFilterController,
     );
   }

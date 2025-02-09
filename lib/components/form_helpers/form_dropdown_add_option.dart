@@ -39,11 +39,13 @@ Future showAddDialog(context, String dialogTitle, String dialogHintText,
                 String val = controller.text.trim();
                 if (val.isNotEmpty) {
                   onAdd(val).then((value) {
-                    Navigator.of(context).pop();
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
                   }).catchError((error) {
-                      logger.e(error);
-                      onAddError();
-                    });
+                    logger.e(error);
+                    onAddError();
+                  });
                 }
               },
               child: const Text('Add'),

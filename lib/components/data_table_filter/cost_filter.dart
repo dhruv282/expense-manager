@@ -19,37 +19,23 @@ class CostFilter extends StatelessWidget {
         children: [
           Expanded(
               child: CustomFormField(
-                  enabled: true,
-                  maxCharacters: null,
-                  labelText: "From",
-                  hintText: "Cost Filter Range Low",
-                  icon: null,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                  inputFormatter: CurrencyTextInputFormatter.simpleCurrency(
-                      enableNegative: false),
-                  controller: costRangeFilter.item1,
-                  onSaved: (val) {},
-                  onChanged: (val) {},
-                  validator: (val) => null,
-                  obscureText: false)),
+            labelText: "From",
+            hintText: "Cost Filter Range Low",
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatter: CurrencyTextInputFormatter.simpleCurrency(
+                enableNegative: false),
+            controller: costRangeFilter.item1,
+          )),
           const SizedBox(width: 20),
           Expanded(
               child: CustomFormField(
-                  enabled: true,
-                  maxCharacters: null,
-                  labelText: "To",
-                  hintText: "Cost Filter Range High",
-                  icon: null,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                  inputFormatter: CurrencyTextInputFormatter.simpleCurrency(
-                      enableNegative: false),
-                  controller: costRangeFilter.item2,
-                  onSaved: (val) {},
-                  onChanged: (val) {},
-                  validator: (val) => null,
-                  obscureText: false)),
+            labelText: "To",
+            hintText: "Cost Filter Range High",
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatter: CurrencyTextInputFormatter.simpleCurrency(
+                enableNegative: false),
+            controller: costRangeFilter.item2,
+          )),
         ],
       )
     ]);

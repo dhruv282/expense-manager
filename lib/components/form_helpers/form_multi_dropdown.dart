@@ -3,17 +3,17 @@ import 'package:multi_dropdown/multi_dropdown.dart';
 
 class CustomFormMultiDropdown extends StatefulWidget {
   final List<String> options;
-  final String labelText;
-  final String hintText;
+  final String? labelText;
+  final String? hintText;
   final MultiSelectController<String> controller;
-  final String? Function(List<DropdownItem<String>>?) validator;
+  final String? Function(List<DropdownItem<String>>?)? validator;
   const CustomFormMultiDropdown({
     super.key,
     required this.options,
-    required this.labelText,
-    required this.validator,
     required this.controller,
-    required this.hintText,
+    this.labelText,
+    this.validator,
+    this.hintText,
   });
 
   @override

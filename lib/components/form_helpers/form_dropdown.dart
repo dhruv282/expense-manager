@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class CustomFormDropdown extends StatefulWidget {
   final List<String> options;
-  final String labelText;
-  final String hintText;
+  final String? labelText;
+  final String? hintText;
   final IconData? icon;
-  final String? Function(String?) validator;
+  final String? Function(String?)? validator;
   final TextEditingController controller;
   final DropdownMenuItem<String>? addOption;
   final Function? onAddOptionSelect;
@@ -13,13 +13,13 @@ class CustomFormDropdown extends StatefulWidget {
   const CustomFormDropdown({
     super.key,
     required this.options,
-    required this.labelText,
-    required this.hintText,
-    required this.icon,
-    required this.validator,
     required this.controller,
-    required this.addOption,
-    required this.onAddOptionSelect,
+    this.labelText,
+    this.hintText,
+    this.icon,
+    this.validator,
+    this.addOption,
+    this.onAddOptionSelect,
   });
 
   @override

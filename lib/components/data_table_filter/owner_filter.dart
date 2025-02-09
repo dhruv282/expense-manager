@@ -15,7 +15,6 @@ class OwnerFilter extends StatelessWidget {
       labelText: 'Owner',
       hintText: 'Filter by owner',
       options: expenseProvider.ownerOptions,
-      validator: (value) => null,
       controller: ownerFilterController,
     );
   }

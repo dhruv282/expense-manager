@@ -61,7 +61,7 @@ class _BarChartWidgetState extends State<BarChartWidget> {
               getTooltipColor: (group) => Theme.of(context)
                   .colorScheme
                   .secondaryContainer
-                  .withOpacity(.80),
+                  .withValues(alpha: .80),
             ),
           ),
         )),

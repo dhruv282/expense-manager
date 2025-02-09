@@ -4,32 +4,32 @@ import 'package:flutter/services.dart';
 class CustomFormField extends StatefulWidget {
   final bool enabled;
   final int? maxCharacters;
-  final String labelText;
-  final String hintText;
+  final String? labelText;
+  final String? hintText;
   final IconData? icon;
-  final TextInputType keyboardType;
-  final TextInputFormatter inputFormatter;
+  final TextInputType? keyboardType;
+  final TextInputFormatter? inputFormatter;
   final bool obscureText;
 
-  final TextEditingController controller;
-  final void Function(String?) onSaved;
-  final void Function(String?) onChanged;
-  final String? Function(String?) validator;
+  final TextEditingController? controller;
+  final void Function(String?)? onSaved;
+  final void Function(String?)? onChanged;
+  final String? Function(String?)? validator;
 
   const CustomFormField({
     super.key,
-    required this.enabled,
-    required this.maxCharacters,
-    required this.labelText,
-    required this.hintText,
-    required this.icon,
-    required this.keyboardType,
-    required this.inputFormatter,
-    required this.controller,
-    required this.onSaved,
-    required this.onChanged,
-    required this.validator,
-    required this.obscureText,
+    this.labelText,
+    this.hintText,
+    this.keyboardType,
+    this.inputFormatter,
+    this.controller,
+    this.enabled = true,
+    this.obscureText = false,
+    this.maxCharacters,
+    this.icon,
+    this.onSaved,
+    this.onChanged,
+    this.validator,
   });
 
   @override
@@ -52,7 +52,8 @@ class _CustomFormFieldState extends State<CustomFormField> {
       obscureText: widget.obscureText ? _obscureText : false,
       maxLength: widget.maxCharacters,
       keyboardType: widget.keyboardType,
-      inputFormatters: [widget.inputFormatter],
+      inputFormatters:
+          widget.inputFormatter != null ? [widget.inputFormatter!] : [],
       controller: widget.controller,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),

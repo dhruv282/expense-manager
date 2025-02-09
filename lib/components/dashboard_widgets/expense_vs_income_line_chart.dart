@@ -39,8 +39,8 @@ class ExpenseVsIncomeLineChart extends DashboardWidget {
                     FlSpot(m.toDouble(), monthlyIncomeAndExpenses[m]!.item1))
                 .toList(),
             color: Colors.green,
-            belowBarData:
-                BarAreaData(show: true, color: Colors.green.withOpacity(0.3)),
+            belowBarData: BarAreaData(
+                show: true, color: Colors.green.withValues(alpha: 0.3)),
           ),
           LineChartBarData(
             spots: months
@@ -48,8 +48,8 @@ class ExpenseVsIncomeLineChart extends DashboardWidget {
                     FlSpot(m.toDouble(), monthlyIncomeAndExpenses[m]!.item2))
                 .toList(),
             color: Colors.red,
-            belowBarData:
-                BarAreaData(show: true, color: Colors.red.withOpacity(0.3)),
+            belowBarData: BarAreaData(
+                show: true, color: Colors.red.withValues(alpha: 0.3)),
           ),
         ];
       },

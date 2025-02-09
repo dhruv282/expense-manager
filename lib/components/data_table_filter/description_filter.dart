@@ -10,18 +10,11 @@ class DescriptionFilter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomFormField(
-      enabled: true,
-      maxCharacters: null,
       keyboardType: TextInputType.text,
       inputFormatter: FilteringTextInputFormatter.singleLineFormatter,
       controller: descriptionFilterController,
       labelText: 'Description',
       hintText: 'Filter by description',
-      obscureText: false,
-      icon: null,
-      onSaved: (value) {},
-      onChanged: (value) {},
-      validator: (value) => null,
     );
   }
 }

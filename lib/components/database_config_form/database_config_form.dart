@@ -81,79 +81,45 @@ class _DatabaseConfigFormState extends State<DatabaseConfigForm> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   CustomFormField(
-                    enabled: true,
-                    maxCharacters: null,
                     keyboardType: TextInputType.text,
                     inputFormatter:
                         FilteringTextInputFormatter.singleLineFormatter,
                     controller: formControllerMap[hostTextFormFieldLabel]!,
                     labelText: hostTextFormFieldLabel,
                     hintText: hostTextFormFieldHint,
-                    obscureText: false,
-                    icon: null,
-                    onSaved: (value) {},
-                    onChanged: (value) {},
-                    validator: (value) {
-                      return checkEmptyInput(value);
-                    },
+                    validator: checkEmptyInput,
                   ),
                   const SizedBox(height: 35),
                   CustomFormField(
-                    enabled: true,
-                    maxCharacters: null,
                     keyboardType: TextInputType.number,
                     inputFormatter: FilteringTextInputFormatter.digitsOnly,
                     controller: formControllerMap[portTextFormFieldLabel]!,
                     labelText: portTextFormFieldLabel,
                     hintText: portTextFormFieldHint,
-                    obscureText: false,
-                    icon: null,
-                    onSaved: (value) {},
-                    onChanged: (value) {},
-                    validator: (value) {
-                      return checkEmptyInput(value);
-                    },
+                    validator: checkEmptyInput,
                   ),
                   const SizedBox(height: 35),
                   CustomFormField(
-                    enabled: true,
-                    maxCharacters: null,
                     keyboardType: TextInputType.text,
                     inputFormatter:
                         FilteringTextInputFormatter.singleLineFormatter,
                     controller: formControllerMap[nameTextFormFieldLabel]!,
                     labelText: nameTextFormFieldLabel,
                     hintText: nameTextFormFieldHint,
-                    obscureText: false,
-                    icon: null,
-                    onSaved: (value) {},
-                    onChanged: (value) {},
-                    validator: (value) {
-                      return checkEmptyInput(value);
-                    },
+                    validator: checkEmptyInput,
                   ),
                   const SizedBox(height: 35),
                   CustomFormField(
-                    enabled: true,
-                    maxCharacters: null,
                     keyboardType: TextInputType.text,
                     inputFormatter:
                         FilteringTextInputFormatter.singleLineFormatter,
                     controller: formControllerMap[usernameTextFormFieldLabel]!,
                     labelText: usernameTextFormFieldLabel,
                     hintText: usernameTextFormFieldHint,
-                    obscureText: false,
-                    icon: null,
-                    onSaved: (value) {},
-                    onChanged: (value) {},
-                    validator: (value) {
-                      return checkEmptyInput(value);
-                    },
+                    validator: checkEmptyInput,
                   ),
                   const SizedBox(height: 35),
                   CustomFormField(
-                    enabled: true,
-                    maxCharacters: null,
                     keyboardType: TextInputType.text,
                     inputFormatter:
                         FilteringTextInputFormatter.singleLineFormatter,
@@ -161,12 +127,7 @@ class _DatabaseConfigFormState extends State<DatabaseConfigForm> {
                     labelText: passwordTextFormFieldLabel,
                     hintText: passwordTextFormFieldHint,
                     obscureText: true,
-                    icon: null,
-                    onSaved: (value) {},
-                    onChanged: (value) {},
-                    validator: (value) {
-                      return checkEmptyInput(value);
-                    },
+                    validator: checkEmptyInput,
                   ),
                   const SizedBox(height: 35),
                   CustomFormDropdown(
@@ -180,9 +141,6 @@ class _DatabaseConfigFormState extends State<DatabaseConfigForm> {
                       return null;
                     },
                     hintText: sslModeDropdownFieldHint,
-                    icon: null,
-                    addOption: null,
-                    onAddOptionSelect: null,
                   ),
                 ],
               ),

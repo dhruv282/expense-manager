@@ -62,18 +62,12 @@ class _ExpenseFormState extends State<ExpenseForm> {
                   Row(children: [
                     Expanded(
                       child: CustomFormField(
-                        enabled: true,
-                        maxCharacters: null,
                         keyboardType: TextInputType.datetime,
                         inputFormatter: DateInputFormatter(),
                         controller:
                             widget.controllerMap[dateTextFormFieldLabel]!,
                         labelText: dateTextFormFieldLabel,
                         hintText: dateTextFormFieldHint,
-                        obscureText: false,
-                        icon: null,
-                        onSaved: (value) {},
-                        onChanged: (value) {},
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Please enter a valid date';
@@ -99,8 +93,6 @@ class _ExpenseFormState extends State<ExpenseForm> {
                   const SizedBox(height: 35),
                   // Cost field
                   CustomFormField(
-                    enabled: true,
-                    maxCharacters: null,
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
                     inputFormatter: CurrencyTextInputFormatter.simpleCurrency(
@@ -108,17 +100,11 @@ class _ExpenseFormState extends State<ExpenseForm> {
                     controller: widget.controllerMap[amountTextFormFieldLabel]!,
                     labelText: amountTextFormFieldLabel,
                     hintText: amountTextFormFieldHint,
-                    obscureText: false,
-                    icon: null,
-                    onSaved: (value) {},
-                    onChanged: (value) {},
                     validator: checkEmptyInput,
                   ),
                   const SizedBox(height: 35),
                   // Description field
                   CustomFormField(
-                    enabled: true,
-                    maxCharacters: null,
                     keyboardType: TextInputType.text,
                     inputFormatter:
                         FilteringTextInputFormatter.singleLineFormatter,
@@ -126,10 +112,6 @@ class _ExpenseFormState extends State<ExpenseForm> {
                         widget.controllerMap[descriptionTextFormFieldLabel]!,
                     labelText: descriptionTextFormFieldLabel,
                     hintText: descriptionTextFormFieldHint,
-                    obscureText: false,
-                    icon: null,
-                    onSaved: (value) {},
-                    onChanged: (value) {},
                     validator: checkEmptyInput,
                   ),
                   const SizedBox(height: 35),
@@ -141,7 +123,6 @@ class _ExpenseFormState extends State<ExpenseForm> {
                         widget.controllerMap[categoryTextFormFieldLabel]!,
                     validator: checkEmptyInput,
                     hintText: categoryTextFormFieldHint,
-                    icon: null,
                     addOption: getAddOptionDropdownItem(
                         'add_new_category', 'Add new category'),
                     onAddOptionSelect: () => showAddDialog(
@@ -164,7 +145,6 @@ class _ExpenseFormState extends State<ExpenseForm> {
                     controller: widget.controllerMap[personTextFormFieldLabel]!,
                     validator: checkEmptyInput,
                     hintText: personTextFormFieldHint,
-                    icon: null,
                     addOption: getAddOptionDropdownItem(
                         'add_new_owner', 'Add new owner'),
                     onAddOptionSelect: () => showAddDialog(
@@ -212,7 +192,9 @@ class _ExpenseFormState extends State<ExpenseForm> {
 
               widget.onSubmit(expense).then((res) {
                 widget.onSuccess();
-                Navigator.pop(context);
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
               }).catchError((error) {
                 logger.e(error);
                 widget.onError();
