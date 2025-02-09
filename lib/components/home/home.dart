@@ -111,6 +111,8 @@ class _HomeState extends State<Home> {
             }),
         title: const YearSelector(),
         centerTitle: true,
+        scrolledUnderElevation: 0.0,
+        backgroundColor: Colors.transparent,
         actions: [
           IconButton(
             tooltip: 'Refresh Data',
