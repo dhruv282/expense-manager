@@ -20,7 +20,6 @@ class _AddExpensePageState extends State<AddExpensePage> {
     descriptionTextFormFieldLabel: TextEditingController(),
     categoryTextFormFieldLabel: TextEditingController(),
     dateTextFormFieldLabel: TextEditingController(),
-    personTextFormFieldLabel: TextEditingController(),
   };
 
   @override

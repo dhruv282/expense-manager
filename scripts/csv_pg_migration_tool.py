@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 
 class Transaction:
     date: str
-    owner: str
     description: str
     category: str
     cost: float
@@ -30,13 +29,6 @@ def initialize_db(cursor: psycopg2._psycopg.cursor) -> bool:
     try:
         cursor.execute('''
             DO $$ BEGIN
-              CREATE TYPE OWNER_OPTIONS AS ENUM('Shared');
-            EXCEPTION
-              WHEN duplicate_object THEN null;
-            END $$;        
-        ''')
-        cursor.execute('''
-            DO $$ BEGIN
               CREATE TYPE CATEGORY_OPTIONS AS ENUM();
             EXCEPTION
               WHEN duplicate_object THEN null;
@@ -48,8 +40,7 @@ def initialize_db(cursor: psycopg2._psycopg.cursor) -> bool:
             cost DECIMAL(12,2) NOT NULL,
             description TEXT NOT NULL,
             date DATE NOT NULL,
-            category CATEGORY_OPTIONS,
-            person OWNER_OPTIONS
+            category CATEGORY_OPTIONS
         )
         ''')
     except Exception as e:
@@ -58,23 +49,9 @@ def initialize_db(cursor: psycopg2._psycopg.cursor) -> bool:
     return True
 
 
-def add_owner_if_not_exists(owner: str, cursor: psycopg2._psycopg.cursor) -> bool:
-    try:
-        # Check if owner val currently exists in enum
-        cursor.execute("SELECT unnest(enum_range(NULL::OWNER_OPTIONS))")
-        vals = cursor.fetchall()
-        owners = [o[0] for o in vals]
-        if owner not in owners:
-            # Alter enum to add value
-            cursor.execute(f"ALTER TYPE OWNER_OPTIONS ADD VALUE '{owner}'")
-    except Exception as e:
-        logger.error(e)
-        return False
-    return True
-
 def add_category_if_not_exists(category: str, cursor: psycopg2._psycopg.cursor) -> bool:
     try:
-        # Check if owner val currently exists in enum
+        # Check if category val currently exists in enum
         cursor.execute("SELECT unnest(enum_range(NULL::CATEGORY_OPTIONS))")
         vals = cursor.fetchall()
         categories = [c[0] for c in vals]
@@ -105,10 +82,6 @@ def get_transactions_from_csv(csv_file_path: Path) -> List[Transaction]:
             transaction.description = row[1]
             transaction.date = row[0]
             transaction.category = row[2]
-            if row[6] == "Yes":
-                transaction.owner = "Shared"
-            else:
-                transaction.owner = row[3]
 
             if not is_valid_date(transaction.date):
                 logger.error(f"Invalid date format: {transaction.date}")
@@ -132,24 +105,17 @@ def main(db_config: DBConfig, transactions: List[Transaction]):
         sys.exit(1)
     
     for t in tqdm(transactions, desc="Adding entries to DB"):
-        owner_status_ok = add_owner_if_not_exists(t.owner, cur)
-        if not owner_status_ok:
-            logger.error(f"Error adding owner: {t.owner}")
-            sys.exit(1)
-        postgres_client.commit()
-
         category_status_ok = add_category_if_not_exists(t.category, cur)
         if not category_status_ok:
             logger.error(f"Error adding category: {t.category}")
             sys.exit(1)
         postgres_client.commit()
 
-        cur.execute("INSERT INTO expenses (cost, description, date, category, person) VALUES (%s, %s, %s, %s, %s)", (
+        cur.execute("INSERT INTO expenses (cost, description, date, category) VALUES (%s, %s, %s, %s, %s)", (
             t.cost,
             t.description,
             t.date,
             t.category,
-            t.owner,
         ))
     logger.info("DB entries added successfully!")
     postgres_client.commit()

@@ -2,7 +2,6 @@ import 'package:expense_manager/components/data_table_filter/category_filter.dar
 import 'package:expense_manager/components/data_table_filter/cost_filter.dart';
 import 'package:expense_manager/components/data_table_filter/date_range_filter.dart';
 import 'package:expense_manager/components/data_table_filter/description_filter.dart';
-import 'package:expense_manager/components/data_table_filter/owner_filter.dart';
 import 'package:expense_manager/data/expense_data.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
@@ -36,7 +35,6 @@ class _DataTableFilterState extends State<DataTableFilter> {
   final _filterSnapShot = <String, String>{};
   final _descriptionFilterController = TextEditingController();
   final _categoryFilterController = MultiSelectController<String>();
-  final _ownerFilterController = MultiSelectController<String>();
   final _costRangeFilter = Tuple2<TextEditingController, TextEditingController>(
       TextEditingController(), TextEditingController());
   final _dateRangeFilter = Tuple2<TextEditingController, TextEditingController>(
@@ -67,13 +65,6 @@ class _DataTableFilterState extends State<DataTableFilter> {
           "Category is '${_categoryFilterController.selectedItems.map((e) => e.value).join("', '")}'",
           () => setState(() {
                 _categoryFilterController.clearAll();
-              })));
-    }
-    if (_ownerFilterController.selectedItems.isNotEmpty) {
-      newActiveFilters.add(getFilterChip(
-          "Owner is '${_ownerFilterController.selectedItems.map((e) => e.value).join("', '")}'",
-          () => setState(() {
-                _ownerFilterController.clearAll();
               })));
     }
 
@@ -126,8 +117,6 @@ class _DataTableFilterState extends State<DataTableFilter> {
     _filterSnapShot["description"] = _descriptionFilterController.text;
     _filterSnapShot["category"] =
         _categoryFilterController.selectedItems.map((v) => v.value).join(":");
-    _filterSnapShot["owner"] =
-        _ownerFilterController.selectedItems.map((v) => v.value).join(":");
     _filterSnapShot["costRangeLow"] = _costRangeFilter.item1.text;
     _filterSnapShot["costRangeHigh"] = _costRangeFilter.item2.text;
   }
@@ -145,16 +134,6 @@ class _DataTableFilterState extends State<DataTableFilter> {
           .selectWhere((v) => snapShotCategoriesList.contains(v.label));
       _categoryFilterController
           .unselectWhere((v) => !snapShotCategoriesList.contains(v.label));
-    }
-
-    _ownerFilterController.clearAll();
-    final snapShotOwners = _filterSnapShot["owner"];
-    if (snapShotOwners != null) {
-      final snapShotOwnersList = snapShotOwners.split(":");
-      _ownerFilterController
-          .selectWhere((v) => snapShotOwnersList.contains(v.label));
-      _ownerFilterController
-          .unselectWhere((v) => !snapShotOwnersList.contains(v.label));
     }
 
     _costRangeFilter.item1.text = _filterSnapShot["costRangeLow"] ?? "";
@@ -177,14 +156,6 @@ class _DataTableFilterState extends State<DataTableFilter> {
           .where((e) => _categoryFilterController.selectedItems
               .map((c) => c.value)
               .contains(e.category))
-          .toList();
-    }
-
-    if (_ownerFilterController.selectedItems.isNotEmpty) {
-      filteredData = filteredData
-          .where((e) => _ownerFilterController.selectedItems
-              .map((c) => c.value)
-              .contains(e.person))
           .toList();
     }
 
@@ -275,9 +246,6 @@ class _DataTableFilterState extends State<DataTableFilter> {
                                 CategoryFilter(
                                     categoryFilterController:
                                         _categoryFilterController),
-                                OwnerFilter(
-                                    ownerFilterController:
-                                        _ownerFilterController),
                                 CostFilter(costRangeFilter: _costRangeFilter),
                               ]
                                   .expand(

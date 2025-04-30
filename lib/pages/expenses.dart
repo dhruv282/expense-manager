@@ -112,12 +112,6 @@ class _ExpensePageState extends State<ExpensePage> {
               sort<String>((d) => d.category, columnIndex, ascending),
         ),
         DataColumn2(
-          label: const Text('Owner'),
-          size: ColumnSize.S,
-          onSort: (columnIndex, ascending) =>
-              sort<String>((d) => d.person, columnIndex, ascending),
-        ),
-        DataColumn2(
           label: const Text('Cost'),
           size: ColumnSize.S,
           onSort: (columnIndex, ascending) =>
