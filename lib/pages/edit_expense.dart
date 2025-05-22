@@ -21,7 +21,6 @@ class _EditExpensePageState extends State<EditExpensePage> {
     descriptionTextFormFieldLabel: TextEditingController(),
     categoryTextFormFieldLabel: TextEditingController(),
     dateTextFormFieldLabel: TextEditingController(),
-    personTextFormFieldLabel: TextEditingController(),
   };
 
   @override
@@ -35,7 +34,6 @@ class _EditExpensePageState extends State<EditExpensePage> {
         widget.expense.category;
     formControllerMap[dateTextFormFieldLabel]?.text =
         DateFormat('MM/dd/yyyy').format(widget.expense.date);
-    formControllerMap[personTextFormFieldLabel]?.text = widget.expense.person;
   }
 
   @override

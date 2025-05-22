@@ -14,9 +14,6 @@ class ExpenseData {
   // Category is the type of expense
   String category;
 
-  // Person is the person who made the expense
-  String person;
-
   // Constructor
   ExpenseData({
     this.id = '',
@@ -24,7 +21,6 @@ class ExpenseData {
     required this.cost,
     required this.date,
     required this.category,
-    required this.person,
   });
 
   // Empty constructor
@@ -33,8 +29,7 @@ class ExpenseData {
         description = "",
         cost = 0,
         date = DateTime.now(),
-        category = "",
-        person = "";
+        category = "";
 
   // Converts the object to a map
   Map<String, dynamic> toMap() {
@@ -44,7 +39,6 @@ class ExpenseData {
       'cost': cost,
       'date': date,
       'category': category,
-      'person': person,
     };
   }
 
@@ -55,7 +49,6 @@ class ExpenseData {
           cost: double.parse(map['cost']),
           date: DateTime.parse(map['date'].toString()),
           category: map['category'].asString,
-          person: map['person'].asString,
         );
 
   // Converts the object to JSON
@@ -66,7 +59,6 @@ class ExpenseData {
       'cost': cost,
       'date': date,
       'category': category,
-      'person': person,
     };
   }
 
@@ -76,8 +68,7 @@ class ExpenseData {
         description = json['description'],
         cost = json['cost'],
         date = json['date'],
-        category = json['category'],
-        person = json['person'];
+        category = json['category'];
 
   // Returns a copy of the object
   ExpenseData copy() {
@@ -87,13 +78,12 @@ class ExpenseData {
       cost: cost,
       date: date,
       category: category,
-      person: person,
     );
   }
 
   // Returns a string representation of the object
   @override
   String toString() {
-    return 'ExpenseData{id: $id, description: $description, cost: $cost, date: $date, category: $category, person: $person}';
+    return 'ExpenseData{id: $id, description: $description, cost: $cost, date: $date, category: $category}';
   }
 }

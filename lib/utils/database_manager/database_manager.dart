@@ -24,29 +24,20 @@ class DatabaseManager {
       );
 
       return await connection!
-          // .execute('CREATE TYPE OWNER_OPTIONS AS ENUM(\'Shared\')')
           .execute('''
-            DO \$\$ BEGIN
-              CREATE TYPE OWNER_OPTIONS AS ENUM('Shared');
-            EXCEPTION
-              WHEN duplicate_object THEN null;
-            END \$\$;
-          ''')
-          .then((value) => connection!.execute('''
             DO \$\$ BEGIN
               CREATE TYPE CATEGORY_OPTIONS AS ENUM();
             EXCEPTION
               WHEN duplicate_object THEN null;
             END \$\$;
-          '''))
+          ''')
           .then((value) =>
               connection!.execute('CREATE TABLE IF NOT EXISTS expenses ('
                   '  id UUID DEFAULT gen_random_uuid() PRIMARY KEY, '
                   '  cost DECIMAL(12,2) NOT NULL,'
                   '  description TEXT NOT NULL,'
                   '  date DATE NOT NULL,'
-                  '  category CATEGORY_OPTIONS,'
-                  '  person OWNER_OPTIONS'
+                  '  category CATEGORY_OPTIONS'
                   ')'));
     } catch (e) {
       logger.e("Error connecting to the database: $e");
@@ -90,13 +81,12 @@ class DatabaseManager {
 
     // Execute the query
     final res = await connection!.execute(
-        r'INSERT INTO expenses (cost, description, date, category, person) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+        r'INSERT INTO expenses (cost, description, date, category) VALUES ($1, $2, $3, $4) RETURNING id',
         parameters: [
           expense.cost,
           expense.description,
           DateFormat('MM/dd/yyyy').format(expense.date),
           expense.category,
-          expense.person,
         ]);
     if (res.isEmpty) {
       throw Exception('Error inserting expense: $expense');
@@ -114,14 +104,13 @@ class DatabaseManager {
 
     return await connection!.execute(
         Sql.named(
-            'UPDATE expenses SET cost=@cost, description=@description, date=@date, category=@category, person=@person WHERE id=@id'),
+            'UPDATE expenses SET cost=@cost, description=@description, date=@date, category=@category WHERE id=@id'),
         parameters: {
           'id': expense.id,
           'description': expense.description,
           'date': DateFormat('MM/dd/yyyy').format(expense.date),
           'category': expense.category,
-          'person': expense.person,
-          'cost': expense.cost
+          'cost': expense.cost,
         });
   }
 
@@ -137,40 +126,6 @@ class DatabaseManager {
         .execute(Sql.named('DELETE FROM expenses WHERE id=@id'), parameters: {
       'id': id,
     });
-  }
-
-  /// Get OWNER_OPTIONS values from the database.
-  Future<List<String>> getOwners() async {
-    logger.i("Getting owner options");
-
-    if (connection == null) {
-      return Future.error("No connection to Database");
-    }
-
-    List<String> owners = [];
-
-    // Execute the query
-    final results = await connection!.execute(
-      Sql.named('SELECT unnest(enum_range(NULL::OWNER_OPTIONS))'),
-    );
-
-    for (var result in results) {
-      owners.add(result.toColumnMap()["unnest"].asString);
-    }
-
-    return owners;
-  }
-
-  /// Appends to OWNER_OPTIONS enum in the database.
-  Future<Result?> addOwner(String owner) async {
-    logger.i("Adding owner option $owner");
-
-    if (connection == null) {
-      return Future.error("No connection to Database");
-    }
-
-    return await connection!
-        .execute("ALTER TYPE OWNER_OPTIONS ADD VALUE '$owner'");
   }
 
   /// Get CATEGORY_OPTIONS values from the database.
@@ -195,7 +150,7 @@ class DatabaseManager {
     return categories;
   }
 
-  /// Appends to OWNER_OPTIONS enum in the database.
+  /// Appends to CATEGORY_OPTIONS enum in the database.
   Future<Result?> addCategory(String category) async {
     logger.i("Adding category option $category");
 

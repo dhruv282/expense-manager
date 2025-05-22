@@ -23,7 +23,6 @@ class ExpenseDataSource extends DataTableSource {
         DataCell(Text(DateFormat('MM/dd/yyyy').format(expense.date))),
         DataCell(Text(expense.description)),
         DataCell(Text(expense.category)),
-        DataCell(Text(expense.person)),
         DataCell(Text(NumberFormat.simpleCurrency().format(expense.cost))),
       ],
       onDoubleTap: () => Navigator.push(

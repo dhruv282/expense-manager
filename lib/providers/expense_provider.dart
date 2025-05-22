@@ -5,20 +5,17 @@ import 'package:flutter/material.dart';
 
 class ExpenseProvider extends ChangeNotifier {
   List<ExpenseData> _expenses = [];
-  List<String> _ownerOptions = [];
   List<String> _categoryOptions = [];
   List<int> _yearOptions = [];
   int? _selectedYear;
 
   List<ExpenseData> get expenses => _expenses;
-  List<String> get ownerOptions => _ownerOptions;
   List<String> get categoryOptions => _categoryOptions;
   List<int> get yearOptions => _yearOptions;
   int? get selectedYear => _selectedYear;
 
   Future initialize() async {
     return loadYearOptions()
-        .then((res) => loadOwnerOptions())
         .then((res) => loadCategoryOptions())
         .then((res) => loadExpenseData(autoLoadLatestYear: true))
         .catchError((e) => logger.e(e))
@@ -36,13 +33,6 @@ class ExpenseProvider extends ChangeNotifier {
     }).whenComplete(() => notifyListeners());
   }
 
-  Future loadOwnerOptions() async {
-    var dbManager = DatabaseManager();
-    return dbManager.getOwners().then((options) {
-      _ownerOptions = options;
-    });
-  }
-
   Future loadCategoryOptions() async {
     var dbManager = DatabaseManager();
     return dbManager.getCategories().then((options) {
@@ -58,10 +48,6 @@ class ExpenseProvider extends ChangeNotifier {
   }
 
   Future updateExpense(ExpenseData e) {
-    if (!_ownerOptions.contains(e.person)) {
-      return Future.error('Invalid value for person in expense: ${e.person}');
-    }
-
     if (!_categoryOptions.contains(e.category)) {
       return Future.error(
           'Invalid value for category in expense: ${e.category}');
@@ -84,10 +70,6 @@ class ExpenseProvider extends ChangeNotifier {
   }
 
   Future addExpense(ExpenseData e) {
-    if (!_ownerOptions.contains(e.person)) {
-      return Future.error('Invalid value for person in expense: ${e.person}');
-    }
-
     if (!_categoryOptions.contains(e.category)) {
       return Future.error(
           'Invalid value for category in expense: ${e.category}');
@@ -120,13 +102,6 @@ class ExpenseProvider extends ChangeNotifier {
           : Comparable.compare(bValue, aValue);
     });
     notifyListeners();
-  }
-
-  Future addOwner(String owner) {
-    var dbManager = DatabaseManager();
-    return dbManager.addOwner(owner).then((res) {
-      _ownerOptions.add(owner);
-    }).whenComplete(() => notifyListeners());
   }
 
   Future addCategory(String category) {

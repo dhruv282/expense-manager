@@ -137,28 +137,6 @@ class _ExpenseFormState extends State<ExpenseForm> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 35),
-                  // Owner field
-                  CustomFormDropdown(
-                    options: expenseProvider.ownerOptions,
-                    labelText: personTextFormFieldLabel,
-                    controller: widget.controllerMap[personTextFormFieldLabel]!,
-                    validator: checkEmptyInput,
-                    hintText: personTextFormFieldHint,
-                    addOption: getAddOptionDropdownItem(
-                        'add_new_owner', 'Add new owner'),
-                    onAddOptionSelect: () => showAddDialog(
-                      context,
-                      'Add Owner',
-                      'Enter value for new owner',
-                      (owner) => expenseProvider.addOwner(owner),
-                      () => showSnackBar(
-                        context,
-                        'Failed to add owner :(',
-                        SnackBarColor.error,
-                      ),
-                    ),
-                  ),
                 ],
               ))),
       bottomSheet: ElevatedButton(
@@ -187,7 +165,6 @@ class _ExpenseFormState extends State<ExpenseForm> {
                     .parse(widget.controllerMap[dateTextFormFieldLabel]!.text),
                 category:
                     widget.controllerMap[categoryTextFormFieldLabel]!.text,
-                person: widget.controllerMap[personTextFormFieldLabel]!.text,
               );
 
               widget.onSubmit(expense).then((res) {
