@@ -1,4 +1,5 @@
 import 'package:expense_manager/components/navbar/bottom_navbar.dart';
+import 'package:expense_manager/components/settings/database_config_form/database_config_form.dart';
 import 'package:expense_manager/components/year_selector/year_selector.dart';
 import 'package:expense_manager/pages/add_expense.dart';
 import 'package:expense_manager/pages/settings.dart';
@@ -58,6 +59,12 @@ class _HomeState extends State<Home> {
     checkDBConfigFlow();
   }
 
+  void navigateToDatabaseConfigPage() async {
+    await Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const DatabaseConfigForm()));
+    checkDBConfigFlow();
+  }
+
   void checkDBConfigFlow() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _isDBConfigComplete().then((val) {
@@ -68,7 +75,7 @@ class _HomeState extends State<Home> {
             });
           });
         } else {
-          navigateToSettingsPage();
+          navigateToDatabaseConfigPage();
           showSnackBar(
             context,
             'Missing DB Config',
@@ -76,7 +83,7 @@ class _HomeState extends State<Home> {
           );
         }
       }).catchError((error) {
-        navigateToSettingsPage();
+        navigateToDatabaseConfigPage();
         showSnackBar(
           context,
           'Failed to fetch DB Config',

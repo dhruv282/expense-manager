@@ -1,4 +1,4 @@
-import 'package:expense_manager/components/database_config_form/constants.dart';
+import 'package:expense_manager/components/settings/database_config_form/constants.dart';
 import 'package:expense_manager/components/form_helpers/form_dropdown.dart';
 import 'package:expense_manager/components/form_helpers/form_field.dart';
 import 'package:expense_manager/utils/database_config_store/database_config_store.dart';
@@ -74,77 +74,83 @@ class _DatabaseConfigFormState extends State<DatabaseConfigForm> {
     return isLoadingConfig
         ? const Center(child: CircularProgressIndicator())
         : Scaffold(
-            body: SingleChildScrollView(
-                child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomFormField(
-                    keyboardType: TextInputType.text,
-                    inputFormatter:
-                        FilteringTextInputFormatter.singleLineFormatter,
-                    controller: formControllerMap[hostTextFormFieldLabel]!,
-                    labelText: hostTextFormFieldLabel,
-                    hintText: hostTextFormFieldHint,
-                    validator: checkEmptyInput,
+            appBar: AppBar(title: const Text('Database Configuration')),
+            body: Padding(
+                padding: EdgeInsets.all(10),
+                child: SingleChildScrollView(
+                    child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      CustomFormField(
+                        keyboardType: TextInputType.text,
+                        inputFormatter:
+                            FilteringTextInputFormatter.singleLineFormatter,
+                        controller: formControllerMap[hostTextFormFieldLabel]!,
+                        labelText: hostTextFormFieldLabel,
+                        hintText: hostTextFormFieldHint,
+                        validator: checkEmptyInput,
+                      ),
+                      const SizedBox(height: 35),
+                      CustomFormField(
+                        keyboardType: TextInputType.number,
+                        inputFormatter: FilteringTextInputFormatter.digitsOnly,
+                        controller: formControllerMap[portTextFormFieldLabel]!,
+                        labelText: portTextFormFieldLabel,
+                        hintText: portTextFormFieldHint,
+                        validator: checkEmptyInput,
+                      ),
+                      const SizedBox(height: 35),
+                      CustomFormField(
+                        keyboardType: TextInputType.text,
+                        inputFormatter:
+                            FilteringTextInputFormatter.singleLineFormatter,
+                        controller: formControllerMap[nameTextFormFieldLabel]!,
+                        labelText: nameTextFormFieldLabel,
+                        hintText: nameTextFormFieldHint,
+                        validator: checkEmptyInput,
+                      ),
+                      const SizedBox(height: 35),
+                      CustomFormField(
+                        keyboardType: TextInputType.text,
+                        inputFormatter:
+                            FilteringTextInputFormatter.singleLineFormatter,
+                        controller:
+                            formControllerMap[usernameTextFormFieldLabel]!,
+                        labelText: usernameTextFormFieldLabel,
+                        hintText: usernameTextFormFieldHint,
+                        validator: checkEmptyInput,
+                      ),
+                      const SizedBox(height: 35),
+                      CustomFormField(
+                        keyboardType: TextInputType.text,
+                        inputFormatter:
+                            FilteringTextInputFormatter.singleLineFormatter,
+                        controller:
+                            formControllerMap[passwordTextFormFieldLabel]!,
+                        labelText: passwordTextFormFieldLabel,
+                        hintText: passwordTextFormFieldHint,
+                        obscureText: true,
+                        validator: checkEmptyInput,
+                      ),
+                      const SizedBox(height: 35),
+                      CustomFormDropdown(
+                        options: sslModeOptions,
+                        labelText: sslModeDropdownFieldLabel,
+                        controller:
+                            formControllerMap[sslModeDropdownFieldLabel]!,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please select a value';
+                          }
+                          return null;
+                        },
+                        hintText: sslModeDropdownFieldHint,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 35),
-                  CustomFormField(
-                    keyboardType: TextInputType.number,
-                    inputFormatter: FilteringTextInputFormatter.digitsOnly,
-                    controller: formControllerMap[portTextFormFieldLabel]!,
-                    labelText: portTextFormFieldLabel,
-                    hintText: portTextFormFieldHint,
-                    validator: checkEmptyInput,
-                  ),
-                  const SizedBox(height: 35),
-                  CustomFormField(
-                    keyboardType: TextInputType.text,
-                    inputFormatter:
-                        FilteringTextInputFormatter.singleLineFormatter,
-                    controller: formControllerMap[nameTextFormFieldLabel]!,
-                    labelText: nameTextFormFieldLabel,
-                    hintText: nameTextFormFieldHint,
-                    validator: checkEmptyInput,
-                  ),
-                  const SizedBox(height: 35),
-                  CustomFormField(
-                    keyboardType: TextInputType.text,
-                    inputFormatter:
-                        FilteringTextInputFormatter.singleLineFormatter,
-                    controller: formControllerMap[usernameTextFormFieldLabel]!,
-                    labelText: usernameTextFormFieldLabel,
-                    hintText: usernameTextFormFieldHint,
-                    validator: checkEmptyInput,
-                  ),
-                  const SizedBox(height: 35),
-                  CustomFormField(
-                    keyboardType: TextInputType.text,
-                    inputFormatter:
-                        FilteringTextInputFormatter.singleLineFormatter,
-                    controller: formControllerMap[passwordTextFormFieldLabel]!,
-                    labelText: passwordTextFormFieldLabel,
-                    hintText: passwordTextFormFieldHint,
-                    obscureText: true,
-                    validator: checkEmptyInput,
-                  ),
-                  const SizedBox(height: 35),
-                  CustomFormDropdown(
-                    options: sslModeOptions,
-                    labelText: sslModeDropdownFieldLabel,
-                    controller: formControllerMap[sslModeDropdownFieldLabel]!,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select a value';
-                      }
-                      return null;
-                    },
-                    hintText: sslModeDropdownFieldHint,
-                  ),
-                ],
-              ),
-            )),
+                ))),
             bottomSheet: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(200, 50),
