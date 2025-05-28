@@ -1,4 +1,5 @@
 import 'package:expense_manager/components/settings/database_config_form/database_config_form.dart';
+import 'package:expense_manager/components/settings/widget_config/widget_config.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -23,17 +24,17 @@ class _SettingsPageState extends State<SettingsPage> {
           );
         },
       ),
-      // SettingsItem(
-      //   title: 'Reccuring Transactions',
-      //   description: 'Manage reccuring transactions',
-      //   icon: Icons.replay,
-      //   onClick: () {
-      //     Navigator.push(
-      //       context,
-      //       MaterialPageRoute(builder: (context) => DatabaseConfigForm()),
-      //     );
-      //   },
-      // ),
+      SettingsItem(
+        title: 'Dashboard Configuration',
+        description: 'Manage dashboard widget visibility',
+        icon: Icons.widgets,
+        onClick: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => WidgetConfig()),
+          );
+        },
+      ),
     ];
     return Scaffold(
         appBar: AppBar(title: const Text('Settings')),

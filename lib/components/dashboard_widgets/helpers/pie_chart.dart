@@ -12,7 +12,8 @@ class PieChartWidget extends StatefulWidget {
   const PieChartWidget(
       {super.key,
       required this.getCategoryData,
-      required this.getDefaultLabel, this.colorList});
+      required this.getDefaultLabel,
+      this.colorList});
 
   @override
   State<StatefulWidget> createState() => _PieChartWidgetState();

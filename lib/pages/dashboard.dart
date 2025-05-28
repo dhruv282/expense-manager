@@ -1,10 +1,7 @@
-import 'package:expense_manager/components/dashboard_widgets/dashboard_widget.dart';
-import 'package:expense_manager/components/dashboard_widgets/expense_pie_chart.dart';
-import 'package:expense_manager/components/dashboard_widgets/expense_vs_income_line_chart.dart';
-import 'package:expense_manager/components/dashboard_widgets/expense_vs_income_pie_chart.dart';
+import 'package:expense_manager/providers/dashboard_widgets_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:tuple/tuple.dart';
+import 'package:provider/provider.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -14,24 +11,22 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  final Map<DashboardWidget, Tuple2<int, int>> widgetsWithSize = {
-    ExpensePieChart(): const Tuple2(1, 1),
-    ExpenseVsIncomePieChart(): const Tuple2(1, 1),
-    ExpenseVsIncomeLineChart(): const Tuple2(2, 1),
-  };
-
   @override
   Widget build(BuildContext context) {
+    final dashboardWidgetProvider =
+        Provider.of<DashboardWidgetsProvider>(context);
+    final widgetsWithConfig = dashboardWidgetProvider.widgetsWithConfig.entries
+        .where((e) => e.value.isEnabled);
     return SingleChildScrollView(
         child: StaggeredGrid.count(
       axisDirection: AxisDirection.down,
       crossAxisCount: 2,
       mainAxisSpacing: 1,
       crossAxisSpacing: 2,
-      children: widgetsWithSize.entries
+      children: widgetsWithConfig
           .map((e) => e.key.getWidgetTile(
-              crossAxisCellCount: e.value.item1,
-              mainAxisCellCount: e.value.item2))
+              crossAxisCellCount: e.value.size.item1,
+              mainAxisCellCount: e.value.size.item2))
           .toList(),
     ));
   }

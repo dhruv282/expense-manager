@@ -17,6 +17,7 @@ final Map<SnackBarColor, Color> lightColorMap = HashMap.from({
 void showSnackBar(
     BuildContext context, String text, SnackBarColor snackbarColor) {
   bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+  ScaffoldMessenger.of(context).clearSnackBars();
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Text(

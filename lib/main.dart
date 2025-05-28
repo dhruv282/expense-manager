@@ -1,4 +1,5 @@
 import 'package:expense_manager/components/home/home.dart';
+import 'package:expense_manager/providers/dashboard_widgets_provider.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +24,7 @@ class App extends StatelessWidget {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => ExpenseProvider()),
+          ChangeNotifierProvider(create: (_) => DashboardWidgetsProvider()),
         ],
         child: MaterialApp(
           title: 'Expense Manager',
