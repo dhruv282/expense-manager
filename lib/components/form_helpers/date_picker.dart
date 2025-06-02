@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class CustomDatePicker extends StatefulWidget {
   final DateTime initialDate;
@@ -37,8 +38,21 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.calendar_today),
+    return OutlinedButton(
+      style: OutlinedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5),
+        ),
+      ),
+      child: Padding(
+          padding: EdgeInsets.only(top: 15, bottom: 15),
+          child: Row(spacing: 10, children: [
+            const Icon(Icons.calendar_today),
+            Text(
+              DateFormat.yMMMd().format(_selectedDate),
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ])),
       onPressed: () => _selectDate(context),
     );
   }

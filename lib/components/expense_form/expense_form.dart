@@ -1,7 +1,9 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:expense_manager/components/expense_form/constants.dart';
 import 'package:expense_manager/components/form_helpers/form_dropdown_add_option.dart';
+import 'package:expense_manager/components/recurring_schedule_form/recurring_schedule_form.dart';
 import 'package:expense_manager/data/expense_data.dart';
+import 'package:expense_manager/data/recurring_schedule.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:expense_manager/utils/logger/logger.dart';
 import 'package:expense_manager/components/form_helpers/date_picker.dart';
@@ -11,21 +13,22 @@ import 'package:expense_manager/utils/snackbar/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:pattern_formatter/date_formatter.dart';
 import 'package:provider/provider.dart';
+import 'package:rrule/rrule.dart';
 
 class ExpenseForm extends StatefulWidget {
   final Map<String, TextEditingController> controllerMap;
-  final Future Function(ExpenseData e) onSubmit;
+  final Future Function(ExpenseData e, RecurringSchedule? s) onSubmit;
   final Function() onSuccess;
   final Function() onError;
 
-  const ExpenseForm(
-      {super.key,
-      required this.controllerMap,
-      required this.onSubmit,
-      required this.onSuccess,
-      required this.onError});
+  const ExpenseForm({
+    super.key,
+    required this.controllerMap,
+    required this.onSubmit,
+    required this.onSuccess,
+    required this.onError,
+  });
 
   @override
   State<ExpenseForm> createState() => _ExpenseFormState();
@@ -38,7 +41,10 @@ class _ExpenseFormState extends State<ExpenseForm> {
   // Note: This is a GlobalKey<FormState>,
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
+  final formFieldSpacing = const SizedBox(height: 20);
   var isSubmitting = false;
+  var recurringTransaction = false;
+  final Map<String, dynamic> reccurenceRuleJson = {};
 
   String? checkEmptyInput(String? value) {
     if (value == null || value.isEmpty) {
@@ -59,38 +65,14 @@ class _ExpenseFormState extends State<ExpenseForm> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   // Date field
-                  Row(children: [
-                    Expanded(
-                      child: CustomFormField(
-                        keyboardType: TextInputType.datetime,
-                        inputFormatter: DateInputFormatter(),
-                        controller:
-                            widget.controllerMap[dateTextFormFieldLabel]!,
-                        labelText: dateTextFormFieldLabel,
-                        hintText: dateTextFormFieldHint,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter a valid date';
-                          } else {
-                            try {
-                              DateFormat.yMd().parse(value).toString();
-
-                              return null;
-                            } catch (e) {
-                              return 'Please enter a valid date';
-                            }
-                          }
-                        },
-                      ),
-                    ),
-                    CustomDatePicker(
-                        initialDate: DateTime.now(),
-                        onDateSelected: (date) {
-                          widget.controllerMap[dateTextFormFieldLabel]!.text =
-                              DateFormat.yMd().format(date);
-                        }),
-                  ]),
-                  const SizedBox(height: 35),
+                  CustomDatePicker(
+                      initialDate: DateFormat('MM/dd/yyyy').parse(
+                          widget.controllerMap[dateTextFormFieldLabel]!.text),
+                      onDateSelected: (date) {
+                        widget.controllerMap[dateTextFormFieldLabel]!.text =
+                            DateFormat.yMd().format(date);
+                      }),
+                  formFieldSpacing,
                   // Cost field
                   CustomFormField(
                     keyboardType:
@@ -102,7 +84,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                     hintText: amountTextFormFieldHint,
                     validator: checkEmptyInput,
                   ),
-                  const SizedBox(height: 35),
+                  formFieldSpacing,
                   // Description field
                   CustomFormField(
                     keyboardType: TextInputType.text,
@@ -114,7 +96,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                     hintText: descriptionTextFormFieldHint,
                     validator: checkEmptyInput,
                   ),
-                  const SizedBox(height: 35),
+                  formFieldSpacing,
                   // Category field
                   CustomFormDropdown(
                     options: expenseProvider.categoryOptions,
@@ -137,6 +119,27 @@ class _ExpenseFormState extends State<ExpenseForm> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 5),
+                  const Divider(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Reccuring Transaction',
+                          style: theme.textTheme.titleMedium),
+                      Switch(
+                        value: recurringTransaction,
+                        onChanged: (value) {
+                          setState(() {
+                            recurringTransaction = value;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  if (recurringTransaction)
+                    RecurringScheduleForm(
+                      recurrenceRuleJson: reccurenceRuleJson,
+                    ),
                 ],
               ))),
       bottomSheet: ElevatedButton(
@@ -167,7 +170,17 @@ class _ExpenseFormState extends State<ExpenseForm> {
                     widget.controllerMap[categoryTextFormFieldLabel]!.text,
               );
 
-              widget.onSubmit(expense).then((res) {
+              RecurringSchedule? recurringSchedule;
+              if (recurringTransaction) {
+                recurringSchedule = RecurringSchedule(
+                  description: expense.description,
+                  cost: expense.cost,
+                  category: expense.category,
+                  recurrenceRule: RecurrenceRule.fromJson(reccurenceRuleJson).toString(),
+                );
+              }
+
+              widget.onSubmit(expense, recurringSchedule).then((res) {
                 widget.onSuccess();
                 if (context.mounted) {
                   Navigator.pop(context);

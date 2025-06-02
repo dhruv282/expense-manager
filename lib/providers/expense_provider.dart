@@ -1,4 +1,5 @@
 import 'package:expense_manager/data/expense_data.dart';
+import 'package:expense_manager/data/recurring_schedule.dart';
 import 'package:expense_manager/utils/database_manager/database_manager.dart';
 import 'package:expense_manager/utils/logger/logger.dart';
 import 'package:flutter/material.dart';
@@ -8,16 +9,19 @@ class ExpenseProvider extends ChangeNotifier {
   List<String> _categoryOptions = [];
   List<int> _yearOptions = [];
   int? _selectedYear;
+  List<RecurringSchedule> _recurringSchedules = [];
 
   List<ExpenseData> get expenses => _expenses;
   List<String> get categoryOptions => _categoryOptions;
   List<int> get yearOptions => _yearOptions;
   int? get selectedYear => _selectedYear;
+  List<RecurringSchedule> get recurringSchedules => _recurringSchedules;
 
   Future initialize() async {
     return loadYearOptions()
         .then((res) => loadCategoryOptions())
         .then((res) => loadExpenseData(autoLoadLatestYear: true))
+        .then((res) => loadRecurringSchedules())
         .catchError((e) => logger.e(e))
         .whenComplete(() => notifyListeners());
   }
@@ -108,6 +112,52 @@ class ExpenseProvider extends ChangeNotifier {
     var dbManager = DatabaseManager();
     return dbManager.addCategory(category).then((res) {
       _categoryOptions.add(category);
+    }).whenComplete(() => notifyListeners());
+  }
+
+  Future loadRecurringSchedules() async {
+    var dbManager = DatabaseManager();
+    return dbManager.getRecurringSchedules().then((recurring) {
+      _recurringSchedules = recurring;
+    }).whenComplete(() => notifyListeners());
+  }
+
+  Future addRecurringSchedule(RecurringSchedule e) {
+    var dbManager = DatabaseManager();
+    return dbManager.insertRecurringSchedule(e).then((id) {
+      // Populate the ID value of the object.
+      e.id = id;
+      _recurringSchedules.add(e);
+    }).whenComplete(() => notifyListeners());
+  }
+
+  Future updateRecurringSchedule(RecurringSchedule e) {
+    var dbManager = DatabaseManager();
+    return dbManager.updateRecurringSchedule(e).then((_) {
+      var updated = false;
+      for (var i = 0; i < _recurringSchedules.length; i++) {
+        if (_recurringSchedules[i].id == e.id) {
+          _recurringSchedules[i] = e.copy();
+          updated = true;
+          break;
+        }
+      }
+      if (!updated) {
+        throw Exception('Unable to find recurring schedule with ID: ${e.id}');
+      }
+    }).whenComplete(() => notifyListeners());
+  }
+
+  Future triggerRecurringScheduleRule(RecurringSchedule e) {
+    var updated = e.copy();
+    updated.lastExecuted = DateTime.now();
+    return updateRecurringSchedule(e);
+  }
+
+  Future deleteRecurringSchedule(RecurringSchedule e) {
+    var dbManager = DatabaseManager();
+    return dbManager.deleteRecurringSchedule(e.id).then((_) {
+      _recurringSchedules.removeWhere((expense) => expense.id == e.id);
     }).whenComplete(() => notifyListeners());
   }
 }

@@ -1,6 +1,7 @@
 import 'package:expense_manager/components/expense_form/expense_form.dart';
 import 'package:expense_manager/components/expense_form/constants.dart';
 import 'package:expense_manager/data/expense_data.dart';
+import 'package:expense_manager/data/recurring_schedule.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:expense_manager/utils/snackbar/snackbar.dart';
 import 'package:flutter/material.dart';
@@ -47,10 +48,15 @@ class _EditExpensePageState extends State<EditExpensePage> {
           padding: const EdgeInsets.all(16.0),
           child: ExpenseForm(
             controllerMap: formControllerMap,
-            onSubmit: (ExpenseData e) {
+            onSubmit: (ExpenseData e, RecurringSchedule? r) {
               // Add expense ID for a successful update.
               e.id = widget.expense.id;
-              return expenseProvider.updateExpense(e);
+              return expenseProvider.updateExpense(e).then((v) {
+                if (r != null) {
+                return expenseProvider.addRecurringSchedule(r);
+              }
+              return Future.value();
+              });
             },
             onSuccess: () {
               showSnackBar(context, 'Expense updated!', SnackBarColor.success);
