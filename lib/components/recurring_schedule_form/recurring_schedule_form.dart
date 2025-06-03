@@ -3,11 +3,12 @@ import 'package:expense_manager/components/form_helpers/form_dropdown.dart';
 import 'package:expense_manager/components/form_helpers/form_field.dart';
 import 'package:expense_manager/components/form_helpers/form_multi_dropdown.dart';
 import 'package:expense_manager/components/recurring_schedule_form/constants.dart';
+import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:rrule/rrule.dart';
+import 'package:provider/provider.dart';
 
 class RecurringScheduleForm extends StatefulWidget {
   final Map<String, dynamic> recurrenceRuleJson;
@@ -23,8 +24,7 @@ class RecurringScheduleForm extends StatefulWidget {
 
 class _RecurringScheduleFormState extends State<RecurringScheduleForm> {
   final formFieldSpacing = const SizedBox(height: 20);
-  RruleL10n? l10n;
-  String recurringRuleText = '';
+  String recurringRuleText = 'INIT';
   final Map<String, TextEditingController> recurranceRuleControllerMap = {
     recurringFrequencyTextFormFieldLabel:
         TextEditingController(text: 'Monthly'),
@@ -105,26 +105,24 @@ class _RecurringScheduleFormState extends State<RecurringScheduleForm> {
       recurranceRuleControllerMap[recurringNumOccurrencesFormFieldLabel]!.text =
           widget.recurrenceRuleJson['count'].toString();
     }
-
-    RruleL10nEn.create().then((v) {
-      l10n = v;
-      setState(() {
-        evaluateRecurrenceRuleText();
-      });
-    });
-  }
-
-  void evaluateRecurrenceRuleText() {
-    try {
-      recurringRuleText = RecurrenceRule.fromJson(widget.recurrenceRuleJson)
-          .toText(l10n: l10n!);
-    } catch (e) {
-      recurringRuleText = '';
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final expenseProvider = Provider.of<ExpenseProvider>(context);
+    void evaluateRecurrenceRuleText() {
+      try {
+        recurringRuleText =
+            expenseProvider.recurrenceJsonToText(widget.recurrenceRuleJson);
+      } catch (e) {
+        recurringRuleText = '';
+      }
+    }
+
+    if (recurringRuleText == 'INIT') {
+      evaluateRecurrenceRuleText();
+    }
+
     var isWeekly = widget.recurrenceRuleJson.containsKey('freq') &&
         widget.recurrenceRuleJson['freq'] == 'WEEKLY';
     var isMonthly = widget.recurrenceRuleJson.containsKey('freq') &&

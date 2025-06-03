@@ -32,7 +32,7 @@ class RecurringSchedule {
           id: map['id'],
           description: map['description'],
           cost: double.parse(map['cost'].toString()),
-          category: map['category'],
+          category: map['category'].asString,
           recurrenceRule: map['recurrence_rule'],
           lastExecuted: map['last_executed'] != null
               ? DateTime.parse(map['last_executed'].toString())
@@ -48,5 +48,11 @@ class RecurringSchedule {
       recurrenceRule: recurrenceRule,
       lastExecuted: lastExecuted,
     );
+  }
+
+  // Returns a string representation of the object
+  @override
+  String toString() {
+    return 'RecurringSchedule{id: $id, description: $description, cost: $cost, category: $category, recurrenceRule: $recurrenceRule, lastExecuted: $lastExecuted}';
   }
 }

@@ -53,9 +53,9 @@ class _EditExpensePageState extends State<EditExpensePage> {
               e.id = widget.expense.id;
               return expenseProvider.updateExpense(e).then((v) {
                 if (r != null) {
-                return expenseProvider.addRecurringSchedule(r);
-              }
-              return Future.value();
+                  return expenseProvider.addRecurringSchedule(r);
+                }
+                return Future.value();
               });
             },
             onSuccess: () {

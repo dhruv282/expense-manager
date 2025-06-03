@@ -18,6 +18,7 @@ import 'package:rrule/rrule.dart';
 
 class ExpenseForm extends StatefulWidget {
   final Map<String, TextEditingController> controllerMap;
+  final RecurrenceRule? recurrenceRule;
   final Future Function(ExpenseData e, RecurringSchedule? s) onSubmit;
   final Function() onSuccess;
   final Function() onError;
@@ -25,6 +26,7 @@ class ExpenseForm extends StatefulWidget {
   const ExpenseForm({
     super.key,
     required this.controllerMap,
+    this.recurrenceRule,
     required this.onSubmit,
     required this.onSuccess,
     required this.onError,
@@ -51,6 +53,14 @@ class _ExpenseFormState extends State<ExpenseForm> {
       return 'Please enter a value';
     }
     return null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.recurrenceRule != null) {
+      reccurenceRuleJson.addAll(widget.recurrenceRule!.toJson());
+    }
   }
 
   @override
@@ -176,7 +186,8 @@ class _ExpenseFormState extends State<ExpenseForm> {
                   description: expense.description,
                   cost: expense.cost,
                   category: expense.category,
-                  recurrenceRule: RecurrenceRule.fromJson(reccurenceRuleJson).toString(),
+                  recurrenceRule:
+                      RecurrenceRule.fromJson(reccurenceRuleJson).toString(),
                 );
               }
 

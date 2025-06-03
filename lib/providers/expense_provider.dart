@@ -3,6 +3,7 @@ import 'package:expense_manager/data/recurring_schedule.dart';
 import 'package:expense_manager/utils/database_manager/database_manager.dart';
 import 'package:expense_manager/utils/logger/logger.dart';
 import 'package:flutter/material.dart';
+import 'package:rrule/rrule.dart';
 
 class ExpenseProvider extends ChangeNotifier {
   List<ExpenseData> _expenses = [];
@@ -17,7 +18,10 @@ class ExpenseProvider extends ChangeNotifier {
   int? get selectedYear => _selectedYear;
   List<RecurringSchedule> get recurringSchedules => _recurringSchedules;
 
+  late RruleL10n _l10n;
+
   Future initialize() async {
+    RruleL10nEn.create().then((l10n) => _l10n = l10n);
     return loadYearOptions()
         .then((res) => loadCategoryOptions())
         .then((res) => loadExpenseData(autoLoadLatestYear: true))
@@ -115,6 +119,10 @@ class ExpenseProvider extends ChangeNotifier {
     }).whenComplete(() => notifyListeners());
   }
 
+  bool isIncome(String category) {
+    return category.toUpperCase() == 'INCOME';
+  }
+
   Future loadRecurringSchedules() async {
     var dbManager = DatabaseManager();
     return dbManager.getRecurringSchedules().then((recurring) {
@@ -159,5 +167,13 @@ class ExpenseProvider extends ChangeNotifier {
     return dbManager.deleteRecurringSchedule(e.id).then((_) {
       _recurringSchedules.removeWhere((expense) => expense.id == e.id);
     }).whenComplete(() => notifyListeners());
+  }
+
+  String recurrenceRuleToText(String rule) {
+    return RecurrenceRule.fromString(rule).toText(l10n: _l10n);
+  }
+
+  String recurrenceJsonToText(Map<String, dynamic> rule) {
+    return RecurrenceRule.fromJson(rule).toText(l10n: _l10n);
   }
 }
