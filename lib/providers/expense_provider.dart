@@ -11,12 +11,15 @@ class ExpenseProvider extends ChangeNotifier {
   List<int> _yearOptions = [];
   int? _selectedYear;
   List<RecurringSchedule> _recurringSchedules = [];
+  Map<RecurringSchedule, List<ExpenseData>> _pendingTransactions = {};
 
   List<ExpenseData> get expenses => _expenses;
   List<String> get categoryOptions => _categoryOptions;
   List<int> get yearOptions => _yearOptions;
   int? get selectedYear => _selectedYear;
   List<RecurringSchedule> get recurringSchedules => _recurringSchedules;
+  Map<RecurringSchedule, List<ExpenseData>> get pendingTransactions =>
+      _pendingTransactions;
 
   late RruleL10n _l10n;
 
@@ -26,6 +29,7 @@ class ExpenseProvider extends ChangeNotifier {
         .then((res) => loadCategoryOptions())
         .then((res) => loadExpenseData(autoLoadLatestYear: true))
         .then((res) => loadRecurringSchedules())
+        .then((res) => loadPendingTransactions())
         .catchError((e) => logger.e(e))
         .whenComplete(() => notifyListeners());
   }
@@ -130,36 +134,63 @@ class ExpenseProvider extends ChangeNotifier {
     }).whenComplete(() => notifyListeners());
   }
 
+  Future loadPendingTransactions() async {
+    Map<RecurringSchedule, List<ExpenseData>> temp = {};
+    for (var s in _recurringSchedules) {
+      var recurringEntries = getRecurringEntries(s);
+      if (recurringEntries.isNotEmpty) {
+        temp[s] = getRecurringEntries(s);
+      }
+    }
+    _pendingTransactions = temp;
+    return Future.value().whenComplete(() => notifyListeners());
+  }
+
   Future addRecurringSchedule(RecurringSchedule e) {
     var dbManager = DatabaseManager();
-    return dbManager.insertRecurringSchedule(e).then((id) {
-      // Populate the ID value of the object.
-      e.id = id;
-      _recurringSchedules.add(e);
-    }).whenComplete(() => notifyListeners());
+    return dbManager
+        .insertRecurringSchedule(e)
+        .then((id) {
+          // Populate the ID value of the object.
+          e.id = id;
+          _recurringSchedules.add(e);
+        })
+        .then((_) => loadPendingTransactions())
+        .whenComplete(() => notifyListeners());
   }
 
-  Future updateRecurringSchedule(RecurringSchedule e) {
+  Future updateRecurringSchedule(RecurringSchedule s) {
     var dbManager = DatabaseManager();
-    return dbManager.updateRecurringSchedule(e).then((_) {
-      var updated = false;
-      for (var i = 0; i < _recurringSchedules.length; i++) {
-        if (_recurringSchedules[i].id == e.id) {
-          _recurringSchedules[i] = e.copy();
-          updated = true;
-          break;
-        }
-      }
-      if (!updated) {
-        throw Exception('Unable to find recurring schedule with ID: ${e.id}');
-      }
-    }).whenComplete(() => notifyListeners());
+    return dbManager
+        .updateRecurringSchedule(s)
+        .then((_) {
+          var updated = false;
+          for (var i = 0; i < _recurringSchedules.length; i++) {
+            if (_recurringSchedules[i].id == s.id) {
+              _recurringSchedules[i] = s.copy();
+              updated = true;
+              break;
+            }
+          }
+          if (!updated) {
+            throw Exception(
+                'Unable to find recurring schedule with ID: ${s.id}');
+          }
+        })
+        .then((_) => loadPendingTransactions())
+        .whenComplete(() => notifyListeners());
   }
 
-  Future triggerRecurringScheduleRule(RecurringSchedule e) {
-    var updated = e.copy();
-    updated.lastExecuted = DateTime.now();
-    return updateRecurringSchedule(e);
+  Future triggerRecurringScheduleRule(
+      RecurringSchedule s, ExpenseData e, bool skip) async {
+    var updated = s.copy();
+    updated.lastExecuted = e.date;
+    if (!skip) {
+      await addExpense(e);
+    }
+    return updateRecurringSchedule(updated)
+        .then((_) => loadPendingTransactions())
+        .whenComplete(() => notifyListeners());
   }
 
   Future deleteRecurringSchedule(RecurringSchedule e) {
@@ -175,5 +206,23 @@ class ExpenseProvider extends ChangeNotifier {
 
   String recurrenceJsonToText(Map<String, dynamic> rule) {
     return RecurrenceRule.fromJson(rule).toText(l10n: _l10n);
+  }
+
+  List<ExpenseData> getRecurringEntries(RecurringSchedule schedule) {
+    final recurrenceRule = RecurrenceRule.fromString(schedule.recurrenceRule);
+    return recurrenceRule
+        .getInstances(
+          start: schedule.lastExecuted.toUtc(),
+          before: DateTime.now().toUtc(),
+          includeBefore: true,
+          after: schedule.lastExecuted.toUtc(),
+          includeAfter: false,
+        )
+        .map((d) => ExpenseData(
+            date: d,
+            description: schedule.description,
+            cost: schedule.cost,
+            category: schedule.category))
+        .toList();
   }
 }

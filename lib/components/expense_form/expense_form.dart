@@ -188,6 +188,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                   category: expense.category,
                   recurrenceRule:
                       RecurrenceRule.fromJson(reccurenceRuleJson).toString(),
+                  lastExecuted: expense.date,
                 );
               }
 

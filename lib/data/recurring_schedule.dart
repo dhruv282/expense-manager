@@ -15,7 +15,7 @@ class RecurringSchedule {
   String recurrenceRule;
 
   // Last executed date for the rule
-  DateTime? lastExecuted;
+  DateTime lastExecuted;
 
   // Constructor
   RecurringSchedule({
@@ -24,7 +24,7 @@ class RecurringSchedule {
     required this.cost,
     required this.category,
     required this.recurrenceRule,
-    this.lastExecuted,
+    required this.lastExecuted,
   });
 
   RecurringSchedule.fromMap(Map<String, dynamic> map)
@@ -34,9 +34,7 @@ class RecurringSchedule {
           cost: double.parse(map['cost'].toString()),
           category: map['category'].asString,
           recurrenceRule: map['recurrence_rule'],
-          lastExecuted: map['last_executed'] != null
-              ? DateTime.parse(map['last_executed'].toString())
-              : null,
+          lastExecuted: DateTime.parse(map['last_executed'].toString()),
         );
 
   RecurringSchedule copy() {

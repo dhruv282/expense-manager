@@ -47,7 +47,7 @@ class DatabaseManager {
                   '  cost DECIMAL(12,2) NOT NULL,'
                   '  category CATEGORY_OPTIONS NOT NULL,'
                   '  recurrence_rule TEXT NOT NULL,'
-                  '  last_executed DATE'
+                  '  last_executed DATE NOT NULL'
                   ')'));
     } catch (e) {
       logger.e("Error connecting to the database: $e");
@@ -234,9 +234,7 @@ class DatabaseManager {
           expense.cost,
           expense.category,
           expense.recurrenceRule,
-          expense.lastExecuted != null
-              ? DateFormat('MM/dd/yyyy').format(expense.lastExecuted!)
-              : null,
+          DateFormat('MM/dd/yyyy').format(expense.lastExecuted),
         ]);
     if (res.isEmpty) {
       throw Exception('Error inserting recurring schedule: $expense');
@@ -261,9 +259,8 @@ class DatabaseManager {
           'cost': expense.cost,
           'category': expense.category,
           'recurrence_rule': expense.recurrenceRule,
-          'last_executed': expense.lastExecuted != null
-              ? DateFormat('MM/dd/yyyy').format(expense.lastExecuted!)
-              : null,
+          'last_executed':
+              DateFormat('MM/dd/yyyy').format(expense.lastExecuted),
         });
   }
 
