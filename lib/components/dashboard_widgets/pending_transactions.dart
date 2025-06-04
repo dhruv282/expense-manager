@@ -31,13 +31,17 @@ class _PendingTransactionsWidgetState extends State<PendingTransactionsWidget> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
             padding: EdgeInsets.only(top: 5, left: 10, right: 10),
-            child: Text(
-              'Pending Transactions',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-            ),
+            child: Row(spacing: 5, children: [
+              Icon(Icons.schedule,
+                  color: Theme.of(context).colorScheme.primary),
+              Text(
+                'Pending Transactions',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+              )
+            ]),
           ),
           Divider(
             color: Theme.of(context).colorScheme.primary,
