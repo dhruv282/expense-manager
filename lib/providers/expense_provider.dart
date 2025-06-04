@@ -127,6 +127,12 @@ class ExpenseProvider extends ChangeNotifier {
     return category.toUpperCase() == 'INCOME';
   }
 
+  Color getCategoryColor(String category) {
+    return isIncome(category)
+        ? Color.fromARGB(255, 0, 190, 0)
+        : Color.fromARGB(255, 190, 0, 0);
+  }
+
   Future loadRecurringSchedules() async {
     var dbManager = DatabaseManager();
     return dbManager.getRecurringSchedules().then((recurring) {

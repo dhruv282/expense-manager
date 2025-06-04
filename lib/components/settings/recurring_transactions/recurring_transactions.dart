@@ -42,9 +42,7 @@ class _RecurringTransactionsState extends State<RecurringTransactions> {
                   ]),
               trailing: Text("\$${schedule.cost.toStringAsFixed(2)}",
                   style: TextStyle(
-                    color: expenseProvider.isIncome(schedule.category)
-                        ? Color.fromARGB(255, 0, 190, 0)
-                        : Color.fromARGB(255, 190, 0, 0),
+                    color: expenseProvider.getCategoryColor(schedule.category),
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   )),
