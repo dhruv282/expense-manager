@@ -11,6 +11,9 @@ class RecurringSchedule {
   // Category is the type of expense
   String category;
 
+  // Auto creates the expense when the rule is executed
+  bool autoConfirm;
+
   // Recurence rule for the expense
   String recurrenceRule;
 
@@ -23,6 +26,7 @@ class RecurringSchedule {
     required this.description,
     required this.cost,
     required this.category,
+    required this.autoConfirm,
     required this.recurrenceRule,
     required this.lastExecuted,
   });
@@ -33,6 +37,7 @@ class RecurringSchedule {
           description: map['description'],
           cost: double.parse(map['cost'].toString()),
           category: map['category'].asString,
+          autoConfirm: map['auto_confirm'],
           recurrenceRule: map['recurrence_rule'],
           lastExecuted: DateTime.parse(map['last_executed'].toString()),
         );
@@ -43,6 +48,7 @@ class RecurringSchedule {
       description: description,
       cost: cost,
       category: category,
+      autoConfirm: autoConfirm,
       recurrenceRule: recurrenceRule,
       lastExecuted: lastExecuted,
     );
@@ -51,6 +57,6 @@ class RecurringSchedule {
   // Returns a string representation of the object
   @override
   String toString() {
-    return 'RecurringSchedule{id: $id, description: $description, cost: $cost, category: $category, recurrenceRule: $recurrenceRule, lastExecuted: $lastExecuted}';
+    return 'RecurringSchedule{id: $id, description: $description, cost: $cost, category: $category, autoConfirm:$autoConfirm, recurrenceRule: $recurrenceRule, lastExecuted: $lastExecuted}';
   }
 }

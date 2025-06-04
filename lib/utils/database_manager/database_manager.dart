@@ -46,6 +46,7 @@ class DatabaseManager {
                   '  description TEXT NOT NULL,'
                   '  cost DECIMAL(12,2) NOT NULL,'
                   '  category CATEGORY_OPTIONS NOT NULL,'
+                  '  auto_confirm BOOLEAN NOT NULL DEFAULT FALSE,'
                   '  recurrence_rule TEXT NOT NULL,'
                   '  last_executed DATE NOT NULL'
                   ')'));
@@ -219,7 +220,7 @@ class DatabaseManager {
   }
 
   /// Inserts the given recurring schedule in the database and returns the ID.
-  Future<String> insertRecurringSchedule(RecurringSchedule expense) async {
+  Future<String> insertRecurringSchedule(RecurringSchedule schedule) async {
     logger.i("Inserting a recurring schedule into the database...");
 
     if (connection == null) {
@@ -228,16 +229,17 @@ class DatabaseManager {
 
     // Execute the query
     final res = await connection!.execute(
-        r'INSERT INTO recurring_expenses (description, cost, category, recurrence_rule, last_executed) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+        r'INSERT INTO recurring_expenses (description, cost, category, auto_confirm, recurrence_rule, last_executed) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
         parameters: [
-          expense.description,
-          expense.cost,
-          expense.category,
-          expense.recurrenceRule,
-          DateFormat('MM/dd/yyyy').format(expense.lastExecuted),
+          schedule.description,
+          schedule.cost,
+          schedule.category,
+          schedule.autoConfirm,
+          schedule.recurrenceRule,
+          DateFormat('MM/dd/yyyy').format(schedule.lastExecuted),
         ]);
     if (res.isEmpty) {
-      throw Exception('Error inserting recurring schedule: $expense');
+      throw Exception('Error inserting recurring schedule: $schedule');
     }
     return res[0][0].toString();
   }
@@ -252,12 +254,13 @@ class DatabaseManager {
 
     return await connection!.execute(
         Sql.named(
-            'UPDATE recurring_expenses SET description=@description, cost=@cost, category=@category, recurrence_rule=@recurrence_rule, last_executed=@last_executed WHERE id=@id'),
+            'UPDATE recurring_expenses SET description=@description, cost=@cost, category=@category, auto_confirm=@auto_confirm, recurrence_rule=@recurrence_rule, last_executed=@last_executed WHERE id=@id'),
         parameters: {
           'id': expense.id,
           'description': expense.description,
           'cost': expense.cost,
           'category': expense.category,
+          'auto_confirm': expense.autoConfirm,
           'recurrence_rule': expense.recurrenceRule,
           'last_executed':
               DateFormat('MM/dd/yyyy').format(expense.lastExecuted),

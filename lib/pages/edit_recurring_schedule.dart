@@ -32,6 +32,7 @@ class _EditRecurringScheduleState extends State<EditRecurringSchedule> {
     descriptionTextFormFieldLabel: TextEditingController(),
     categoryTextFormFieldLabel: TextEditingController(),
   };
+  var recurrenceScheduleAutoConfirm = false;
 
   String? checkEmptyInput(String? value) {
     if (value == null || value.isEmpty) {
@@ -52,6 +53,7 @@ class _EditRecurringScheduleState extends State<EditRecurringSchedule> {
         widget.schedule.category;
     reccurenceRuleJson.addAll(
         RecurrenceRule.fromString(widget.schedule.recurrenceRule).toJson());
+    recurrenceScheduleAutoConfirm = widget.schedule.autoConfirm;
   }
 
   @override
@@ -113,58 +115,74 @@ class _EditRecurringScheduleState extends State<EditRecurringSchedule> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-              // Cost field
-              CustomFormField(
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                inputFormatter: CurrencyTextInputFormatter.simpleCurrency(
-                    enableNegative: false),
-                controller: formControllerMap[amountTextFormFieldLabel]!,
-                labelText: amountTextFormFieldLabel,
-                hintText: amountTextFormFieldHint,
-                validator: checkEmptyInput,
-              ),
-              formFieldSpacing,
-              // Description field
-              CustomFormField(
-                keyboardType: TextInputType.text,
-                inputFormatter: FilteringTextInputFormatter.singleLineFormatter,
-                controller: formControllerMap[descriptionTextFormFieldLabel]!,
-                labelText: descriptionTextFormFieldLabel,
-                hintText: descriptionTextFormFieldHint,
-                validator: checkEmptyInput,
-              ),
-              formFieldSpacing,
-              // Category field
-              CustomFormDropdown(
-                options: expenseProvider.categoryOptions,
-                labelText: categoryTextFormFieldLabel,
-                controller: formControllerMap[categoryTextFormFieldLabel]!,
-                validator: checkEmptyInput,
-                hintText: categoryTextFormFieldHint,
-                addOption: getAddOptionDropdownItem(
-                    'add_new_category', 'Add new category'),
-                onAddOptionSelect: () => showAddDialog(
-                  context,
-                  'Add Category',
-                  'Enter value for new category',
-                  (category) => expenseProvider.addCategory(category),
-                  () => showSnackBar(
-                    context,
-                    'Failed to add category :(',
-                    SnackBarColor.error,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 5),
-              const Divider(),
-              RecurringScheduleForm(recurrenceRuleJson: reccurenceRuleJson),
-            ]),
-          ),
+          child: Padding(
+              padding: EdgeInsets.only(bottom: 80),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      // Cost field
+                      CustomFormField(
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        inputFormatter:
+                            CurrencyTextInputFormatter.simpleCurrency(
+                                enableNegative: false),
+                        controller:
+                            formControllerMap[amountTextFormFieldLabel]!,
+                        labelText: amountTextFormFieldLabel,
+                        hintText: amountTextFormFieldHint,
+                        validator: checkEmptyInput,
+                      ),
+                      formFieldSpacing,
+                      // Description field
+                      CustomFormField(
+                        keyboardType: TextInputType.text,
+                        inputFormatter:
+                            FilteringTextInputFormatter.singleLineFormatter,
+                        controller:
+                            formControllerMap[descriptionTextFormFieldLabel]!,
+                        labelText: descriptionTextFormFieldLabel,
+                        hintText: descriptionTextFormFieldHint,
+                        validator: checkEmptyInput,
+                      ),
+                      formFieldSpacing,
+                      // Category field
+                      CustomFormDropdown(
+                        options: expenseProvider.categoryOptions,
+                        labelText: categoryTextFormFieldLabel,
+                        controller:
+                            formControllerMap[categoryTextFormFieldLabel]!,
+                        validator: checkEmptyInput,
+                        hintText: categoryTextFormFieldHint,
+                        addOption: getAddOptionDropdownItem(
+                            'add_new_category', 'Add new category'),
+                        onAddOptionSelect: () => showAddDialog(
+                          context,
+                          'Add Category',
+                          'Enter value for new category',
+                          (category) => expenseProvider.addCategory(category),
+                          () => showSnackBar(
+                            context,
+                            'Failed to add category :(',
+                            SnackBarColor.error,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      const Divider(),
+                      RecurringScheduleForm(
+                        recurrenceRuleJson: reccurenceRuleJson,
+                        autoConfirm: recurrenceScheduleAutoConfirm,
+                        onAutoConfirmChanged: (value) {
+                          setState(() {
+                            recurrenceScheduleAutoConfirm = value;
+                          });
+                        },
+                      ),
+                    ]),
+              )),
         ),
       ),
       bottomSheet: ElevatedButton(
@@ -191,6 +209,7 @@ class _EditRecurringScheduleState extends State<EditRecurringSchedule> {
                     .replaceFirst("\$", "")
                     .replaceAll(",", "")),
                 category: formControllerMap[categoryTextFormFieldLabel]!.text,
+                autoConfirm: recurrenceScheduleAutoConfirm,
                 recurrenceRule:
                     RecurrenceRule.fromJson(reccurenceRuleJson).toString(),
               );

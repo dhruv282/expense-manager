@@ -12,10 +12,14 @@ import 'package:provider/provider.dart';
 
 class RecurringScheduleForm extends StatefulWidget {
   final Map<String, dynamic> recurrenceRuleJson;
+  final bool autoConfirm;
+  final Function(bool) onAutoConfirmChanged;
 
   const RecurringScheduleForm({
     super.key,
     required this.recurrenceRuleJson,
+    required this.autoConfirm,
+    required this.onAutoConfirmChanged,
   });
 
   @override
@@ -175,6 +179,20 @@ class _RecurringScheduleFormState extends State<RecurringScheduleForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Auto Confirm',
+                style: Theme.of(context).textTheme.titleMedium),
+            Switch(
+              value: widget.autoConfirm,
+              onChanged: (value) {
+                widget.onAutoConfirmChanged(value);
+              },
+            ),
+          ],
+        ),
+        formFieldSpacing,
         if (recurringRuleText.isNotEmpty) ...[
           Card.outlined(
               child: Padding(

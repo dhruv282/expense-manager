@@ -145,7 +145,12 @@ class ExpenseProvider extends ChangeNotifier {
     for (var s in _recurringSchedules) {
       var recurringEntries = getRecurringEntries(s);
       if (recurringEntries.isNotEmpty) {
-        temp[s] = getRecurringEntries(s);
+        if (s.autoConfirm) {
+          // The recursive nature of notifyListeners will take care of draining the auto-confirm queue.
+          await triggerRecurringScheduleRule(s, recurringEntries.first, false);
+        } else {
+          temp[s] = getRecurringEntries(s);
+        }
       }
     }
     _pendingTransactions = temp;
