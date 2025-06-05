@@ -1,6 +1,7 @@
 import 'package:expense_manager/components/expense_form/expense_form.dart';
 import 'package:expense_manager/components/expense_form/constants.dart';
 import 'package:expense_manager/data/expense_data.dart';
+import 'package:expense_manager/data/recurring_schedule.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:expense_manager/utils/snackbar/snackbar.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +43,12 @@ class _AddExpensePageState extends State<AddExpensePage> {
           padding: const EdgeInsets.all(16.0),
           child: ExpenseForm(
             controllerMap: formControllerMap,
-            onSubmit: (ExpenseData e) => expenseProvider.addExpense(e),
+            onSubmit: (ExpenseData e, RecurringSchedule? r) => expenseProvider.addExpense(e).then((v) {
+              if (r != null) {
+                return expenseProvider.addRecurringSchedule(r);
+              }
+              return Future.value();
+            }),
             onSuccess: () {
               showSnackBar(
                 context,

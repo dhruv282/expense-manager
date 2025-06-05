@@ -14,7 +14,9 @@ class CategoryFilter extends StatelessWidget {
     return CustomFormMultiDropdown(
       labelText: 'Category',
       hintText: 'Filter by category',
-      options: expenseProvider.categoryOptions,
+      options: expenseProvider.categoryOptions
+          .map((v) => DropdownItem(label: v, value: v))
+          .toList(),
       controller: categoryFilterController,
     );
   }

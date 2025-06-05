@@ -9,6 +9,7 @@ class CustomFormDropdown extends StatefulWidget {
   final TextEditingController controller;
   final DropdownMenuItem<String>? addOption;
   final Function? onAddOptionSelect;
+  final Function? onChanged;
 
   const CustomFormDropdown({
     super.key,
@@ -20,6 +21,7 @@ class CustomFormDropdown extends StatefulWidget {
     this.validator,
     this.addOption,
     this.onAddOptionSelect,
+    this.onChanged,
   });
 
   @override
@@ -41,6 +43,7 @@ class _CustomFormDropdownState extends State<CustomFormDropdown> {
       options.add(widget.addOption as DropdownMenuItem<String>);
     }
     return DropdownButtonFormField<String>(
+      dropdownColor: Theme.of(context).colorScheme.surfaceContainerHigh,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         icon: widget.icon != null ? Icon(widget.icon) : null,
@@ -59,6 +62,7 @@ class _CustomFormDropdownState extends State<CustomFormDropdown> {
             value = val!;
             widget.controller.text = val;
           });
+          widget.onChanged?.call(val);
         }
       },
       items: options,

@@ -1,7 +1,9 @@
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:expense_manager/components/expense_form/constants.dart';
 import 'package:expense_manager/components/form_helpers/form_dropdown_add_option.dart';
+import 'package:expense_manager/components/recurring_schedule_form/recurring_schedule_form.dart';
 import 'package:expense_manager/data/expense_data.dart';
+import 'package:expense_manager/data/recurring_schedule.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:expense_manager/utils/logger/logger.dart';
 import 'package:expense_manager/components/form_helpers/date_picker.dart';
@@ -11,21 +13,24 @@ import 'package:expense_manager/utils/snackbar/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:pattern_formatter/date_formatter.dart';
 import 'package:provider/provider.dart';
+import 'package:rrule/rrule.dart';
 
 class ExpenseForm extends StatefulWidget {
   final Map<String, TextEditingController> controllerMap;
-  final Future Function(ExpenseData e) onSubmit;
+  final RecurrenceRule? recurrenceRule;
+  final Future Function(ExpenseData e, RecurringSchedule? s) onSubmit;
   final Function() onSuccess;
   final Function() onError;
 
-  const ExpenseForm(
-      {super.key,
-      required this.controllerMap,
-      required this.onSubmit,
-      required this.onSuccess,
-      required this.onError});
+  const ExpenseForm({
+    super.key,
+    required this.controllerMap,
+    this.recurrenceRule,
+    required this.onSubmit,
+    required this.onSuccess,
+    required this.onError,
+  });
 
   @override
   State<ExpenseForm> createState() => _ExpenseFormState();
@@ -38,7 +43,11 @@ class _ExpenseFormState extends State<ExpenseForm> {
   // Note: This is a GlobalKey<FormState>,
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
+  final formFieldSpacing = const SizedBox(height: 20);
   var isSubmitting = false;
+  var recurringTransaction = false;
+  final Map<String, dynamic> reccurenceRuleJson = {};
+  var recurrenceRuleAutoConfirm = false;
 
   String? checkEmptyInput(String? value) {
     if (value == null || value.isEmpty) {
@@ -48,97 +57,112 @@ class _ExpenseFormState extends State<ExpenseForm> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.recurrenceRule != null) {
+      reccurenceRuleJson.addAll(widget.recurrenceRule!.toJson());
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final expenseProvider = Provider.of<ExpenseProvider>(context);
     return Scaffold(
       body: SingleChildScrollView(
-          child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  // Date field
-                  Row(children: [
-                    Expanded(
-                      child: CustomFormField(
-                        keyboardType: TextInputType.datetime,
-                        inputFormatter: DateInputFormatter(),
+          child: Padding(
+              padding: EdgeInsets.only(bottom: 80),
+              child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      // Date field
+                      CustomDatePicker(
+                          initialDate: DateFormat('MM/dd/yyyy').parse(widget
+                              .controllerMap[dateTextFormFieldLabel]!.text),
+                          onDateSelected: (date) {
+                            widget.controllerMap[dateTextFormFieldLabel]!.text =
+                                DateFormat.yMd().format(date);
+                          }),
+                      formFieldSpacing,
+                      // Cost field
+                      CustomFormField(
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        inputFormatter:
+                            CurrencyTextInputFormatter.simpleCurrency(
+                                enableNegative: false),
                         controller:
-                            widget.controllerMap[dateTextFormFieldLabel]!,
-                        labelText: dateTextFormFieldLabel,
-                        hintText: dateTextFormFieldHint,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter a valid date';
-                          } else {
-                            try {
-                              DateFormat.yMd().parse(value).toString();
-
-                              return null;
-                            } catch (e) {
-                              return 'Please enter a valid date';
-                            }
-                          }
-                        },
+                            widget.controllerMap[amountTextFormFieldLabel]!,
+                        labelText: amountTextFormFieldLabel,
+                        hintText: amountTextFormFieldHint,
+                        validator: checkEmptyInput,
                       ),
-                    ),
-                    CustomDatePicker(
-                        initialDate: DateTime.now(),
-                        onDateSelected: (date) {
-                          widget.controllerMap[dateTextFormFieldLabel]!.text =
-                              DateFormat.yMd().format(date);
-                        }),
-                  ]),
-                  const SizedBox(height: 35),
-                  // Cost field
-                  CustomFormField(
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
-                    inputFormatter: CurrencyTextInputFormatter.simpleCurrency(
-                        enableNegative: false),
-                    controller: widget.controllerMap[amountTextFormFieldLabel]!,
-                    labelText: amountTextFormFieldLabel,
-                    hintText: amountTextFormFieldHint,
-                    validator: checkEmptyInput,
-                  ),
-                  const SizedBox(height: 35),
-                  // Description field
-                  CustomFormField(
-                    keyboardType: TextInputType.text,
-                    inputFormatter:
-                        FilteringTextInputFormatter.singleLineFormatter,
-                    controller:
-                        widget.controllerMap[descriptionTextFormFieldLabel]!,
-                    labelText: descriptionTextFormFieldLabel,
-                    hintText: descriptionTextFormFieldHint,
-                    validator: checkEmptyInput,
-                  ),
-                  const SizedBox(height: 35),
-                  // Category field
-                  CustomFormDropdown(
-                    options: expenseProvider.categoryOptions,
-                    labelText: categoryTextFormFieldLabel,
-                    controller:
-                        widget.controllerMap[categoryTextFormFieldLabel]!,
-                    validator: checkEmptyInput,
-                    hintText: categoryTextFormFieldHint,
-                    addOption: getAddOptionDropdownItem(
-                        'add_new_category', 'Add new category'),
-                    onAddOptionSelect: () => showAddDialog(
-                      context,
-                      'Add Category',
-                      'Enter value for new category',
-                      (category) => expenseProvider.addCategory(category),
-                      () => showSnackBar(
-                        context,
-                        'Failed to add category :(',
-                        SnackBarColor.error,
+                      formFieldSpacing,
+                      // Description field
+                      CustomFormField(
+                        keyboardType: TextInputType.text,
+                        inputFormatter:
+                            FilteringTextInputFormatter.singleLineFormatter,
+                        controller: widget
+                            .controllerMap[descriptionTextFormFieldLabel]!,
+                        labelText: descriptionTextFormFieldLabel,
+                        hintText: descriptionTextFormFieldHint,
+                        validator: checkEmptyInput,
                       ),
-                    ),
-                  ),
-                ],
-              ))),
+                      formFieldSpacing,
+                      // Category field
+                      CustomFormDropdown(
+                        options: expenseProvider.categoryOptions,
+                        labelText: categoryTextFormFieldLabel,
+                        controller:
+                            widget.controllerMap[categoryTextFormFieldLabel]!,
+                        validator: checkEmptyInput,
+                        hintText: categoryTextFormFieldHint,
+                        addOption: getAddOptionDropdownItem(
+                            'add_new_category', 'Add new category'),
+                        onAddOptionSelect: () => showAddDialog(
+                          context,
+                          'Add Category',
+                          'Enter value for new category',
+                          (category) => expenseProvider.addCategory(category),
+                          () => showSnackBar(
+                            context,
+                            'Failed to add category :(',
+                            SnackBarColor.error,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      const Divider(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Reccuring Transaction',
+                              style: theme.textTheme.titleMedium),
+                          Switch(
+                            value: recurringTransaction,
+                            onChanged: (value) {
+                              setState(() {
+                                recurringTransaction = value;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      if (recurringTransaction)
+                        RecurringScheduleForm(
+                          recurrenceRuleJson: reccurenceRuleJson,
+                          autoConfirm: recurrenceRuleAutoConfirm,
+                          onAutoConfirmChanged: (value) {
+                            setState(() {
+                              recurrenceRuleAutoConfirm = value;
+                            });
+                          },
+                        ),
+                    ],
+                  )))),
       bottomSheet: ElevatedButton(
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(200, 50),
@@ -167,7 +191,20 @@ class _ExpenseFormState extends State<ExpenseForm> {
                     widget.controllerMap[categoryTextFormFieldLabel]!.text,
               );
 
-              widget.onSubmit(expense).then((res) {
+              RecurringSchedule? recurringSchedule;
+              if (recurringTransaction) {
+                recurringSchedule = RecurringSchedule(
+                  description: expense.description,
+                  cost: expense.cost,
+                  category: expense.category,
+                  autoConfirm: recurrenceRuleAutoConfirm,
+                  recurrenceRule:
+                      RecurrenceRule.fromJson(reccurenceRuleJson).toString(),
+                  lastExecuted: expense.date,
+                );
+              }
+
+              widget.onSubmit(expense, recurringSchedule).then((res) {
                 widget.onSuccess();
                 if (context.mounted) {
                   Navigator.pop(context);
