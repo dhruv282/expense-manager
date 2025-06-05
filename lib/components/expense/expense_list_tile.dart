@@ -7,11 +7,13 @@ import 'package:provider/provider.dart';
 class ExpenseListTile extends StatelessWidget {
   final ExpenseData expense;
   final VoidCallback? onTap;
+  final bool showDate;
 
   const ExpenseListTile({
     super.key,
     required this.expense,
     this.onTap,
+    this.showDate = true,
   });
 
   @override
@@ -32,10 +34,11 @@ class ExpenseListTile extends StatelessWidget {
         subtitle:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(expense.description),
-          Text(
-            DateFormat.yMMMd().format(expense.date),
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
-          ),
+          if (showDate)
+            Text(
+              DateFormat.yMMMd().format(expense.date),
+              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+            ),
         ]),
         trailing: Text("\$${expense.cost.toStringAsFixed(2)}",
             style: TextStyle(
