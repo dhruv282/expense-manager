@@ -61,10 +61,7 @@ class ExpenseDataSource extends DataTableSource {
                       );
                     });
                   },
-                  child: const Text(
-                    'Delete',
-                    selectionColor: Color.fromARGB(255, 95, 0, 0),
-                  ),
+                  child: const Text('Delete'),
                 ),
               ],
             );

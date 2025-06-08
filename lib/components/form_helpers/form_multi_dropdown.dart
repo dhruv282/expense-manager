@@ -2,18 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 
 class CustomFormMultiDropdown extends StatefulWidget {
-  final List<String> options;
+  final List<DropdownItem<String>> options;
   final String? labelText;
   final String? hintText;
-  final MultiSelectController<String> controller;
+  final MultiSelectController<String>? controller;
+  final bool searchEnabled;
   final String? Function(List<DropdownItem<String>>?)? validator;
+  final Function(List<String>)? onChanged;
   const CustomFormMultiDropdown({
     super.key,
     required this.options,
-    required this.controller,
+    this.controller,
+    this.searchEnabled = true,
     this.labelText,
     this.validator,
     this.hintText,
+    this.onChanged,
   });
 
   @override
@@ -25,7 +29,7 @@ class _CustomFormMultiDropdownState extends State<CustomFormMultiDropdown> {
   @override
   Widget build(BuildContext context) {
     return MultiDropdown(
-        searchEnabled: true,
+        searchEnabled: widget.searchEnabled,
         fieldDecoration: FieldDecoration(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
           border: OutlineInputBorder(
@@ -54,8 +58,7 @@ class _CustomFormMultiDropdownState extends State<CustomFormMultiDropdown> {
         ),
         validator: widget.validator,
         controller: widget.controller,
-        items: widget.options
-            .map((o) => DropdownItem(label: o, value: o))
-            .toList());
+        onSelectionChange: widget.onChanged,
+        items: widget.options);
   }
 }

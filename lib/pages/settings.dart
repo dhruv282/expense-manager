@@ -1,4 +1,5 @@
 import 'package:expense_manager/components/settings/database_config_form/database_config_form.dart';
+import 'package:expense_manager/components/settings/recurring_transactions/recurring_transactions.dart';
 import 'package:expense_manager/components/settings/widget_config/widget_config.dart';
 import 'package:flutter/material.dart';
 
@@ -35,6 +36,17 @@ class _SettingsPageState extends State<SettingsPage> {
           );
         },
       ),
+      SettingsItem(
+        title: 'Reccuring Transactions',
+        description: 'Manage recurring transactions and schedule',
+        icon: Icons.replay,
+        onClick: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => RecurringTransactions()),
+          );
+        },
+      )
     ];
     return Scaffold(
         appBar: AppBar(title: const Text('Settings')),
