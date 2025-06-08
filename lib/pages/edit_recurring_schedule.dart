@@ -199,39 +199,68 @@ class _EditRecurringScheduleState extends State<EditRecurringSchedule> {
               isSubmitting = true;
             });
             if (_formKey.currentState!.validate()) {
-              RecurringSchedule recurringSchedule = RecurringSchedule(
-                id: widget.schedule.id,
-                lastExecuted: widget.schedule.lastExecuted,
-                description:
-                    formControllerMap[descriptionTextFormFieldLabel]!.text,
-                cost: double.parse(formControllerMap[amountTextFormFieldLabel]!
-                    .text
-                    .replaceFirst("\$", "")
-                    .replaceAll(",", "")),
-                category: formControllerMap[categoryTextFormFieldLabel]!.text,
-                autoConfirm: recurrenceScheduleAutoConfirm,
-                recurrenceRule:
-                    RecurrenceRule.fromJson(reccurenceRuleJson).toString(),
-              );
-              expenseProvider
-                  .updateRecurringSchedule(recurringSchedule)
-                  .then((_) {
-                if (!context.mounted) return;
-                showSnackBar(
-                  context,
-                  'Recurring Schedule updated!',
-                  SnackBarColor.success,
+              void submit() {
+                RecurringSchedule recurringSchedule = RecurringSchedule(
+                  id: widget.schedule.id,
+                  lastExecuted: widget.schedule.lastExecuted,
+                  description:
+                      formControllerMap[descriptionTextFormFieldLabel]!.text,
+                  cost: double.parse(
+                      formControllerMap[amountTextFormFieldLabel]!
+                          .text
+                          .replaceFirst("\$", "")
+                          .replaceAll(",", "")),
+                  category: formControllerMap[categoryTextFormFieldLabel]!.text,
+                  autoConfirm: recurrenceScheduleAutoConfirm,
+                  recurrenceRule:
+                      RecurrenceRule.fromJson(reccurenceRuleJson).toString(),
                 );
-                Navigator.pop(context);
-              }).catchError((e) {
-                logger.e(e);
-                if (!context.mounted) return;
-                showSnackBar(
-                  context,
-                  'Failed to update recurring schedule :(',
-                  SnackBarColor.error,
-                );
-              });
+                expenseProvider
+                    .updateRecurringSchedule(recurringSchedule)
+                    .then((_) {
+                  if (!context.mounted) return;
+                  showSnackBar(
+                    context,
+                    'Recurring Schedule updated!',
+                    SnackBarColor.success,
+                  );
+                  Navigator.pop(context);
+                }).catchError((e) {
+                  logger.e(e);
+                  if (!context.mounted) return;
+                  showSnackBar(
+                    context,
+                    'Failed to update recurring schedule :(',
+                    SnackBarColor.error,
+                  );
+                });
+              }
+
+              if (expenseProvider.pendingTransactions.keys
+                  .map((e) => e.id)
+                  .contains(widget.schedule.id)) {
+                showDialog(
+                    context: context,
+                    builder: (c) => AlertDialog(
+                          title: Text('Are you sure?'),
+                          content: Text(
+                              'All currently pending transactions from this schedule will be lost.'),
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Cancel')),
+                            FilledButton(
+                                onPressed: () {
+                                  submit();
+                                },
+                                child: Text('Continue')),
+                          ],
+                        ));
+              } else {
+                submit();
+              }
             }
             setState(() {
               isSubmitting = false;
