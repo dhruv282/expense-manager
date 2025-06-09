@@ -30,7 +30,7 @@ class _PendingTransactionsWidgetState extends State<PendingTransactionsWidget> {
         padding: const EdgeInsets.all(5),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
-            padding: EdgeInsets.only(top: 5, left: 10, right: 10),
+            padding: EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 5),
             child: Row(spacing: 5, children: [
               Icon(Icons.schedule,
                   color: Theme.of(context).colorScheme.primary),
@@ -42,10 +42,6 @@ class _PendingTransactionsWidgetState extends State<PendingTransactionsWidget> {
                     ),
               )
             ]),
-          ),
-          Divider(
-            color: Theme.of(context).colorScheme.primary,
-            thickness: 3,
           ),
           Expanded(
               child: ListView(
