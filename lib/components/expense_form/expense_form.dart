@@ -68,164 +68,166 @@ class _ExpenseFormState extends State<ExpenseForm> {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final expenseProvider = Provider.of<ExpenseProvider>(context);
-    return Scaffold(
-      body: SingleChildScrollView(
-          child: Padding(
-              padding: EdgeInsets.only(bottom: 80),
-              child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      // Date field
-                      CustomDatePicker(
-                          initialDate: DateFormat('MM/dd/yyyy').parse(widget
-                              .controllerMap[dateTextFormFieldLabel]!.text),
-                          onDateSelected: (date) {
-                            widget.controllerMap[dateTextFormFieldLabel]!.text =
-                                DateFormat.yMd().format(date);
-                          }),
-                      formFieldSpacing,
-                      // Cost field
-                      CustomFormField(
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
-                        inputFormatter:
-                            CurrencyTextInputFormatter.simpleCurrency(
-                                enableNegative: false),
-                        controller:
-                            widget.controllerMap[amountTextFormFieldLabel]!,
-                        labelText: amountTextFormFieldLabel,
-                        hintText: amountTextFormFieldHint,
-                        validator: checkEmptyInput,
-                      ),
-                      formFieldSpacing,
-                      // Description field
-                      CustomFormField(
-                        keyboardType: TextInputType.text,
-                        inputFormatter:
-                            FilteringTextInputFormatter.singleLineFormatter,
-                        controller: widget
-                            .controllerMap[descriptionTextFormFieldLabel]!,
-                        labelText: descriptionTextFormFieldLabel,
-                        hintText: descriptionTextFormFieldHint,
-                        validator: checkEmptyInput,
-                      ),
-                      formFieldSpacing,
-                      // Category field
-                      CustomFormDropdown(
-                        options: expenseProvider.categoryOptions,
-                        labelText: categoryTextFormFieldLabel,
-                        controller:
-                            widget.controllerMap[categoryTextFormFieldLabel]!,
-                        validator: checkEmptyInput,
-                        hintText: categoryTextFormFieldHint,
-                        addOption: getAddOptionDropdownItem(
-                            'add_new_category', 'Add new category'),
-                        onAddOptionSelect: () => showAddDialog(
-                          context,
-                          'Add Category',
-                          'Enter value for new category',
-                          (category) => expenseProvider.addCategory(category),
-                          () => showSnackBar(
+    return SafeArea(
+      child: Scaffold(
+        body: SingleChildScrollView(
+            child: Padding(
+                padding: EdgeInsets.only(bottom: 80),
+                child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        // Date field
+                        CustomDatePicker(
+                            initialDate: DateFormat('MM/dd/yyyy').parse(widget
+                                .controllerMap[dateTextFormFieldLabel]!.text),
+                            onDateSelected: (date) {
+                              widget.controllerMap[dateTextFormFieldLabel]!
+                                  .text = DateFormat.yMd().format(date);
+                            }),
+                        formFieldSpacing,
+                        // Cost field
+                        CustomFormField(
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
+                          inputFormatter:
+                              CurrencyTextInputFormatter.simpleCurrency(
+                                  enableNegative: false),
+                          controller:
+                              widget.controllerMap[amountTextFormFieldLabel]!,
+                          labelText: amountTextFormFieldLabel,
+                          hintText: amountTextFormFieldHint,
+                          validator: checkEmptyInput,
+                        ),
+                        formFieldSpacing,
+                        // Description field
+                        CustomFormField(
+                          keyboardType: TextInputType.text,
+                          inputFormatter:
+                              FilteringTextInputFormatter.singleLineFormatter,
+                          controller: widget
+                              .controllerMap[descriptionTextFormFieldLabel]!,
+                          labelText: descriptionTextFormFieldLabel,
+                          hintText: descriptionTextFormFieldHint,
+                          validator: checkEmptyInput,
+                        ),
+                        formFieldSpacing,
+                        // Category field
+                        CustomFormDropdown(
+                          options: expenseProvider.categoryOptions,
+                          labelText: categoryTextFormFieldLabel,
+                          controller:
+                              widget.controllerMap[categoryTextFormFieldLabel]!,
+                          validator: checkEmptyInput,
+                          hintText: categoryTextFormFieldHint,
+                          addOption: getAddOptionDropdownItem(
+                              'add_new_category', 'Add new category'),
+                          onAddOptionSelect: () => showAddDialog(
                             context,
-                            'Failed to add category :(',
-                            SnackBarColor.error,
+                            'Add Category',
+                            'Enter value for new category',
+                            (category) => expenseProvider.addCategory(category),
+                            () => showSnackBar(
+                              context,
+                              'Failed to add category :(',
+                              SnackBarColor.error,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 5),
-                      const Divider(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Reccuring Transaction',
-                              style: theme.textTheme.titleMedium),
-                          Switch(
-                            value: recurringTransaction,
-                            onChanged: (value) {
+                        const SizedBox(height: 5),
+                        const Divider(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Reccuring Transaction',
+                                style: theme.textTheme.titleMedium),
+                            Switch(
+                              value: recurringTransaction,
+                              onChanged: (value) {
+                                setState(() {
+                                  recurringTransaction = value;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        if (recurringTransaction)
+                          RecurringScheduleForm(
+                            recurrenceRuleJson: reccurenceRuleJson,
+                            autoConfirm: recurrenceRuleAutoConfirm,
+                            onAutoConfirmChanged: (value) {
                               setState(() {
-                                recurringTransaction = value;
+                                recurrenceRuleAutoConfirm = value;
                               });
                             },
                           ),
-                        ],
-                      ),
-                      if (recurringTransaction)
-                        RecurringScheduleForm(
-                          recurrenceRuleJson: reccurenceRuleJson,
-                          autoConfirm: recurrenceRuleAutoConfirm,
-                          onAutoConfirmChanged: (value) {
-                            setState(() {
-                              recurrenceRuleAutoConfirm = value;
-                            });
-                          },
-                        ),
-                    ],
-                  )))),
-      bottomSheet: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          minimumSize: const Size(200, 50),
-          backgroundColor: isSubmitting
-              ? theme.colorScheme.primary
-              : theme.colorScheme.inversePrimary,
-        ),
-        onPressed: () {
-          // Ignore button presses with ongoing submit operation.
-          if (!isSubmitting) {
-            setState(() {
-              isSubmitting = true;
-            });
-            // Validate returns true if the form is valid, or false otherwise.
-            if (_formKey.currentState!.validate()) {
-              ExpenseData expense = ExpenseData(
-                description:
-                    widget.controllerMap[descriptionTextFormFieldLabel]!.text,
-                cost: double.parse(widget
-                    .controllerMap[amountTextFormFieldLabel]!.text
-                    .replaceFirst("\$", "")
-                    .replaceAll(",", "")),
-                date: DateFormat('M/d/yyyy')
-                    .parse(widget.controllerMap[dateTextFormFieldLabel]!.text),
-                category:
-                    widget.controllerMap[categoryTextFormFieldLabel]!.text,
-              );
-
-              RecurringSchedule? recurringSchedule;
-              if (recurringTransaction) {
-                recurringSchedule = RecurringSchedule(
-                  description: expense.description,
-                  cost: expense.cost,
-                  category: expense.category,
-                  autoConfirm: recurrenceRuleAutoConfirm,
-                  recurrenceRule:
-                      RecurrenceRule.fromJson(reccurenceRuleJson).toString(),
-                  lastExecuted: expense.date,
+                      ],
+                    )))),
+        bottomSheet: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(200, 50),
+            backgroundColor: isSubmitting
+                ? theme.colorScheme.primary
+                : theme.colorScheme.inversePrimary,
+          ),
+          onPressed: () {
+            // Ignore button presses with ongoing submit operation.
+            if (!isSubmitting) {
+              setState(() {
+                isSubmitting = true;
+              });
+              // Validate returns true if the form is valid, or false otherwise.
+              if (_formKey.currentState!.validate()) {
+                ExpenseData expense = ExpenseData(
+                  description:
+                      widget.controllerMap[descriptionTextFormFieldLabel]!.text,
+                  cost: double.parse(widget
+                      .controllerMap[amountTextFormFieldLabel]!.text
+                      .replaceFirst("\$", "")
+                      .replaceAll(",", "")),
+                  date: DateFormat('M/d/yyyy').parse(
+                      widget.controllerMap[dateTextFormFieldLabel]!.text),
+                  category:
+                      widget.controllerMap[categoryTextFormFieldLabel]!.text,
                 );
-              }
 
-              widget.onSubmit(expense, recurringSchedule).then((res) {
-                widget.onSuccess();
-                if (context.mounted) {
-                  Navigator.pop(context);
+                RecurringSchedule? recurringSchedule;
+                if (recurringTransaction) {
+                  recurringSchedule = RecurringSchedule(
+                    description: expense.description,
+                    cost: expense.cost,
+                    category: expense.category,
+                    autoConfirm: recurrenceRuleAutoConfirm,
+                    recurrenceRule:
+                        RecurrenceRule.fromJson(reccurenceRuleJson).toString(),
+                    lastExecuted: expense.date,
+                  );
                 }
-              }).catchError((error) {
-                logger.e(error);
-                widget.onError();
+
+                widget.onSubmit(expense, recurringSchedule).then((res) {
+                  widget.onSuccess();
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                  }
+                }).catchError((error) {
+                  logger.e(error);
+                  widget.onError();
+                });
+              }
+              setState(() {
+                isSubmitting = false;
               });
             }
-            setState(() {
-              isSubmitting = false;
-            });
-          }
-        },
-        child: Text(
-          'Submit',
-          style: TextStyle(
-            fontSize: 20,
-            color: isSubmitting
-                ? theme.colorScheme.inversePrimary
-                : theme.colorScheme.primary,
+          },
+          child: Text(
+            'Submit',
+            style: TextStyle(
+              fontSize: 20,
+              color: isSubmitting
+                  ? theme.colorScheme.inversePrimary
+                  : theme.colorScheme.primary,
+            ),
           ),
         ),
       ),

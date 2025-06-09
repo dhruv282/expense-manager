@@ -61,222 +61,226 @@ class _EditRecurringScheduleState extends State<EditRecurringSchedule> {
     final expenseProvider = Provider.of<ExpenseProvider>(context);
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Edit Recurring Schedule"),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.delete,
-              color: Colors.redAccent,
+        body: SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Edit Recurring Schedule"),
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.delete,
+                color: Colors.redAccent,
+              ),
+              onPressed: () => showDialog(
+                  context: context,
+                  barrierDismissible: true,
+                  builder: (context) => AlertDialog(
+                        title: const Text('Delete Recurring Schedule'),
+                        content: const Text(
+                            'Are you sure you want to delete this schedule?'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('Cancel'),
+                          ),
+                          FilledButton(
+                              onPressed: () {
+                                expenseProvider
+                                    .deleteRecurringSchedule(widget.schedule)
+                                    .then((_) {
+                                  if (!context.mounted) return;
+                                  showSnackBar(
+                                    context,
+                                    'Recurring Schedule deleted!',
+                                    SnackBarColor.success,
+                                  );
+                                  Navigator.of(context).pop();
+                                }).catchError((e) {
+                                  logger.e(e);
+                                  if (!context.mounted) return;
+                                  showSnackBar(
+                                    context,
+                                    'Failed to delete recurring schedule :(',
+                                    SnackBarColor.error,
+                                  );
+                                }).whenComplete(() {
+                                  if (!context.mounted) return;
+                                  Navigator.of(context).pop();
+                                });
+                              },
+                              child: Text('Delete')),
+                        ],
+                      )),
             ),
-            onPressed: () => showDialog(
-                context: context,
-                barrierDismissible: true,
-                builder: (context) => AlertDialog(
-                      title: const Text('Delete Recurring Schedule'),
-                      content: const Text(
-                          'Are you sure you want to delete this schedule?'),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Cancel'),
+          ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Padding(
+                padding: EdgeInsets.only(bottom: 80),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        // Cost field
+                        CustomFormField(
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
+                          inputFormatter:
+                              CurrencyTextInputFormatter.simpleCurrency(
+                                  enableNegative: false),
+                          controller:
+                              formControllerMap[amountTextFormFieldLabel]!,
+                          labelText: amountTextFormFieldLabel,
+                          hintText: amountTextFormFieldHint,
+                          validator: checkEmptyInput,
                         ),
-                        FilledButton(
-                            onPressed: () {
-                              expenseProvider
-                                  .deleteRecurringSchedule(widget.schedule)
-                                  .then((_) {
-                                if (!context.mounted) return;
-                                showSnackBar(
-                                  context,
-                                  'Recurring Schedule deleted!',
-                                  SnackBarColor.success,
-                                );
-                                Navigator.of(context).pop();
-                              }).catchError((e) {
-                                logger.e(e);
-                                if (!context.mounted) return;
-                                showSnackBar(
-                                  context,
-                                  'Failed to delete recurring schedule :(',
-                                  SnackBarColor.error,
-                                );
-                              }).whenComplete(() {
-                                if (!context.mounted) return;
-                                Navigator.of(context).pop();
-                              });
-                            },
-                            child: Text('Delete')),
-                      ],
-                    )),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Padding(
-              padding: EdgeInsets.only(bottom: 80),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      // Cost field
-                      CustomFormField(
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
-                        inputFormatter:
-                            CurrencyTextInputFormatter.simpleCurrency(
-                                enableNegative: false),
-                        controller:
-                            formControllerMap[amountTextFormFieldLabel]!,
-                        labelText: amountTextFormFieldLabel,
-                        hintText: amountTextFormFieldHint,
-                        validator: checkEmptyInput,
-                      ),
-                      formFieldSpacing,
-                      // Description field
-                      CustomFormField(
-                        keyboardType: TextInputType.text,
-                        inputFormatter:
-                            FilteringTextInputFormatter.singleLineFormatter,
-                        controller:
-                            formControllerMap[descriptionTextFormFieldLabel]!,
-                        labelText: descriptionTextFormFieldLabel,
-                        hintText: descriptionTextFormFieldHint,
-                        validator: checkEmptyInput,
-                      ),
-                      formFieldSpacing,
-                      // Category field
-                      CustomFormDropdown(
-                        options: expenseProvider.categoryOptions,
-                        labelText: categoryTextFormFieldLabel,
-                        controller:
-                            formControllerMap[categoryTextFormFieldLabel]!,
-                        validator: checkEmptyInput,
-                        hintText: categoryTextFormFieldHint,
-                        addOption: getAddOptionDropdownItem(
-                            'add_new_category', 'Add new category'),
-                        onAddOptionSelect: () => showAddDialog(
-                          context,
-                          'Add Category',
-                          'Enter value for new category',
-                          (category) => expenseProvider.addCategory(category),
-                          () => showSnackBar(
+                        formFieldSpacing,
+                        // Description field
+                        CustomFormField(
+                          keyboardType: TextInputType.text,
+                          inputFormatter:
+                              FilteringTextInputFormatter.singleLineFormatter,
+                          controller:
+                              formControllerMap[descriptionTextFormFieldLabel]!,
+                          labelText: descriptionTextFormFieldLabel,
+                          hintText: descriptionTextFormFieldHint,
+                          validator: checkEmptyInput,
+                        ),
+                        formFieldSpacing,
+                        // Category field
+                        CustomFormDropdown(
+                          options: expenseProvider.categoryOptions,
+                          labelText: categoryTextFormFieldLabel,
+                          controller:
+                              formControllerMap[categoryTextFormFieldLabel]!,
+                          validator: checkEmptyInput,
+                          hintText: categoryTextFormFieldHint,
+                          addOption: getAddOptionDropdownItem(
+                              'add_new_category', 'Add new category'),
+                          onAddOptionSelect: () => showAddDialog(
                             context,
-                            'Failed to add category :(',
-                            SnackBarColor.error,
+                            'Add Category',
+                            'Enter value for new category',
+                            (category) => expenseProvider.addCategory(category),
+                            () => showSnackBar(
+                              context,
+                              'Failed to add category :(',
+                              SnackBarColor.error,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 5),
-                      const Divider(),
-                      RecurringScheduleForm(
-                        recurrenceRuleJson: reccurenceRuleJson,
-                        autoConfirm: recurrenceScheduleAutoConfirm,
-                        onAutoConfirmChanged: (value) {
-                          setState(() {
-                            recurrenceScheduleAutoConfirm = value;
-                          });
-                        },
-                      ),
-                    ]),
-              )),
+                        const SizedBox(height: 5),
+                        const Divider(),
+                        RecurringScheduleForm(
+                          recurrenceRuleJson: reccurenceRuleJson,
+                          autoConfirm: recurrenceScheduleAutoConfirm,
+                          onAutoConfirmChanged: (value) {
+                            setState(() {
+                              recurrenceScheduleAutoConfirm = value;
+                            });
+                          },
+                        ),
+                      ]),
+                )),
+          ),
         ),
-      ),
-      bottomSheet: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          minimumSize: const Size(200, 50),
-          backgroundColor: isSubmitting
-              ? theme.colorScheme.primary
-              : theme.colorScheme.inversePrimary,
-        ),
-        onPressed: () {
-          // Ignore button presses with ongoing submit operation.
-          if (!isSubmitting) {
-            setState(() {
-              isSubmitting = true;
-            });
-            if (_formKey.currentState!.validate()) {
-              void submit() {
-                RecurringSchedule recurringSchedule = RecurringSchedule(
-                  id: widget.schedule.id,
-                  lastExecuted: widget.schedule.lastExecuted,
-                  description:
-                      formControllerMap[descriptionTextFormFieldLabel]!.text,
-                  cost: double.parse(
-                      formControllerMap[amountTextFormFieldLabel]!
-                          .text
-                          .replaceFirst("\$", "")
-                          .replaceAll(",", "")),
-                  category: formControllerMap[categoryTextFormFieldLabel]!.text,
-                  autoConfirm: recurrenceScheduleAutoConfirm,
-                  recurrenceRule:
-                      RecurrenceRule.fromJson(reccurenceRuleJson).toString(),
-                );
-                expenseProvider
-                    .updateRecurringSchedule(recurringSchedule)
-                    .then((_) {
-                  if (!context.mounted) return;
-                  showSnackBar(
-                    context,
-                    'Recurring Schedule updated!',
-                    SnackBarColor.success,
+        bottomSheet: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(200, 50),
+            backgroundColor: isSubmitting
+                ? theme.colorScheme.primary
+                : theme.colorScheme.inversePrimary,
+          ),
+          onPressed: () {
+            // Ignore button presses with ongoing submit operation.
+            if (!isSubmitting) {
+              setState(() {
+                isSubmitting = true;
+              });
+              if (_formKey.currentState!.validate()) {
+                void submit() {
+                  RecurringSchedule recurringSchedule = RecurringSchedule(
+                    id: widget.schedule.id,
+                    lastExecuted: widget.schedule.lastExecuted,
+                    description:
+                        formControllerMap[descriptionTextFormFieldLabel]!.text,
+                    cost: double.parse(
+                        formControllerMap[amountTextFormFieldLabel]!
+                            .text
+                            .replaceFirst("\$", "")
+                            .replaceAll(",", "")),
+                    category:
+                        formControllerMap[categoryTextFormFieldLabel]!.text,
+                    autoConfirm: recurrenceScheduleAutoConfirm,
+                    recurrenceRule:
+                        RecurrenceRule.fromJson(reccurenceRuleJson).toString(),
                   );
-                  Navigator.pop(context);
-                }).catchError((e) {
-                  logger.e(e);
-                  if (!context.mounted) return;
-                  showSnackBar(
-                    context,
-                    'Failed to update recurring schedule :(',
-                    SnackBarColor.error,
-                  );
-                });
-              }
+                  expenseProvider
+                      .updateRecurringSchedule(recurringSchedule)
+                      .then((_) {
+                    if (!context.mounted) return;
+                    showSnackBar(
+                      context,
+                      'Recurring Schedule updated!',
+                      SnackBarColor.success,
+                    );
+                    Navigator.pop(context);
+                  }).catchError((e) {
+                    logger.e(e);
+                    if (!context.mounted) return;
+                    showSnackBar(
+                      context,
+                      'Failed to update recurring schedule :(',
+                      SnackBarColor.error,
+                    );
+                  });
+                }
 
-              if (expenseProvider.pendingTransactions.keys
-                  .map((e) => e.id)
-                  .contains(widget.schedule.id)) {
-                showDialog(
-                    context: context,
-                    builder: (c) => AlertDialog(
-                          title: Text('Are you sure?'),
-                          content: Text(
-                              'All currently pending transactions from this schedule will be lost.'),
-                          actions: [
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text('Cancel')),
-                            FilledButton(
-                                onPressed: () {
-                                  submit();
-                                },
-                                child: Text('Continue')),
-                          ],
-                        ));
-              } else {
-                submit();
+                if (expenseProvider.pendingTransactions.keys
+                    .map((e) => e.id)
+                    .contains(widget.schedule.id)) {
+                  showDialog(
+                      context: context,
+                      builder: (c) => AlertDialog(
+                            title: Text('Are you sure?'),
+                            content: Text(
+                                'All currently pending transactions from this schedule will be lost.'),
+                            actions: [
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('Cancel')),
+                              FilledButton(
+                                  onPressed: () {
+                                    submit();
+                                  },
+                                  child: Text('Continue')),
+                            ],
+                          ));
+                } else {
+                  submit();
+                }
               }
+              setState(() {
+                isSubmitting = false;
+              });
             }
-            setState(() {
-              isSubmitting = false;
-            });
-          }
-        },
-        child: Text(
-          'Submit',
-          style: TextStyle(
-            fontSize: 20,
-            color: isSubmitting
-                ? theme.colorScheme.inversePrimary
-                : theme.colorScheme.primary,
+          },
+          child: Text(
+            'Submit',
+            style: TextStyle(
+              fontSize: 20,
+              color: isSubmitting
+                  ? theme.colorScheme.inversePrimary
+                  : theme.colorScheme.primary,
+            ),
           ),
         ),
       ),
-    );
+    ));
   }
 }
