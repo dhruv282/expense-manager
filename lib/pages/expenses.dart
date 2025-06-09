@@ -1,6 +1,7 @@
 import 'package:expense_manager/components/data_table_filter/data_table_filter.dart';
 import 'package:expense_manager/components/expense/expense_list_tile.dart';
 import 'package:expense_manager/data/expense_data.dart';
+import 'package:expense_manager/pages/edit_expense.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
@@ -32,8 +33,6 @@ class _ExpensePageState extends State<ExpensePage> {
       });
     }
 
-    // TODO: Loading 1000s of list view items might be laggy.
-    // Figure out way to load in chunks as the user scrolls.
     return Column(
       children: [
         SizedBox(
@@ -50,6 +49,7 @@ class _ExpensePageState extends State<ExpensePage> {
           child: GroupedListView(
             elements: expenseData,
             groupBy: (e) => e.date,
+            order: GroupedListOrder.DESC,
             groupHeaderBuilder: (e) => Padding(
                 padding: EdgeInsets.only(top: 10, left: 10, right: 10),
                 child: Text(
@@ -59,10 +59,14 @@ class _ExpensePageState extends State<ExpensePage> {
                         color: Theme.of(context).colorScheme.primary,
                       ),
                 )),
+            itemComparator: (a, b) => a.date.compareTo(b.date),
             itemBuilder: (context, e) => ExpenseListTile(
               expense: e,
               showDate: false,
-              onTap: () {},
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => EditExpensePage(expense: e))),
             ),
           ),
         ),
