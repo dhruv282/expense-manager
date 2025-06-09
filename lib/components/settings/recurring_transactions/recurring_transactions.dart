@@ -18,43 +18,55 @@ class _RecurringTransactionsState extends State<RecurringTransactions> {
         appBar: AppBar(title: const Text('Recurring Transactions')),
         body: Padding(
           padding: EdgeInsets.all(10),
-          child: ListView(
-              children: expenseProvider.recurringSchedules.map((schedule) {
-            return Card(
-                child: ListTile(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              title: Text(
-                schedule.category,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Column(
-                  spacing: 5,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(schedule.description),
-                    Text(
-                      expenseProvider
-                          .recurrenceRuleToText(schedule.recurrenceRule),
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary),
+          child: expenseProvider.recurringSchedules.isEmpty
+              ? Center(
+                  child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primaryContainer,
+                          border: Border.all(
+                              width: 2.0,
+                              color: Theme.of(context).colorScheme.primary),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: const Text('No data')))
+              : ListView(
+                  children: expenseProvider.recurringSchedules.map((schedule) {
+                  return Card(
+                      child: ListTile(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    title: Text(
+                      schedule.category,
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                  ]),
-              trailing: Text("\$${schedule.cost.toStringAsFixed(2)}",
-                  style: TextStyle(
-                    color: expenseProvider.getCategoryColor(schedule.category),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  )),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            EditRecurringSchedule(schedule: schedule)));
-              },
-            ));
-          }).toList()),
+                    subtitle: Column(
+                        spacing: 5,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(schedule.description),
+                          Text(
+                            expenseProvider
+                                .recurrenceRuleToText(schedule.recurrenceRule),
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary),
+                          ),
+                        ]),
+                    trailing: Text("\$${schedule.cost.toStringAsFixed(2)}",
+                        style: TextStyle(
+                          color: expenseProvider
+                              .getCategoryColor(schedule.category),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        )),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  EditRecurringSchedule(schedule: schedule)));
+                    },
+                  ));
+                }).toList()),
         ));
   }
 }
