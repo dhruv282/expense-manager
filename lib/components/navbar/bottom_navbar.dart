@@ -25,11 +25,13 @@ class _BottomNavBarState extends State<BottomNavBar> {
         selectedIndex: currentPageIndex,
         destinations: const <Widget>[
           NavigationDestination(
-            icon: Icon(Icons.dashboard),
+            icon: Icon(Icons.dashboard_outlined),
+            selectedIcon: Icon(Icons.dashboard),
             label: 'Dashboard',
           ),
           NavigationDestination(
-            icon: Icon(Icons.attach_money),
+            icon: Icon(Icons.paid_outlined),
+            selectedIcon: Icon(Icons.paid),
             label: 'Expenses',
           ),
         ],

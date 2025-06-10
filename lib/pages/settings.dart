@@ -1,5 +1,6 @@
 import 'package:expense_manager/components/settings/database_config_form/database_config_form.dart';
 import 'package:expense_manager/components/settings/recurring_transactions/recurring_transactions.dart';
+import 'package:expense_manager/components/settings/theme_settings/theme_settings.dart';
 import 'package:expense_manager/components/settings/widget_config/widget_config.dart';
 import 'package:flutter/material.dart';
 
@@ -46,54 +47,67 @@ class _SettingsPageState extends State<SettingsPage> {
             MaterialPageRoute(builder: (context) => RecurringTransactions()),
           );
         },
-      )
+      ),
+      SettingsItem(
+        title: 'Theme Settings',
+        description: 'Dark mode, Theme color',
+        icon: Icons.palette,
+        onClick: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ThemeSettings()),
+          );
+        },
+      ),
     ];
     return Scaffold(
         appBar: AppBar(title: const Text('Settings')),
         body: Padding(
           padding: EdgeInsets.all(10),
-          child: ListView.builder(
-              itemCount: settingsItems.length,
-              itemBuilder: (context, index) => Padding(
-                    padding: const EdgeInsets.only(bottom: 5, top: 5),
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.surfaceContainer,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+          child: ListView(
+              children: settingsItems
+                  .map((item) => Padding(
+                        padding: const EdgeInsets.only(bottom: 5, top: 5),
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.surfaceContainer,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: item.onClick,
+                          child: Padding(
+                              padding: const EdgeInsets.all(15),
+                              child: Row(
+                                spacing: 15,
+                                children: [
+                                  Icon(
+                                    item.icon,
+                                    size: 25,
+                                  ),
+                                  Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          item.title,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium,
+                                        ),
+                                        Text(
+                                          item.description,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium,
+                                        )
+                                      ]),
+                                ],
+                              )),
                         ),
-                      ),
-                      onPressed: settingsItems[index].onClick,
-                      child: Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: Row(
-                            spacing: 15,
-                            children: [
-                              Icon(
-                                settingsItems[index].icon,
-                                size: 25,
-                              ),
-                              Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      settingsItems[index].title,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium,
-                                    ),
-                                    Text(
-                                      settingsItems[index].description,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium,
-                                    )
-                                  ]),
-                            ],
-                          )),
-                    ),
-                  )),
+                      ))
+                  .toList()),
         ));
   }
 }
