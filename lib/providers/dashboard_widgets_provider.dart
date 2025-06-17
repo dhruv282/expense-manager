@@ -13,6 +13,8 @@ class DashboardWidgetsProvider extends ChangeNotifier {
     ExpensePieChart(): WidgetConfig(size: Tuple2(1, 1), isEnabled: true),
     ExpenseVsIncomePieChart():
         WidgetConfig(size: Tuple2(1, 1), isEnabled: true),
+    ExpenseAndIncomeSummary():
+        WidgetConfig(size: Tuple2(1, 1), isEnabled: true),
     ExpenseVsIncomeLineChart():
         WidgetConfig(size: Tuple2(2, 1), isEnabled: true),
   };
