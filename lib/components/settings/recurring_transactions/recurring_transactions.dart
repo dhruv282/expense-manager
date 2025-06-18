@@ -1,6 +1,7 @@
 import 'package:expense_manager/pages/edit_recurring_schedule.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class RecurringTransactions extends StatefulWidget {
@@ -11,6 +12,9 @@ class RecurringTransactions extends StatefulWidget {
 }
 
 class _RecurringTransactionsState extends State<RecurringTransactions> {
+  final currencyFormatter =
+      NumberFormat.simpleCurrency(name: 'USD', decimalDigits: 2);
+
   @override
   Widget build(BuildContext context) {
     final expenseProvider = Provider.of<ExpenseProvider>(context);
@@ -51,7 +55,7 @@ class _RecurringTransactionsState extends State<RecurringTransactions> {
                                 color: Theme.of(context).colorScheme.primary),
                           ),
                         ]),
-                    trailing: Text("\$${schedule.cost.toStringAsFixed(2)}",
+                    trailing: Text(currencyFormatter.format(schedule.cost),
                         style: TextStyle(
                           color: expenseProvider
                               .getCategoryColor(schedule.category),

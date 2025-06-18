@@ -8,8 +8,10 @@ class ExpenseListTile extends StatelessWidget {
   final ExpenseData expense;
   final VoidCallback? onTap;
   final bool showDate;
+  final currencyFormatter =
+      NumberFormat.simpleCurrency(name: 'USD', decimalDigits: 2);
 
-  const ExpenseListTile({
+  ExpenseListTile({
     super.key,
     required this.expense,
     this.onTap,
@@ -40,7 +42,7 @@ class ExpenseListTile extends StatelessWidget {
               style: TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
         ]),
-        trailing: Text("\$${expense.cost.toStringAsFixed(2)}",
+        trailing: Text(currencyFormatter.format(expense.cost),
             style: TextStyle(
               color: expenseProvider.getCategoryColor(expense.category),
               fontWeight: FontWeight.bold,

@@ -1,6 +1,7 @@
 import 'package:expense_manager/components/dashboard_widgets/dashboard_widget.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ExpenseAndIncomeSummary extends DashboardWidget {
@@ -11,7 +12,10 @@ class ExpenseAndIncomeSummary extends DashboardWidget {
 }
 
 class ExpenseAndIncomeSummaryWidget extends StatelessWidget {
-  const ExpenseAndIncomeSummaryWidget({super.key});
+  final currencyFormatter =
+      NumberFormat.simpleCurrency(name: 'USD', decimalDigits: 2);
+
+  ExpenseAndIncomeSummaryWidget({super.key});
 
   Card getCard(MaterialColor c, IconData icon, String title, double total,
           {bool isSavings = false}) =>
@@ -34,7 +38,7 @@ class ExpenseAndIncomeSummaryWidget extends StatelessWidget {
                       color: c.shade700,
                       fontWeight: FontWeight.bold,
                     )),
-                Text("\$${total.toStringAsFixed(2)}",
+                Text(currencyFormatter.format(total),
                     style: TextStyle(
                       color: c.shade700,
                     )),
