@@ -59,7 +59,7 @@ jobs:
           path: build/app/outputs/bundle/release/app-release.aab
 
   build-macos:
-    runs-on: macos-latest
+    runs-on: macos-15
     permissions:
       contents: write
     steps:
