@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version number'
+        description: "Version number"
         required: true
         type: string
 
@@ -24,9 +24,9 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: '17'
-          cache: 'gradle'
+          distribution: "zulu"
+          java-version: "17"
+          cache: "gradle"
           check-latest: true
 
       - name: Checkout app code
@@ -36,9 +36,8 @@ jobs:
         with:
           channel: "stable"
 
-      - run: flutter doctor -v
-
-      - run: flutter pub get
+      - name: Download Flutter dependencies
+        run: flutter pub get
 
       - name: Build Android Release APK
         run: flutter build apk --release
@@ -75,37 +74,26 @@ jobs:
         with:
           channel: "stable"
 
-      - run: flutter doctor -v
+      - name: Download Flutter dependencies
+        run: flutter pub get
 
-      - run: flutter pub get
-
-      - name: Install the Apple certificate and provisioning profile
-        env:
-          APPLE_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-        run: |
-          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
-          # import certificate and provisioning profile from secrets
-          echo -n "$APPLE_CERTIFICATE_BASE64" | base64 --decode --output $CERTIFICATE_PATH
-          # create temporary keychain
-          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          # import certificate to keychain
-          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-          security list-keychain -d user -s $KEYCHAIN_PATH
+      - name: Install the Apple certificate
+        uses: apple-actions/import-codesign-certs@v3
+        with:
+          p12-file-base64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
+          p12-password: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
 
       - name: Build macOS Release
         run: flutter build macos --release
 
       - name: Install create-dmg
         run: npm install -g create-dmg
-      
+
       - name: Create DMG for macOS Release
         run: |
           create-dmg build/macos/Build/Products/Release/expense_manager.app --dmg-title "Expense Manager" build/macos/Build/Products/Release
           find build/macos/Build/Products/Release -name '*.dmg' -exec sh -c 'mv "$0" "build/macos/Build/Products/Release/expense-manager.dmg"' {} \;
-      
+
       - name: Upload macOS DMG Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -128,7 +116,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: release-aab
-      
+
       - name: Download macOS DMG Artifact
         uses: actions/download-artifact@v4
         with:
