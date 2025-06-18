@@ -93,7 +93,7 @@ BEGIN
             VALUE "FileDescription", "expense_manager" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "expense_manager" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 com.codepup. All rights reserved." "\0"
             VALUE "OriginalFilename", "expense_manager.exe" "\0"
             VALUE "ProductName", "expense_manager" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
