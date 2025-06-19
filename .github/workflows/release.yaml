@@ -1,14 +1,12 @@
 name: Build and Release
 
-run-name: Building and Releasing Version ${{ github.event.inputs.version }}
+run-name: Building and Releasing Version ${{ github.ref_name }}
 
 on:
   workflow_dispatch:
-    inputs:
-      version:
-        description: "Version number"
-        required: true
-        type: string
+  push:
+    tags:
+      - "*.*.*"
 
 jobs:
   build-android:
@@ -71,11 +69,11 @@ jobs:
         with:
           name: release-aab
 
-      - name: Create Release ${{ github.event.inputs.version }}
+      - name: Create Release ${{ github.ref_name }}
         uses: ncipollo/release-action@v1.13.0
         with:
           artifacts: "app-release.aab, app-release.apk"
           draft: true
-          tag: ${{ github.event.inputs.version }}
+          tag: ${{ github.ref_name }}
           generateReleaseNotes: true
           skipIfReleaseExists: true
