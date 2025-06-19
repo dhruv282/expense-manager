@@ -3,9 +3,6 @@ name: Build and Release
 run-name: Building and Releasing Version ${{ github.event.inputs.version }}
 
 on:
-  push:
-    branches:
-      - ci-setup
   workflow_dispatch:
     inputs:
       version:
