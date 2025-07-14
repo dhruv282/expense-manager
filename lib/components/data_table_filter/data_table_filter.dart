@@ -265,6 +265,10 @@ class _DataTableFilterState extends State<DataTableFilter> {
                                       const SizedBox(width: 10),
                                       FilledButton(
                                           onPressed: () {
+                                            _descriptionFilterController.text =
+                                                _descriptionFilterController
+                                                    .text
+                                                    .trim();
                                             createFilterSnapShot();
                                             processFilters();
                                             Navigator.pop(context);

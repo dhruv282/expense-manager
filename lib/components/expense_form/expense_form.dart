@@ -181,7 +181,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
               if (_formKey.currentState!.validate()) {
                 ExpenseData expense = ExpenseData(
                   description:
-                      widget.controllerMap[descriptionTextFormFieldLabel]!.text,
+                      widget.controllerMap[descriptionTextFormFieldLabel]!.text.trim(),
                   cost: double.parse(widget
                       .controllerMap[amountTextFormFieldLabel]!.text
                       .replaceFirst("\$", "")
