@@ -46,29 +46,40 @@ class _ExpensePageState extends State<ExpensePage> {
               },
             )),
         Expanded(
-          child: GroupedListView(
-            elements: expenseData,
-            groupBy: (e) => e.date,
-            order: GroupedListOrder.DESC,
-            groupHeaderBuilder: (e) => Padding(
-                padding: EdgeInsets.only(top: 10, left: 10, right: 10),
-                child: Text(
-                  DateFormat.MMMMEEEEd().format(e.date),
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                )),
-            itemComparator: (a, b) => a.date.compareTo(b.date),
-            itemBuilder: (context, e) => ExpenseListTile(
-              expense: e,
-              showDate: false,
-              onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => EditExpensePage(expense: e))),
-            ),
-          ),
+          child: expenseData.isEmpty
+              ? Center(
+                  child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primaryContainer,
+                          border: Border.all(
+                              width: 2.0,
+                              color: Theme.of(context).colorScheme.primary),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: const Text('No data')))
+              : GroupedListView(
+                  elements: expenseData,
+                  groupBy: (e) => e.date,
+                  order: GroupedListOrder.DESC,
+                  groupHeaderBuilder: (e) => Padding(
+                      padding: EdgeInsets.only(top: 10, left: 10, right: 10),
+                      child: Text(
+                        DateFormat.MMMMEEEEd().format(e.date),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                      )),
+                  itemComparator: (a, b) => a.date.compareTo(b.date),
+                  itemBuilder: (context, e) => ExpenseListTile(
+                    expense: e,
+                    showDate: false,
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EditExpensePage(expense: e))),
+                  ),
+                ),
         ),
       ],
     );
