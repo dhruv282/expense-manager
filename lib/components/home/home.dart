@@ -106,37 +106,39 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final expenseProvider = Provider.of<ExpenseProvider>(context);
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton.filledTonal(
-            icon: const Icon(Icons.add),
-            tooltip: 'Add Expense',
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AddExpensePage()));
-            }),
-        title: const YearSelector(),
-        centerTitle: true,
-        scrolledUnderElevation: 0.0,
-        backgroundColor: Colors.transparent,
-        actions: [
-          IconButton(
-            tooltip: 'Refresh Data',
-            onPressed: expenseProvider.initialize,
-            icon: const Icon(Icons.refresh),
-          ),
-          IconButton(
-              tooltip: 'Database Settings',
-              onPressed: () {
-                setState(() {
-                  _isLoading = true;
-                });
-                navigateToSettingsPage();
-              },
-              icon: const Icon(Icons.settings)),
-        ],
-      ),
+      appBar: _isLoading
+          ? null
+          : AppBar(
+              leading: IconButton.filledTonal(
+                  icon: const Icon(Icons.add),
+                  tooltip: 'Add Expense',
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AddExpensePage()));
+                  }),
+              title: const YearSelector(),
+              centerTitle: true,
+              scrolledUnderElevation: 0.0,
+              backgroundColor: Colors.transparent,
+              actions: [
+                IconButton(
+                  tooltip: 'Refresh Data',
+                  onPressed: expenseProvider.initialize,
+                  icon: const Icon(Icons.refresh),
+                ),
+                IconButton(
+                    tooltip: 'Database Settings',
+                    onPressed: () {
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      navigateToSettingsPage();
+                    },
+                    icon: const Icon(Icons.settings)),
+              ],
+            ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : expenseProvider.expenses.isNotEmpty
