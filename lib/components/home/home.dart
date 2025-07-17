@@ -118,14 +118,29 @@ class _HomeState extends State<Home> {
                         MaterialPageRoute(
                             builder: (context) => const AddExpensePage()));
                   }),
-              title: const YearSelector(),
+              title: YearSelector(
+                setLoadingState: (bool isLoading) {
+                  setState(() {
+                    _isLoading = isLoading;
+                  });
+                },
+              ),
               centerTitle: true,
               scrolledUnderElevation: 0.0,
               backgroundColor: Colors.transparent,
               actions: [
                 IconButton(
                   tooltip: 'Refresh Data',
-                  onPressed: expenseProvider.initialize,
+                  onPressed: () {
+                    setState(() {
+                      _isLoading = true;
+                    });
+                    expenseProvider.initialize().whenComplete(() {
+                      setState(() {
+                        _isLoading = false;
+                      });
+                    });
+                  },
                   icon: const Icon(Icons.refresh),
                 ),
                 IconButton(
