@@ -1,5 +1,6 @@
 import 'package:expense_manager/data/expense_data.dart';
 import 'package:expense_manager/data/recurring_schedule.dart';
+import 'package:expense_manager/utils/database_config_store/database_config_store.dart';
 import 'package:expense_manager/utils/logger/logger.dart';
 import 'package:intl/intl.dart';
 import 'package:postgres/postgres.dart';
@@ -57,14 +58,42 @@ class DatabaseManager {
     return null;
   }
 
+  Future<bool> ping() async {
+    if (connection == null || !connection!.isOpen) return false;
+
+    try {
+      // Attempt to execute a simple query to check if the connection is alive.
+      // Using a timeout to avoid hanging indefinitely if the database is unreachable.
+      // The connection's isOpen property doesn't track the TCP connection state,
+      // which could be terminated by the OS when the app is in the background.
+      // https://github.com/isoos/postgresql-dart/issues/28#issuecomment-1023001836
+      await connection!.execute('SELECT 1').timeout(
+            const Duration(seconds: 5),
+            onTimeout: () => throw Exception('Database ping timed out'),
+          );
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future _reconnectIfNeeded() async {
+    if (await ping()) return;
+
+    var dbConfigStore = DatabaseConfigStore();
+    var config = await dbConfigStore.getDatabaseConfig();
+    var result = await connect(config.endpoint, config.connectionSettings);
+    if (result == null) {
+      return Future.error('Failed to reconnect to the database');
+    }
+  }
+
   /// Returns all expenses from the database.
   Future<List<ExpenseData>> getExpenses({int? year}) async {
     // Execute the query
     logger.i("Fetching ${year ?? 'all'} expenses from the database...");
 
-    if (connection == null) {
-      return Future.error('No connection to Database');
-    }
+    await _reconnectIfNeeded();
 
     List<ExpenseData> expenses = [];
 
@@ -87,9 +116,7 @@ class DatabaseManager {
   Future<String> insertExpense(ExpenseData expense) async {
     logger.i("Inserting an expense into the database...");
 
-    if (connection == null) {
-      return Future.error('No connection to Database');
-    }
+    await _reconnectIfNeeded();
 
     // Execute the query
     final res = await connection!.execute(
@@ -110,9 +137,7 @@ class DatabaseManager {
   Future<Result?> updateExpense(ExpenseData expense) async {
     logger.i("Updating expense ${expense.id}");
 
-    if (connection == null) {
-      return Future.error('No connection to Database');
-    }
+    await _reconnectIfNeeded();
 
     return await connection!.execute(
         Sql.named(
@@ -130,9 +155,7 @@ class DatabaseManager {
   Future<Result?> deleteExpense(String id) async {
     logger.i("Deleting expense $id");
 
-    if (connection == null) {
-      return Future.error('No connection to Database');
-    }
+    await _reconnectIfNeeded();
 
     return await connection!
         .execute(Sql.named('DELETE FROM expenses WHERE id=@id'), parameters: {
@@ -144,9 +167,7 @@ class DatabaseManager {
   Future<List<String>> getCategories() async {
     logger.i("Getting category options");
 
-    if (connection == null) {
-      return Future.error("No connection to Database");
-    }
+    await _reconnectIfNeeded();
 
     List<String> categories = [];
 
@@ -166,9 +187,7 @@ class DatabaseManager {
   Future<Result?> addCategory(String category) async {
     logger.i("Adding category option $category");
 
-    if (connection == null) {
-      return Future.error("No connection to Database");
-    }
+    await _reconnectIfNeeded();
 
     return await connection!
         .execute("ALTER TYPE CATEGORY_OPTIONS ADD VALUE '$category'");
@@ -178,9 +197,7 @@ class DatabaseManager {
   Future<List<int>> getYears() async {
     logger.i("Getting years");
 
-    if (connection == null) {
-      return Future.error("No connection to Database");
-    }
+    await _reconnectIfNeeded();
 
     List<int> years = [];
 
@@ -201,9 +218,7 @@ class DatabaseManager {
   Future<List<RecurringSchedule>> getRecurringSchedules() async {
     logger.i("Getting recurring schedules");
 
-    if (connection == null) {
-      return Future.error("No connection to Database");
-    }
+    await _reconnectIfNeeded();
 
     List<RecurringSchedule> expenses = [];
 
@@ -223,9 +238,7 @@ class DatabaseManager {
   Future<String> insertRecurringSchedule(RecurringSchedule schedule) async {
     logger.i("Inserting a recurring schedule into the database...");
 
-    if (connection == null) {
-      return Future.error('No connection to Database');
-    }
+    await _reconnectIfNeeded();
 
     // Execute the query
     final res = await connection!.execute(
@@ -248,9 +261,7 @@ class DatabaseManager {
   Future<Result?> updateRecurringSchedule(RecurringSchedule expense) async {
     logger.i("Updating recurring schedule ${expense.id}");
 
-    if (connection == null) {
-      return Future.error('No connection to Database');
-    }
+    await _reconnectIfNeeded();
 
     return await connection!.execute(
         Sql.named(
@@ -271,9 +282,7 @@ class DatabaseManager {
   Future<Result?> deleteRecurringSchedule(String id) async {
     logger.i("Deleting recurring schedule $id");
 
-    if (connection == null) {
-      return Future.error('No connection to Database');
-    }
+    await _reconnectIfNeeded();
 
     return await connection!.execute(
         Sql.named('DELETE FROM recurring_expenses WHERE id=@id'),

@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class YearSelector extends StatefulWidget {
-  const YearSelector({super.key});
+  final Function(bool) setLoadingState;
+  const YearSelector({super.key, required this.setLoadingState});
 
   @override
   State<YearSelector> createState() => _YearSelector();
@@ -20,7 +21,10 @@ class _YearSelector extends State<YearSelector> {
         value: expenseProvider.selectedYear,
         onChanged: (year) {
           setState(() {
-            expenseProvider.loadExpenseData(year: year);
+            widget.setLoadingState(true);
+            expenseProvider.loadExpenseData(year: year).whenComplete(() {
+              widget.setLoadingState(false);
+            });
           });
         },
         items: expenseProvider.yearOptions
