@@ -10,6 +10,7 @@ class CustomFormField extends StatefulWidget {
   final TextInputType? keyboardType;
   final TextInputFormatter? inputFormatter;
   final bool obscureText;
+  final TextCapitalization textCapitalization;
 
   final TextEditingController? controller;
   final void Function(String?)? onSaved;
@@ -25,6 +26,7 @@ class CustomFormField extends StatefulWidget {
     this.controller,
     this.enabled = true,
     this.obscureText = false,
+    this.textCapitalization = TextCapitalization.none,
     this.maxCharacters,
     this.icon,
     this.onSaved,
@@ -52,6 +54,7 @@ class _CustomFormFieldState extends State<CustomFormField> {
       obscureText: widget.obscureText ? _obscureText : false,
       maxLength: widget.maxCharacters,
       keyboardType: widget.keyboardType,
+      textCapitalization: widget.textCapitalization,
       inputFormatters:
           widget.inputFormatter != null ? [widget.inputFormatter!] : [],
       controller: widget.controller,
