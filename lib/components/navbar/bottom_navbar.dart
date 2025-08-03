@@ -4,25 +4,21 @@ import 'package:expense_manager/components/navbar/navbar_page.dart';
 import 'package:flutter/material.dart';
 
 class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({super.key});
+  final int currentPageIndex;
+  final Function(int)? onPageChanged;
+  const BottomNavBar({super.key, required this.currentPageIndex, required this.onPageChanged});
 
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
-  int currentPageIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentPageIndex = index;
-          });
-        },
-        selectedIndex: currentPageIndex,
+        onDestinationSelected: widget.onPageChanged,
+        selectedIndex: widget.currentPageIndex,
         destinations: const <Widget>[
           NavigationDestination(
             icon: Icon(Icons.dashboard_outlined),
@@ -42,7 +38,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
         /// Expenses page
         const NavbarPage(body: ExpensePage()),
-      ][currentPageIndex],
+      ][widget.currentPageIndex],
     );
   }
 }
