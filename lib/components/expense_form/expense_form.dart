@@ -108,6 +108,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                               FilteringTextInputFormatter.singleLineFormatter,
                           controller: widget
                               .controllerMap[descriptionTextFormFieldLabel]!,
+                          textCapitalization: TextCapitalization.words,
                           labelText: descriptionTextFormFieldLabel,
                           hintText: descriptionTextFormFieldHint,
                           validator: checkEmptyInput,
