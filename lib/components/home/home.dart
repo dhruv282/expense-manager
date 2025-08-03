@@ -19,6 +19,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool _isLoading = true;
+  int navBarPageIndex = 0;
 
   Future<bool> _isDBConfigComplete() {
     var dbConfigStore = DatabaseConfigStore();
@@ -157,7 +158,14 @@ class _HomeState extends State<Home> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : expenseProvider.expenses.isNotEmpty
-              ? const BottomNavBar()
+              ? BottomNavBar(
+                  currentPageIndex: navBarPageIndex,
+                  onPageChanged: (int index) {
+                    setState(() {
+                      navBarPageIndex = index;
+                    });
+                  },
+                )
               : Center(
                   child: Container(
                       padding: const EdgeInsets.all(20),
