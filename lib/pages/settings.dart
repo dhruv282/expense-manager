@@ -2,7 +2,9 @@ import 'package:expense_manager/components/settings/database_config_form/databas
 import 'package:expense_manager/components/settings/recurring_transactions/recurring_transactions.dart';
 import 'package:expense_manager/components/settings/theme_settings/theme_settings.dart';
 import 'package:expense_manager/components/settings/widget_config/widget_config.dart';
+import 'package:expense_manager/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -14,6 +16,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
     var settingsItems = [
       SettingsItem(
         title: 'Database Configuration',
@@ -57,6 +60,14 @@ class _SettingsPageState extends State<SettingsPage> {
             context,
             MaterialPageRoute(builder: (context) => ThemeSettings()),
           );
+        },
+      ),
+      SettingsItem(
+        title: 'Toggle Authentication',
+        description: 'Enable or disable biometric authentication',
+        icon: authProvider.isAuthEnabled ? Icons.key : Icons.key_off,
+        onClick: () {
+          authProvider.updateIsAuthEnabled(!authProvider.isAuthEnabled);
         },
       ),
     ];

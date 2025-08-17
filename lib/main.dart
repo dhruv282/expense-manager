@@ -1,4 +1,5 @@
 import 'package:expense_manager/components/home/home.dart';
+import 'package:expense_manager/providers/auth_provider.dart';
 import 'package:expense_manager/providers/dashboard_widgets_provider.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:expense_manager/providers/theme_provider.dart';
@@ -16,6 +17,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
+      ChangeNotifierProvider(create: (_) => AuthProvider()),
       ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ChangeNotifierProvider(create: (_) => ExpenseProvider()),
       ChangeNotifierProvider(create: (_) => DashboardWidgetsProvider()),
@@ -28,6 +30,7 @@ class MaterialAppWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
     generateTheme(Brightness b) => ThemeData(
           bottomSheetTheme:
               const BottomSheetThemeData(backgroundColor: Colors.transparent),
@@ -41,7 +44,9 @@ class MaterialAppWidget extends StatelessWidget {
       darkTheme: generateTheme(Brightness.dark),
       themeMode: themeProvider.themeMode,
       debugShowCheckedModeBanner: false,
-      home: const Home(),
+      home: authProvider.isAuthenticated
+          ? Home()
+          : Center(child: CircularProgressIndicator()),
     );
   }
 }
