@@ -39,6 +39,7 @@ class _NumericFieldState extends State<NumericField> {
                 expressionColor:
                     Theme.of(context).colorScheme.secondaryContainer,
                 operatorColor: Theme.of(context).colorScheme.primaryContainer,
+                commandColor: Theme.of(context).colorScheme.tertiaryContainer,
               ),
               value: total,
               onChanged: (key, value, expression) => setState(() {
