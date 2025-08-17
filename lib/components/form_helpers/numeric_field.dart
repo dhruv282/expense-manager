@@ -23,7 +23,7 @@ class _NumericFieldState extends State<NumericField> {
   void initState() {
     super.initState();
     total = double.tryParse(widget.controller.text) ?? 0;
-    widget.controller.text = total.toStringAsPrecision(2);
+    widget.controller.text = total.toStringAsFixed(2);
   }
 
   void _showCalculator(BuildContext c) {
@@ -44,7 +44,7 @@ class _NumericFieldState extends State<NumericField> {
               value: total,
               onChanged: (key, value, expression) => setState(() {
                 total = value ?? 0;
-                widget.controller.text = total.toStringAsPrecision(2);
+                widget.controller.text = total.toStringAsFixed(2);
               }),
             ),
           );
