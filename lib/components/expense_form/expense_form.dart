@@ -1,6 +1,6 @@
-import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:expense_manager/components/expense_form/constants.dart';
 import 'package:expense_manager/components/form_helpers/form_dropdown_add_option.dart';
+import 'package:expense_manager/components/form_helpers/numeric_field.dart';
 import 'package:expense_manager/components/recurring_schedule_form/recurring_schedule_form.dart';
 import 'package:expense_manager/data/expense_data.dart';
 import 'package:expense_manager/data/recurring_schedule.dart';
@@ -94,18 +94,9 @@ class _ExpenseFormState extends State<ExpenseForm> {
                                   }),
                               formFieldSpacing,
                               // Cost field
-                              CustomFormField(
-                                keyboardType:
-                                    const TextInputType.numberWithOptions(
-                                        decimal: true),
-                                inputFormatter:
-                                    CurrencyTextInputFormatter.simpleCurrency(
-                                        enableNegative: false),
+                              NumericField(
                                 controller: widget
                                     .controllerMap[amountTextFormFieldLabel]!,
-                                labelText: amountTextFormFieldLabel,
-                                hintText: amountTextFormFieldHint,
-                                validator: checkEmptyInput,
                               ),
                               formFieldSpacing,
                               // Description field
