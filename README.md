@@ -18,6 +18,8 @@ Expense Manager is an open-source expense tracking and visualization app develop
 
 🎨 **Customizable Themes** — Automatically adapts to system light/dark mode, with user override support for manual theme and base color selection.
 
+🫆 **Device-Level Authentication** - Protects access with biometrics or system passcode for an extra layer of security.
+
 <p align="center">
   <img src="https://github.com/user-attachments/assets/253f5cb3-56c5-46a4-aeac-fdbb11845507" width="200">
   <img src="https://github.com/user-attachments/assets/62042ce3-8021-46ec-80ee-2e6fd7bcf793" width="200">

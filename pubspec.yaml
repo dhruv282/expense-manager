@@ -54,6 +54,7 @@ dependencies:
   flex_color_picker: ^3.7.1
   shared_preferences: ^2.5.3
   flutter_simple_calculator: ^2.3.0
+  local_auth: ^2.3.0
 
 dev_dependencies:
   flutter_test:
