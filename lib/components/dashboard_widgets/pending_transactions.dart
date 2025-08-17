@@ -1,5 +1,6 @@
 import 'package:expense_manager/components/dashboard_widgets/dashboard_widget.dart';
 import 'package:expense_manager/components/expense/expense_list_tile.dart';
+import 'package:expense_manager/components/form_helpers/numeric_field.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:expense_manager/utils/logger/logger.dart';
 import 'package:expense_manager/utils/snackbar/snackbar.dart';
@@ -46,55 +47,71 @@ class _PendingTransactionsWidgetState extends State<PendingTransactionsWidget> {
           Expanded(
               child: ListView(
             children: expenseProvider.pendingTransactions.entries
-                .map((m) => m.value.map((e) => ExpenseListTile(
-                      expense: e,
-                      onTap: () => showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                            title: Text('Pending Transaction'),
-                            content:
-                                Text('Add this transaction to your records?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  expenseProvider
-                                      .triggerRecurringScheduleRule(
-                                          m.key, e, true)
-                                      .then((_) {
-                                    if (!context.mounted) return;
-                                    Navigator.of(context).pop();
-                                  }).catchError((e) {
-                                    logger.e(e);
-                                  });
-                                },
-                                child: const Text('Skip'),
-                              ),
-                              FilledButton(
+                .map((m) => m.value.map((e) {
+                      final amountController =
+                          TextEditingController(text: e.cost.toString());
+                      return ExpenseListTile(
+                        expense: e,
+                        onTap: () => showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                              title: Text('Pending Transaction'),
+                              content: Wrap(children: [
+                                Column(
+                                  children: [
+                                    Text(
+                                        'Add this transaction to your records?'),
+                                    const SizedBox(height: 20),
+                                    NumericField(
+                                      controller: amountController,
+                                    ),
+                                  ],
+                                )
+                              ]),
+                              actions: [
+                                TextButton(
                                   onPressed: () {
                                     expenseProvider
                                         .triggerRecurringScheduleRule(
-                                            m.key, e, false)
-                                        .then((v) {
+                                            m.key, e, true)
+                                        .then((_) {
                                       if (!context.mounted) return;
                                       Navigator.of(context).pop();
-                                      showSnackBar(
-                                        context,
-                                        'Transaction added successfully!',
-                                        SnackBarColor.success,
-                                      );
                                     }).catchError((e) {
                                       logger.e(e);
-                                      if (!context.mounted) return;
-                                      showSnackBar(
-                                          context,
-                                          'Failed to add transaction',
-                                          SnackBarColor.error);
                                     });
                                   },
-                                  child: Text('Add')),
-                            ]),
-                      ),
-                    )))
+                                  child: const Text('Skip'),
+                                ),
+                                FilledButton(
+                                    onPressed: () {
+                                      e.cost =
+                                          double.parse(amountController.text);
+                                      expenseProvider
+                                          .triggerRecurringScheduleRule(
+                                              m.key, e, false)
+                                          .then((v) {
+                                        if (!context.mounted) return;
+                                        Navigator.of(context).pop();
+                                        showSnackBar(
+                                          context,
+                                          'Transaction added successfully!',
+                                          SnackBarColor.success,
+                                        );
+                                      }).catchError((e) {
+                                        logger.e(e);
+                                        if (!context.mounted) return;
+                                        showSnackBar(
+                                            context,
+                                            'Failed to add transaction',
+                                            SnackBarColor.error);
+                                      });
+                                    },
+                                    child: Text('Add')),
+                              ]),
+                        ),
+                      );
+                    }))
                 .expand((w) => w)
                 .toList(),
           ))
