@@ -1,6 +1,5 @@
 import 'package:expense_manager/components/dashboard_widgets/dashboard_widget.dart';
 import 'package:expense_manager/components/dashboard_widgets/helpers/bar_chart.dart';
-import 'package:expense_manager/data/expense_data.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -13,10 +12,10 @@ class ExpenseVsIncomeBarChart extends DashboardWidget {
         NumberFormat.compactCurrency(symbol: '\$', decimalDigits: 0);
     final simpleCurrencyFormatter = NumberFormat.simpleCurrency();
     return BarChartWidget(
-      getBarChartGroupData: (List<ExpenseData> expenses) {
+      getBarChartGroupData: (expenseProvider) {
         final Map<int, Tuple2<double, double>> monthlyIncomeAndExpenses = {};
-        for (var expense in expenses) {
-          if (expense.category == "Income") {
+        for (var expense in expenseProvider.expenses) {
+          if (expenseProvider.isIncome(expense.category)) {
             monthlyIncomeAndExpenses.update(
               expense.date.month,
               (tuple) => Tuple2(tuple.item1 + expense.cost, tuple.item2),

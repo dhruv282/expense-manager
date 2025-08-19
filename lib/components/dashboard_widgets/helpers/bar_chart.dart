@@ -1,11 +1,10 @@
-import 'package:expense_manager/data/expense_data.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class BarChartWidget extends StatefulWidget {
-  final List<BarChartGroupData> Function(List<ExpenseData>)
+  final List<BarChartGroupData> Function(ExpenseProvider)
       getBarChartGroupData;
   final Widget Function(double, TitleMeta) leftTitleWidgets;
   final Widget Function(double, TitleMeta) bottomTitleWidgets;
@@ -27,7 +26,7 @@ class _BarChartWidgetState extends State<BarChartWidget> {
   @override
   Widget build(BuildContext context) {
     final expenseProvider = Provider.of<ExpenseProvider>(context);
-    var groupData = widget.getBarChartGroupData(expenseProvider.expenses);
+    var groupData = widget.getBarChartGroupData(expenseProvider);
 
     return Card(
       child: Padding(
