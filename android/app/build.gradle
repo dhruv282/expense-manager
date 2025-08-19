@@ -26,7 +26,6 @@ if (flutterVersionName == null) {
 android {
     namespace = "com.codepup.expense_manager"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
