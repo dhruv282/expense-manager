@@ -50,6 +50,11 @@ class DatabaseManager {
                   '  auto_confirm BOOLEAN NOT NULL DEFAULT FALSE,'
                   '  recurrence_rule TEXT NOT NULL,'
                   '  last_executed DATE NOT NULL'
+                  ')'))
+          .then((value) =>
+              connection!.execute('CREATE TABLE IF NOT EXISTS category_type ('
+                  '  category CATEGORY_OPTIONS PRIMARY KEY,'
+                  '  is_income BOOLEAN NOT NULL'
                   ')'));
     } catch (e) {
       logger.e("Error connecting to the database: $e");
@@ -191,6 +196,41 @@ class DatabaseManager {
 
     return await connection!
         .execute("ALTER TYPE CATEGORY_OPTIONS ADD VALUE '$category'");
+  }
+
+  /// Get Category type from the database.
+  Future<Map<String, bool>> getCategoryTypes() async {
+    logger.i("Getting category types");
+
+    await _reconnectIfNeeded();
+
+    Map<String, bool> categoryTypes = {};
+
+    // Execute the query
+    final results = await connection!.execute(
+      Sql.named('SELECT * FROM category_type'),
+    );
+
+    for (var result in results) {
+      categoryTypes[result.toColumnMap()["category"].asString] =
+          result.toColumnMap()["is_income"];
+    }
+
+    return categoryTypes;
+  }
+
+  /// Inserts category type to category_type table in the database.
+  Future<Result?> addCategoryType(String category, bool isIncome) async {
+    logger.i("Adding category type $category, $isIncome");
+
+    await _reconnectIfNeeded();
+
+    return await connection!.execute(
+        r'INSERT INTO category_type (category, is_income) VALUES ($1, $2)',
+        parameters: [
+          category,
+          isIncome,
+        ]);
   }
 
   /// Gets list of years from transaction data.

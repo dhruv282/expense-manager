@@ -10,6 +10,7 @@ class CustomFormDropdown extends StatefulWidget {
   final DropdownMenuItem<String>? addOption;
   final Function? onAddOptionSelect;
   final Function? onChanged;
+  final Widget? Function(String)? getOptionWidget;
 
   const CustomFormDropdown({
     super.key,
@@ -22,6 +23,7 @@ class CustomFormDropdown extends StatefulWidget {
     this.addOption,
     this.onAddOptionSelect,
     this.onChanged,
+    this.getOptionWidget,
   });
 
   @override
@@ -36,7 +38,7 @@ class _CustomFormDropdownState extends State<CustomFormDropdown> {
     var options = widget.options.map<DropdownMenuItem<String>>((String value) {
       return DropdownMenuItem(
         value: value,
-        child: Text(value),
+        child: widget.getOptionWidget?.call(value) ?? Text(value),
       );
     }).toList();
     if (widget.addOption != null) {
