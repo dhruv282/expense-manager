@@ -1,11 +1,10 @@
-import 'package:expense_manager/data/expense_data.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class LineChartWidget extends StatefulWidget {
-  final List<LineChartBarData> Function(List<ExpenseData>) getLineBarData;
+  final List<LineChartBarData> Function(ExpenseProvider) getLineBarData;
   final Widget Function(double, TitleMeta) leftTitleWidgets;
   final Widget Function(double, TitleMeta) bottomTitleWidgets;
   final List<LineTooltipItem?> Function(List<LineBarSpot>) getTooltipItems;
@@ -25,7 +24,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
   @override
   Widget build(BuildContext context) {
     final expenseProvider = Provider.of<ExpenseProvider>(context);
-    var lineBarData = widget.getLineBarData(expenseProvider.expenses);
+    var lineBarData = widget.getLineBarData(expenseProvider);
 
     return Card(
         child: Padding(

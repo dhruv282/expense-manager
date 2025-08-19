@@ -1,4 +1,3 @@
-import 'package:expense_manager/data/expense_data.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class PieChartWidget extends StatefulWidget {
-  final Map<String, double> Function(List<ExpenseData>) getCategoryData;
-  final String Function(List<ExpenseData>) getDefaultLabel;
+  final Map<String, double> Function(ExpenseProvider) getCategoryData;
+  final String Function(ExpenseProvider) getDefaultLabel;
   final List<Color>? colorList;
   const PieChartWidget(
       {super.key,
@@ -28,7 +27,7 @@ class _PieChartWidgetState extends State<PieChartWidget> {
     final colorList = widget.colorList ?? Colors.primaries;
     final expenseProvider = Provider.of<ExpenseProvider>(context);
     final Map<String, double> categoryTotals =
-        widget.getCategoryData(expenseProvider.expenses);
+        widget.getCategoryData(expenseProvider);
     final List<PieChartSectionData> pieChartSectionData = [];
     for (var i = 0; i < categoryTotals.length; i++) {
       final key = categoryTotals.keys.toList()[i];
@@ -69,7 +68,7 @@ class _PieChartWidgetState extends State<PieChartWidget> {
               )),
               Text(
                 touchedKey.isEmpty
-                    ? widget.getDefaultLabel(expenseProvider.expenses)
+                    ? widget.getDefaultLabel(expenseProvider)
                     : "$touchedKey\n${currencyFormatter.format(categoryTotals[touchedKey])}",
                 textAlign: TextAlign.center,
               ),
