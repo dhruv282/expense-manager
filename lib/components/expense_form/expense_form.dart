@@ -1,3 +1,4 @@
+import 'package:expense_manager/components/category/add_category_dialog.dart';
 import 'package:expense_manager/components/expense_form/constants.dart';
 import 'package:expense_manager/components/form_helpers/form_dropdown_add_option.dart';
 import 'package:expense_manager/components/form_helpers/numeric_field.dart';
@@ -115,6 +116,17 @@ class _ExpenseFormState extends State<ExpenseForm> {
                               // Category field
                               CustomFormDropdown(
                                 options: expenseProvider.categoryOptions,
+                                getOptionWidget: (category) =>
+                                    Row(spacing: 10, children: [
+                                  Icon(
+                                    expenseProvider.isIncome(category)
+                                        ? Icons.payments
+                                        : Icons.money_off,
+                                    color: expenseProvider
+                                        .getCategoryColor(category),
+                                  ),
+                                  Text(category),
+                                ]),
                                 labelText: categoryTextFormFieldLabel,
                                 controller: widget
                                     .controllerMap[categoryTextFormFieldLabel]!,
@@ -122,12 +134,12 @@ class _ExpenseFormState extends State<ExpenseForm> {
                                 hintText: categoryTextFormFieldHint,
                                 addOption: getAddOptionDropdownItem(
                                     'add_new_category', 'Add new category'),
-                                onAddOptionSelect: () => showAddDialog(
+                                onAddOptionSelect: () => showAddCategoryDialog(
                                   context,
                                   'Add Category',
                                   'Enter value for new category',
-                                  (category) =>
-                                      expenseProvider.addCategory(category),
+                                  (category, isIncome) => expenseProvider
+                                      .addCategory(category, isIncome),
                                   () => showSnackBar(
                                     context,
                                     'Failed to add category :(',

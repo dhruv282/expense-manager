@@ -7,14 +7,16 @@ import 'package:rrule/rrule.dart';
 
 class ExpenseProvider extends ChangeNotifier {
   List<ExpenseData> _expenses = [];
-  List<String> _categoryOptions = [];
+  Map<String, bool> _categoryOptions = {};
   List<int> _yearOptions = [];
   int? _selectedYear;
   List<RecurringSchedule> _recurringSchedules = [];
   Map<RecurringSchedule, List<ExpenseData>> _pendingTransactions = {};
 
+  Color incomeColor = Color.fromARGB(255, 0, 190, 0);
+  Color expenseColor = Color.fromARGB(255, 190, 0, 0);
   List<ExpenseData> get expenses => _expenses;
-  List<String> get categoryOptions => _categoryOptions;
+  List<String> get categoryOptions => _categoryOptions.keys.toList();
   List<int> get yearOptions => _yearOptions;
   int? get selectedYear => _selectedYear;
   List<RecurringSchedule> get recurringSchedules => _recurringSchedules;
@@ -47,7 +49,7 @@ class ExpenseProvider extends ChangeNotifier {
 
   Future loadCategoryOptions() async {
     var dbManager = DatabaseManager();
-    return dbManager.getCategories().then((options) {
+    return dbManager.getCategoryTypes().then((options) {
       _categoryOptions = options;
     });
   }
@@ -60,7 +62,7 @@ class ExpenseProvider extends ChangeNotifier {
   }
 
   Future updateExpense(ExpenseData e) {
-    if (!_categoryOptions.contains(e.category)) {
+    if (!_categoryOptions.containsKey(e.category)) {
       return Future.error(
           'Invalid value for category in expense: ${e.category}');
     }
@@ -82,7 +84,7 @@ class ExpenseProvider extends ChangeNotifier {
   }
 
   Future addExpense(ExpenseData e) {
-    if (!_categoryOptions.contains(e.category)) {
+    if (!_categoryOptions.containsKey(e.category)) {
       return Future.error(
           'Invalid value for category in expense: ${e.category}');
     }
@@ -116,21 +118,24 @@ class ExpenseProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future addCategory(String category) {
+  Future addCategory(String category, bool isIncome) {
     var dbManager = DatabaseManager();
-    return dbManager.addCategory(category).then((res) {
-      _categoryOptions.add(category);
+    return dbManager
+        .addCategory(category)
+        .then((res) => dbManager.addCategoryType(category, isIncome))
+        .then((res) {
+      _categoryOptions[category] = isIncome;
     }).whenComplete(() => notifyListeners());
   }
 
   bool isIncome(String category) {
-    return category.toUpperCase() == 'INCOME';
+    return _categoryOptions[category]!;
   }
 
   Color getCategoryColor(String category) {
     return isIncome(category)
-        ? Color.fromARGB(255, 0, 190, 0)
-        : Color.fromARGB(255, 190, 0, 0);
+        ? incomeColor
+        : expenseColor;
   }
 
   Future loadRecurringSchedules() async {
