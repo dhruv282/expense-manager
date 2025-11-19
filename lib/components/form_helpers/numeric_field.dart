@@ -32,20 +32,22 @@ class _NumericFieldState extends State<NumericField> {
         builder: (BuildContext context) {
           return SizedBox(
             height: MediaQuery.of(context).size.height * 0.75,
-            child: SimpleCalculator(
-              hideSurroundingBorder: true,
-              theme: CalculatorThemeData(
-                displayColor: Theme.of(context).colorScheme.surfaceContainer,
-                expressionColor:
-                    Theme.of(context).colorScheme.secondaryContainer,
-                operatorColor: Theme.of(context).colorScheme.primaryContainer,
-                commandColor: Theme.of(context).colorScheme.tertiaryContainer,
+            child: SafeArea(
+              child: SimpleCalculator(
+                hideSurroundingBorder: true,
+                theme: CalculatorThemeData(
+                  displayColor: Theme.of(context).colorScheme.surfaceContainer,
+                  expressionColor:
+                      Theme.of(context).colorScheme.secondaryContainer,
+                  operatorColor: Theme.of(context).colorScheme.primaryContainer,
+                  commandColor: Theme.of(context).colorScheme.tertiaryContainer,
+                ),
+                value: total,
+                onChanged: (key, value, expression) => setState(() {
+                  total = value ?? 0;
+                  widget.controller.text = total.toStringAsFixed(2);
+                }),
               ),
-              value: total,
-              onChanged: (key, value, expression) => setState(() {
-                total = value ?? 0;
-                widget.controller.text = total.toStringAsFixed(2);
-              }),
             ),
           );
         });
