@@ -97,23 +97,26 @@ class _SettingsPageState extends State<SettingsPage> {
                                     item.icon,
                                     size: 25,
                                   ),
-                                  Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          item.title,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleMedium,
-                                        ),
-                                        Text(
-                                          item.description,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium,
-                                        )
-                                      ]),
+                                  Expanded(
+                                      child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.title,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium,
+                                      ),
+                                      Text(
+                                        item.description,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
+                                        softWrap: true,
+                                      ),
+                                    ],
+                                  )),
                                 ],
                               )),
                         ),
