@@ -11,8 +11,6 @@ jobs:
 
   BuildAndroid:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
       - uses: actions/checkout@v4
@@ -52,8 +50,6 @@ jobs:
 
   BuildiOS:
     runs-on: macos-26
-    permissions:
-      contents: write
     steps:
 
       - name: Verify Xcode version
