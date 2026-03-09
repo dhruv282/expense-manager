@@ -1,0 +1,82 @@
+name: Nightly Build
+
+run-name: Building the Android and iOS app bundles 🚀
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *' # Runs every day at midnight UTC
+
+jobs:
+
+  BuildAndroid:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+          check-latest: true
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Build Android Debug APK
+        run: flutter build apk --debug
+
+      - name: Build Android Debug AppBundle
+        run: flutter build appbundle --debug
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+
+      - name: Upload Android AppBundle Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-aab
+          path: build/app/outputs/bundle/debug/app-debug.aab
+
+  BuildiOS:
+    runs-on: macos-26
+    permissions:
+      contents: write
+    steps:
+
+      - name: Verify Xcode version
+        run: xcodebuild -version
+
+      - name: iOS SDK version
+        run: xcrun --sdk iphoneos --show-sdk-version
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Build iOS (no code signing)
+        run: flutter build ios --debug --no-codesign
+
+      - name: Upload iOS build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-ios
+          path: build/ios/iphoneos/Runner.app
