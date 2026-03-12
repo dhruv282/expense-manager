@@ -1,4 +1,4 @@
-name: Nightly Build
+name: Build
 
 run-name: Building the Android and iOS app bundles 🚀
 
@@ -7,11 +7,11 @@ on:
   pull_request:
     types: [ opened, synchronize, reopened ]
   schedule:
-    - cron: '0 0 * * *' # Runs every day at midnight UTC
+    - cron: '0 0 * * *' # Nightly Build runs every day at midnight UTC
 
 jobs:
 
-  BuildAndroid:
+  build-android:
     runs-on: ubuntu-latest
 
     steps:
@@ -50,7 +50,7 @@ jobs:
           name: debug-aab
           path: build/app/outputs/bundle/debug/app-debug.aab
 
-  BuildiOS:
+  build-ios:
     runs-on: macos-26
     steps:
 
