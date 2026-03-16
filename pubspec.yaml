@@ -35,25 +35,25 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
   dropdown_button2: ^2.3.9
-  postgres: ^3.5.6
-  logger: ^2.3.0
-  intl: ^0.19.0
-  currency_text_input_formatter: ^2.2.3
-  pattern_formatter: ^4.0.0
-  provider: ^6.1.2
+  postgres: ^3.5.9
+  logger: ^2.7.0
+  intl: ^0.20.2
+  currency_text_input_formatter: ^2.3.0
+  pattern_formatter: ^4.0.1
+  provider: ^6.1.5+1
   flutter_secure_storage: ^9.2.4
-  flutter_launcher_icons: ^0.14.1
+  flutter_launcher_icons: ^0.14.4
   fl_chart: ^0.70.2
   flutter_staggered_grid_view: ^0.7.0
   tuple: ^2.0.2
-  multi_dropdown: ^3.0.1
+  multi_dropdown: ^3.1.1
   fading_edge_scrollview: ^4.1.1
-  flutter_date_range_picker: ^0.1.1
-  rrule: ^0.2.17
+  flutter_date_range_picker: ^0.2.1
+  rrule: ^0.2.18
   grouped_list: ^6.0.0
-  flex_color_picker: ^3.7.1
-  shared_preferences: ^2.5.3
-  flutter_simple_calculator: ^2.3.0
+  flex_color_picker: ^3.8.0
+  shared_preferences: ^2.5.4
+  flutter_simple_calculator: ^2.7.1
   local_auth: ^2.3.0
 
 dev_dependencies:
