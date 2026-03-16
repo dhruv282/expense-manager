@@ -221,14 +221,22 @@ class _RecurringScheduleFormState extends State<RecurringScheduleForm> {
               var val = value.toString().toUpperCase();
               widget.recurrenceRuleJson['freq'] = val;
 
-              for (var i in recurrenceRuleMultiSelectValues[
-                  recurringByDayFormFieldLabel]!) {
-                i.selected = false;
-              }
-              for (var i in recurrenceRuleMultiSelectValues[
-                  recurringByMonthFormFieldLabel]!) {
-                i.selected = false;
-              }
+              recurrenceRuleMultiSelectValues[recurringByDayFormFieldLabel] =
+                  recurrenceRuleMultiSelectValues[recurringByDayFormFieldLabel]!
+                      .map((i) => DropdownItem(
+                            label: i.label,
+                            value: i.value,
+                            selected: false,
+                          ))
+                      .toList();
+              recurrenceRuleMultiSelectValues[recurringByMonthFormFieldLabel] =
+                  recurrenceRuleMultiSelectValues[recurringByMonthFormFieldLabel]!
+                      .map((i) => DropdownItem(
+                            label: i.label,
+                            value: i.value,
+                            selected: false,
+                          ))
+                      .toList();
 
               widget.recurrenceRuleJson['byday'] = [];
               widget.recurrenceRuleJson['bymonth'] = [];
