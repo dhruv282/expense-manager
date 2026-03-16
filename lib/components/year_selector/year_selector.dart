@@ -15,25 +15,27 @@ class _YearSelector extends State<YearSelector> {
   @override
   Widget build(BuildContext context) {
     final expenseProvider = Provider.of<ExpenseProvider>(context);
+    final valueNotifier = ValueNotifier(expenseProvider.selectedYear);
 
     return DropdownButtonHideUnderline(
       child: DropdownButton2(
-        value: expenseProvider.selectedYear,
+        valueListenable: valueNotifier,
         onChanged: (year) {
           setState(() {
             widget.setLoadingState(true);
+            valueNotifier.value = year;
             expenseProvider.loadExpenseData(year: year).whenComplete(() {
               widget.setLoadingState(false);
             });
           });
         },
         items: expenseProvider.yearOptions
-                .map((int year) => DropdownMenuItem(
+                .map((int year) => DropdownItem(
                       value: year,
                       child: Text(year.toString()),
                     ))
                 .toList() +
-            [const DropdownMenuItem(value: null, child: Text("ALL"))],
+            [const DropdownItem(value: null, child: Text("ALL"))],
         dropdownStyleData: DropdownStyleData(
             decoration: BoxDecoration(
           color: Theme.of(context).buttonTheme.colorScheme?.secondaryContainer,
