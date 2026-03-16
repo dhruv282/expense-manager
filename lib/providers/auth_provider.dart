@@ -26,7 +26,6 @@ class AuthProvider extends ChangeNotifier {
         _auth
             .authenticate(
           localizedReason: "Please authenticate to access transaction data",
-          options: AuthenticationOptions(),
         )
             .then((isAuthenticated) {
           this.isAuthenticated = isAuthenticated;
