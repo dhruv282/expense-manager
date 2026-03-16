@@ -1,0 +1,34 @@
+version: 2
+updates:
+
+  # Keep Flutter/Dart packages up to date
+  - package-ecosystem: "pub"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "deps"
+    labels:
+      - "dependencies"
+      - "flutter"
+      
+    # Group all non-breaking updates into a single PR to reduce noise.
+    # Breaking (major) version bumps will still come as individual PRs.
+    groups:
+      flutter-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # Keep Gradle plugins and Android dependencies up to date
+  - package-ecosystem: "gradle"
+    directory: "/android"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "deps(android)"
+    labels:
+      - "dependencies"
+      - "android"
