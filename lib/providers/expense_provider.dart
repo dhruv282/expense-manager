@@ -1,5 +1,6 @@
 import 'package:expense_manager/data/expense_data.dart';
 import 'package:expense_manager/data/recurring_schedule.dart';
+import 'package:expense_manager/data/time_period_enums.dart';
 import 'package:expense_manager/utils/database_manager/database_manager.dart';
 import 'package:expense_manager/utils/logger/logger.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +8,17 @@ import 'package:rrule/rrule.dart';
 
 class ExpenseProvider extends ChangeNotifier {
   List<ExpenseData> _expenses = [];
+  List<ExpenseData> _databaseExpenses = []; // All expenses from DB (unfiltered)
   Map<String, bool> _categoryOptions = {};
   List<int> _yearOptions = [];
   int? _selectedYear;
   List<RecurringSchedule> _recurringSchedules = [];
   Map<RecurringSchedule, List<ExpenseData>> _pendingTransactions = {};
+
+  // Time period filter state
+  bool _timePeriodMode = false;
+  TimePeriod _selectedTimePeriod = TimePeriod.thirtyDays;
+  DateTime? _earliestExpenseDate;
 
   Color incomeColor = Color.fromARGB(255, 0, 190, 0);
   Color expenseColor = Color.fromARGB(255, 190, 0, 0);
@@ -22,6 +29,11 @@ class ExpenseProvider extends ChangeNotifier {
   List<RecurringSchedule> get recurringSchedules => _recurringSchedules;
   Map<RecurringSchedule, List<ExpenseData>> get pendingTransactions =>
       _pendingTransactions;
+
+  // Time period getters
+  bool get timePeriodMode => _timePeriodMode;
+  TimePeriod get selectedTimePeriod => _selectedTimePeriod;
+  DateTime? get earliestExpenseDate => _earliestExpenseDate;
 
   late RruleL10n _l10n;
 
@@ -42,9 +54,101 @@ class ExpenseProvider extends ChangeNotifier {
     if (autoLoadLatestYear && _selectedYear == null && yearOptions.isNotEmpty) {
       _selectedYear = yearOptions.first;
     }
-    return dbManager.getExpenses(year: _selectedYear).then((entries) {
-      _expenses = entries;
+    // Load all expenses from database (no year filter)
+    return dbManager.getExpenses().then((allEntries) {
+      _databaseExpenses = allEntries;
+      if (autoLoadLatestYear || !timePeriodMode) {
+        // Filter by year if selected
+        _updateExpensesWithYearFilter();
+      } else {
+        // Apply time period filter
+        _updateExpensesWithTimePeriodFilter();
+      }
     }).whenComplete(() => notifyListeners());
+  }
+
+  /// Apply year filter to database expenses
+  void _updateExpensesWithYearFilter() {
+    if (_selectedYear == null) {
+      _expenses = _databaseExpenses;
+      return;
+    }
+    _expenses = _databaseExpenses
+        .where((expense) => expense.date.year == _selectedYear)
+        .toList();
+  }
+
+  /// Apply time period filter to _databaseExpenses
+  void _updateExpensesWithTimePeriodFilter() {
+    if (!_timePeriodMode) {
+      _expenses = _databaseExpenses;
+      return;
+    }
+
+    final dateRangeStart = _getDateRangeStart();
+    _expenses = _databaseExpenses
+        .where((expense) =>
+            expense.date.isAfter(dateRangeStart) ||
+            expense.date.isAtSameMomentAs(dateRangeStart))
+        .toList();
+  }
+
+  /// Get the date range start based on selected time period
+  DateTime _getDateRangeStart() {
+    switch (_selectedTimePeriod) {
+      case TimePeriod.thirtyDays:
+        return DateTime.now().subtract(const Duration(days: 30));
+      case TimePeriod.sixMonths:
+        return DateTime.now().subtract(const Duration(days: 180));
+      case TimePeriod.oneYear:
+        return DateTime.now().subtract(const Duration(days: 365));
+      case TimePeriod.fiveYears:
+        return DateTime.now().subtract(const Duration(days: 1825));
+      case TimePeriod.all:
+        return DateTime(1900); // Far in the past
+    }
+  }
+
+  /// Check if there is data available for a specific time period.
+  bool isTimePeriodAvailable(TimePeriod period) {
+    final sourceData = _databaseExpenses;
+    if (sourceData.isEmpty) return false;
+
+    final dateRangeStart = switch (period) {
+      TimePeriod.thirtyDays =>
+        DateTime.now().subtract(const Duration(days: 30)),
+      TimePeriod.sixMonths =>
+        DateTime.now().subtract(const Duration(days: 180)),
+      TimePeriod.oneYear => DateTime.now().subtract(const Duration(days: 365)),
+      TimePeriod.fiveYears =>
+        DateTime.now().subtract(const Duration(days: 1825)),
+      TimePeriod.all => DateTime(1900),
+    };
+
+    return sourceData.any((expense) =>
+        expense.date.isAfter(dateRangeStart) ||
+        expense.date.isAtSameMomentAs(dateRangeStart));
+  }
+
+  /// Set the active time period and apply filter
+  Future setTimePeriod(TimePeriod period) async {
+    _selectedTimePeriod = period;
+    _updateExpensesWithTimePeriodFilter();
+    notifyListeners();
+    return Future.value();
+  }
+
+  /// Enable/disable time period mode
+  Future setTimePeriodMode(bool enabled) async {
+    _timePeriodMode = enabled;
+    if (_timePeriodMode) {
+      _selectedTimePeriod = TimePeriod.thirtyDays;
+      _updateExpensesWithTimePeriodFilter();
+    } else {
+      _updateExpensesWithYearFilter();
+    }
+    notifyListeners();
+    return Future.value();
   }
 
   Future loadCategoryOptions() async {
@@ -133,9 +237,7 @@ class ExpenseProvider extends ChangeNotifier {
   }
 
   Color getCategoryColor(String category) {
-    return isIncome(category)
-        ? incomeColor
-        : expenseColor;
+    return isIncome(category) ? incomeColor : expenseColor;
   }
 
   Future loadRecurringSchedules() async {
