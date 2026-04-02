@@ -33,7 +33,7 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.6
+  cupertino_icons: ^1.0.9
   dropdown_button2: ^3.0.0
   postgres: ^3.5.9
   logger: ^2.7.0
@@ -52,7 +52,7 @@ dependencies:
   rrule: ^0.2.18
   grouped_list: ^6.0.0
   flex_color_picker: ^3.8.0
-  shared_preferences: ^2.5.4
+  shared_preferences: ^2.5.5
   flutter_simple_calculator: ^2.7.1
   local_auth: ^3.0.1
 
