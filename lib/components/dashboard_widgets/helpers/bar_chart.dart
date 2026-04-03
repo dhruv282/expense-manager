@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class BarChartWidget extends StatefulWidget {
-  final List<BarChartGroupData> Function(ExpenseProvider)
-      getBarChartGroupData;
+  final List<BarChartGroupData> Function(ExpenseProvider) getBarChartGroupData;
   final Widget Function(double, TitleMeta) leftTitleWidgets;
   final Widget Function(double, TitleMeta) bottomTitleWidgets;
   final BarTooltipItem? Function(BarChartGroupData, int, BarChartRodData, int)
@@ -28,6 +27,18 @@ class _BarChartWidgetState extends State<BarChartWidget> {
     final expenseProvider = Provider.of<ExpenseProvider>(context);
     var groupData = widget.getBarChartGroupData(expenseProvider);
 
+    // Calculate dynamic interval based on number of bars
+    // Aim for ~4-6 labels on the x-axis
+    int interval = 1;
+    if (groupData.isNotEmpty) {
+      final barCount = groupData.length;
+      if (barCount > 24) {
+        interval = (barCount / 6).ceil(); // ~6 labels
+      } else if (barCount > 12) {
+        interval = 3; // ~4 labels
+      }
+    }
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(10),
@@ -42,7 +53,7 @@ class _BarChartWidgetState extends State<BarChartWidget> {
               bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                       showTitles: true,
-                      interval: 1,
+                      interval: interval.toDouble(),
                       getTitlesWidget: widget.bottomTitleWidgets)),
               topTitles:
                   const AxisTitles(sideTitles: SideTitles(showTitles: false)),
