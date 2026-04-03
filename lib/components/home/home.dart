@@ -1,6 +1,7 @@
 import 'package:expense_manager/components/navbar/bottom_navbar.dart';
 import 'package:expense_manager/components/settings/database_config_form/database_config_form.dart';
 import 'package:expense_manager/components/year_selector/year_selector.dart';
+import 'package:expense_manager/components/data_table_filter/time_filter_button_group.dart';
 import 'package:expense_manager/pages/add_expense.dart';
 import 'package:expense_manager/pages/settings.dart';
 import 'package:expense_manager/providers/expense_provider.dart';
@@ -20,6 +21,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   bool _isLoading = true;
   int navBarPageIndex = 0;
+  bool _useTimeFilter = false;
 
   Future<bool> _isDBConfigComplete() {
     var dbConfigStore = DatabaseConfigStore();
@@ -119,17 +121,45 @@ class _HomeState extends State<Home> {
                         MaterialPageRoute(
                             builder: (context) => const AddExpensePage()));
                   }),
-              title: YearSelector(
-                setLoadingState: (bool isLoading) {
-                  setState(() {
-                    _isLoading = isLoading;
-                  });
-                },
-              ),
+              title: _useTimeFilter
+                  ? TimeFilterButtonGroup(
+                      setLoadingState: (bool isLoading) {
+                        setState(() {
+                          _isLoading = isLoading;
+                        });
+                      },
+                    )
+                  : YearSelector(
+                      setLoadingState: (bool isLoading) {
+                        setState(() {
+                          _isLoading = isLoading;
+                        });
+                      },
+                    ),
               centerTitle: true,
               scrolledUnderElevation: 0.0,
               backgroundColor: Colors.transparent,
               actions: [
+                IconButton(
+                  tooltip: _useTimeFilter
+                      ? 'Switch to Year View'
+                      : 'Switch to Time Filter',
+                  onPressed: () {
+                    setState(() {
+                      _useTimeFilter = !_useTimeFilter;
+                      // Reset expense provider time period mode
+                      if (!_useTimeFilter) {
+                        Provider.of<ExpenseProvider>(context, listen: false)
+                            .setTimePeriodMode(false);
+                      } else {
+                        Provider.of<ExpenseProvider>(context, listen: false)
+                            .setTimePeriodMode(true);
+                      }
+                    });
+                  },
+                  icon: Icon(
+                      _useTimeFilter ? Icons.calendar_month : Icons.date_range),
+                ),
                 IconButton(
                   tooltip: 'Refresh Data',
                   onPressed: () {

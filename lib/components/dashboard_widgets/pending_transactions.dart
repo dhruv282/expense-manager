@@ -44,8 +44,7 @@ class _PendingTransactionsWidgetState extends State<PendingTransactionsWidget> {
               )
             ]),
           ),
-          Expanded(
-              child: ListView(
+          Column(
             children: expenseProvider.pendingTransactions.entries
                 .map((m) => m.value.map((e) {
                       final amountController =
@@ -114,7 +113,7 @@ class _PendingTransactionsWidgetState extends State<PendingTransactionsWidget> {
                     }))
                 .expand((w) => w)
                 .toList(),
-          ))
+          )
         ]),
       ),
     );
