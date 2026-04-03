@@ -20,7 +20,9 @@ class App extends StatelessWidget {
       ChangeNotifierProvider(create: (_) => AuthProvider()),
       ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ChangeNotifierProvider(create: (_) => ExpenseProvider()),
-      ChangeNotifierProvider(create: (_) => DashboardWidgetsProvider()),
+      ChangeNotifierProvider(
+        create: (_) => DashboardWidgetsProvider()..initialize(),
+      ),
     ], child: MaterialAppWidget());
   }
 }
