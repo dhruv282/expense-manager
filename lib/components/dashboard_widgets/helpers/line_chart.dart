@@ -26,6 +26,18 @@ class _LineChartWidgetState extends State<LineChartWidget> {
     final expenseProvider = Provider.of<ExpenseProvider>(context);
     var lineBarData = widget.getLineBarData(expenseProvider);
 
+    // Calculate dynamic interval based on number of data points
+    // Aim for ~4-6 labels on the x-axis
+    int interval = 1;
+    if (lineBarData.isNotEmpty && lineBarData.first.spots.isNotEmpty) {
+      final dataPointCount = lineBarData.first.spots.length;
+      if (dataPointCount > 24) {
+        interval = (dataPointCount / 6).ceil(); // ~6 labels
+      } else if (dataPointCount > 12) {
+        interval = 3; // ~4 labels
+      }
+    }
+
     return Card(
         child: Padding(
             padding: const EdgeInsets.all(10),
@@ -40,7 +52,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
                   bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                           showTitles: true,
-                          interval: 1,
+                          interval: interval.toDouble(),
                           getTitlesWidget: widget.bottomTitleWidgets)),
                   topTitles: const AxisTitles(
                       sideTitles: SideTitles(showTitles: false)),
