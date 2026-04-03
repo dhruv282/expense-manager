@@ -1,54 +1,91 @@
 import 'package:expense_manager/components/dashboard_widgets/dashboard_widget.dart';
 import 'package:expense_manager/components/dashboard_widgets/helpers/line_chart.dart';
+import 'package:expense_manager/providers/expense_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
 class ExpenseVsIncomeLineChart extends DashboardWidget {
   @override
   Widget getWidget() {
+    return _ExpenseVsIncomeLineChartContent();
+  }
+}
+
+class _ExpenseVsIncomeLineChartContent extends StatefulWidget {
+  const _ExpenseVsIncomeLineChartContent();
+
+  @override
+  State<_ExpenseVsIncomeLineChartContent> createState() =>
+      _ExpenseVsIncomeLineChartContentState();
+}
+
+class _ExpenseVsIncomeLineChartContentState
+    extends State<_ExpenseVsIncomeLineChartContent> {
+  late List<(int, int)> sortedPeriods;
+  late Map<(int, int), Tuple2<double, double>> monthlyIncomeAndExpenses;
+
+  @override
+  Widget build(BuildContext context) {
+    final expenseProvider = Provider.of<ExpenseProvider>(context);
     final compactCurrencyFormatter =
         NumberFormat.compactCurrency(symbol: '\$', decimalDigits: 0);
     final simpleCurrencyFormatter = NumberFormat.simpleCurrency();
+
+    // Map (year, month) to (income, expense)
+    monthlyIncomeAndExpenses = {};
+    for (var expense in expenseProvider.expenses) {
+      final key = (expense.date.year, expense.date.month);
+      if (expenseProvider.isIncome(expense.category)) {
+        monthlyIncomeAndExpenses.update(
+          key,
+          (tuple) => Tuple2(tuple.item1 + expense.cost, tuple.item2),
+          ifAbsent: () => Tuple2(expense.cost, 0),
+        );
+      } else {
+        monthlyIncomeAndExpenses.update(
+          key,
+          (tuple) => Tuple2(tuple.item1, tuple.item2 + expense.cost),
+          ifAbsent: () => Tuple2(0, expense.cost),
+        );
+      }
+    }
+
+    // Sort by (year, month) and create sequential x-coordinates
+    sortedPeriods = monthlyIncomeAndExpenses.keys.toList();
+    sortedPeriods.sort((a, b) {
+      if (a.$1 != b.$1) return a.$1.compareTo(b.$1);
+      return a.$2.compareTo(b.$2);
+    });
+
     return LineChartWidget(
       getLineBarData: (expenseProvider) {
-        final Map<int, Tuple2<double, double>> monthlyIncomeAndExpenses = {};
-        for (var expense in expenseProvider.expenses) {
-          if (expenseProvider.isIncome(expense.category)) {
-            monthlyIncomeAndExpenses.update(
-              expense.date.month,
-              (tuple) => Tuple2(tuple.item1 + expense.cost, tuple.item2),
-              ifAbsent: () => Tuple2(expense.cost, 0),
-            );
-          } else {
-            monthlyIncomeAndExpenses.update(
-              expense.date.month,
-              (tuple) => Tuple2(tuple.item1, tuple.item2 + expense.cost),
-              ifAbsent: () => Tuple2(0, expense.cost),
-            );
-          }
-        }
-        var months = monthlyIncomeAndExpenses.keys.toList();
-        months.sort();
         return [
           LineChartBarData(
-            spots: months
-                .map((m) =>
-                    FlSpot(m.toDouble(), monthlyIncomeAndExpenses[m]!.item1))
+            spots: sortedPeriods
+                .asMap()
+                .entries
+                .map((entry) => FlSpot(entry.key.toDouble(),
+                    monthlyIncomeAndExpenses[entry.value]!.item1))
                 .toList(),
             color: Colors.green,
             belowBarData: BarAreaData(
                 show: true, color: Colors.green.withValues(alpha: 0.3)),
+            dotData: FlDotData(show: false),
           ),
           LineChartBarData(
-            spots: months
-                .map((m) =>
-                    FlSpot(m.toDouble(), monthlyIncomeAndExpenses[m]!.item2))
+            spots: sortedPeriods
+                .asMap()
+                .entries
+                .map((entry) => FlSpot(entry.key.toDouble(),
+                    monthlyIncomeAndExpenses[entry.value]!.item2))
                 .toList(),
             color: Colors.red,
             belowBarData: BarAreaData(
                 show: true, color: Colors.red.withValues(alpha: 0.3)),
+            dotData: FlDotData(show: false),
           ),
         ];
       },
@@ -68,7 +105,12 @@ class ExpenseVsIncomeLineChart extends DashboardWidget {
         );
       },
       bottomTitleWidgets: (double value, TitleMeta meta) {
-        var text = DateFormat('MMM').format(DateTime(0, value.toInt()));
+        final index = value.toInt();
+        if (index < 0 || index >= sortedPeriods.length) {
+          return Container();
+        }
+        final (year, month) = sortedPeriods[index];
+        final text = DateFormat('MMM').format(DateTime(year, month));
 
         return SideTitleWidget(
           meta: meta,
@@ -82,9 +124,15 @@ class ExpenseVsIncomeLineChart extends DashboardWidget {
       },
       getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
         return touchedBarSpots.map((barSpot) {
+          final index = barSpot.x.toInt();
+          if (index < 0 || index >= sortedPeriods.length) {
+            return null;
+          }
+          final (year, month) = sortedPeriods[index];
+
           return LineTooltipItem(
             barSpot.barIndex == 0
-                ? DateFormat('MMM').format(DateTime(0, barSpot.x.toInt()))
+                ? DateFormat('MMM yyyy').format(DateTime(year, month))
                 : '',
             const TextStyle(
               fontSize: 14,
@@ -104,6 +152,8 @@ class ExpenseVsIncomeLineChart extends DashboardWidget {
         }).toList()
           // Sort such that tooltips with the month title always appear first
           ..sort((a, b) {
+            if (a == null) return 1;
+            if (b == null) return -1;
             if (a.text.isNotEmpty) {
               return -1;
             } else if (b.text.isNotEmpty) {
