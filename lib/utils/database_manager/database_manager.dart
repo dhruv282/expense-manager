@@ -73,7 +73,7 @@ class DatabaseManager {
       // which could be terminated by the OS when the app is in the background.
       // https://github.com/isoos/postgresql-dart/issues/28#issuecomment-1023001836
       await connection!.execute('SELECT 1').timeout(
-            const Duration(seconds: 5),
+            const Duration(seconds: 2),
             onTimeout: () => throw Exception('Database ping timed out'),
           );
       return true;

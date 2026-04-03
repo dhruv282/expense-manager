@@ -36,7 +36,7 @@ class _SettingsPageState extends State<SettingsPage> {
         onClick: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => WidgetConfig()),
+            MaterialPageRoute(builder: (context) => const WidgetConfigPage()),
           );
         },
       ),
