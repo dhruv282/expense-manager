@@ -125,10 +125,10 @@ packages:
     dependency: "direct main"
     description:
       name: dropdown_button2
-      sha256: fbb9ea9ea81b04e48d27bb181852b7e11e684aa2a32e95aec4c131be1849e33a
+      sha256: "24f5b775483a9b3c508092766798c10e3f23127e66b3f4a305b5bfb59ff1debc"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0"
+    version: "3.1.0"
   equatable:
     dependency: transitive
     description:
