@@ -35,13 +35,13 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.9
   dropdown_button2: ^3.1.0
-  postgres: ^3.5.9
+  postgres: ^3.5.11
   logger: ^2.7.0
   intl: ^0.20.2
   currency_text_input_formatter: ^2.3.0
   pattern_formatter: ^4.0.1
   provider: ^6.1.5+1
-  flutter_secure_storage: ^10.0.0
+  flutter_secure_storage: ^10.3.1
   flutter_launcher_icons: ^0.14.4
   fl_chart: ^1.2.0
   flutter_staggered_grid_view: ^0.7.0
