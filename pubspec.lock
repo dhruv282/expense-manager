@@ -117,10 +117,10 @@ packages:
     dependency: "direct main"
     description:
       name: currency_text_input_formatter
-      sha256: "7ca90006337241559caea445699b4b32f4e198676728541604fa9521d0d4f75a"
+      sha256: "38c708c736f098ae8e1e26d7f42012e39e463d3c84afc7b4ac081d986563df7b"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.0"
+    version: "2.3.1"
   dropdown_button2:
     dependency: "direct main"
     description:
@@ -460,10 +460,10 @@ packages:
     dependency: "direct main"
     description:
       name: multi_dropdown
-      sha256: fa322e6d05220b2375b5117c328ac1720f0ce08eeb26ffe82a73e08db8782fe9
+      sha256: "3582128d2d70d24f9a2e8acfce38b579cceb57e885461d4dd9e669a10342f863"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.1"
+    version: "3.2.1"
   nested:
     dependency: transitive
     description:
@@ -580,10 +580,10 @@ packages:
     dependency: "direct main"
     description:
       name: postgres
-      sha256: fe4a19a69fad564efa8ced72d58b14e86d12a548f5f0a511b377089bf3b592ed
+      sha256: "123de5cbadc56a7e8d9fa485c780b6b56940b4081f4c74f3a5578682757c299b"
       url: "https://pub.dev"
     source: hosted
-    version: "3.5.11"
+    version: "3.5.12"
   provider:
     dependency: "direct main"
     description:
