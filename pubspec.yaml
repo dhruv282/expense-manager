@@ -51,7 +51,7 @@ dependencies:
   flutter_date_range_picker: ^0.2.1
   rrule: ^0.2.18
   grouped_list: ^6.0.0
-  flex_color_picker: ^3.8.0
+  flex_color_picker: ^4.0.0
   shared_preferences: ^2.5.5
   flutter_simple_calculator: ^2.7.1
   local_auth: ^3.0.2
