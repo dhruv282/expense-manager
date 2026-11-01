@@ -561,10 +561,10 @@ packages:
     dependency: "direct main"
     description:
       name: pattern_formatter
-      sha256: f5fe03f7425524237465561a6a5f049616b09f99e35138df515f6b7b9aaa823b
+      sha256: "5f65f22aa4065a33b4990dc9db74a55e4d596abf93cd82d35acb75aa448dce0f"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.1"
+    version: "5.0.0"
   petitparser:
     dependency: transitive
     description:
